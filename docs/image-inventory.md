@@ -1,5 +1,9 @@
 # Exact-image distribution inventory (not release clearance)
 
+For offline candidate matching of archived upstream sources to these inventories,
+see [source inventory review](source-inventory-review.md). That comparison does
+not replace binary/source correspondence or release approval.
+
 The native [container installation workflow](../.github/workflows/container-install.yml)
 catalogues both default images on Linux AMD64 and ARM64 **before** mounting any
 generated device state. It uses maintained [Anchore Syft 1.56.0](https://github.com/anchore/syft/releases/tag/v1.56.0)
