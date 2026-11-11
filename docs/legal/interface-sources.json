@@ -1,0 +1,3076 @@
+{
+  "schema": "interface-sources/1",
+  "base_commit": "0108c3522ff681fdda6912ea8efa418de6d61f19",
+  "inventory_regex": "0xa5f0|0xa5f1|UP-AI-KEY|UVC AI Port|10001|233\\.89\\.188\\.1|7442|7443|/api/adopt|/api/1\\.2/manage|/api/info|ucp4|x-ident|x-mode|x-key|x-adopted|ubnt_avclient|UiStreamControl|GetStreamList|ResetAIPortStreams|EventAIPortStatus|ChangeVideoSettings|UpdateUsernamePassword|/internal/aiprocessors|secure_transfer|/camera/1\\.0/ws|a photo of|ubntbox",
+  "status": "observations_pending",
+  "rights_approval": false,
+  "coverage_scope": "Exact regex occurrences across src plus reviewed AST command/header/target atoms, wire fields at protocol/device/AI Port boundaries, discovery TLVs/layouts and UCP framing. Coverage is a syntactic regression guard, not proof of complete semantic provenance.",
+  "manual_review": {
+    "files": [
+      "src/aikey/protocol.py",
+      "src/aikey/discovery.py",
+      "src/aikey/aiport_candidate.py",
+      "src/aikey/device.py",
+      "src/aikey/tls.py"
+    ],
+    "tls": "tls.py implements locally generated RSA/X.509 identity and independently pinned SHA-256 controller trust with standard cryptography APIs; these are local design choices, not claims about vendor-generated certificates or keys. No device firmware was consulted. General interoperability acceptance remains bounded by the referenced live reconnect records.",
+    "limits": "Local configuration keys, defensive size limits and standard TLS/HTTP choices are not automatically manufacturer facts. Tests do not recognize every future semantic protocol change; contributors must extend the reviewed inventory."
+  },
+  "facts": [
+    {
+      "inventory_key": "aiport_status:0",
+      "fact": "aiport_status: 0",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:1384",
+        "src/aikey/aiport_candidate.py:1764",
+        "src/aikey/aiport_candidate.py:1818",
+        "src/aikey/aiport_candidate.py:1834",
+        "src/aikey/aiport_candidate.py:1865",
+        "src/aikey/aiport_candidate.py:2846",
+        "src/aikey/aiport_candidate.py:2888",
+        "src/aikey/aiport_candidate.py:2907",
+        "src/aikey/aiport_candidate.py:2920",
+        "src/aikey/aiport_candidate.py:2945",
+        "src/aikey/aiport_candidate.py:2966",
+        "src/aikey/aiport_candidate.py:2987",
+        "src/aikey/aiport_candidate.py:3035",
+        "src/aikey/aiport_candidate.py:3076",
+        "src/aikey/aiport_candidate.py:3097",
+        "src/aikey/aiport_candidate.py:3127",
+        "src/aikey/aiport_candidate.py:3256",
+        "src/aikey/aiport_candidate.py:3316"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Inspect the status-code handling in your own Protect installation, or use a bounded no-camera emulator trial recording only numeric status and progression. Separate our locally selected refusal code from a proven manufacturer-defined meaning.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "aiport_status:5",
+      "fact": "aiport_status: 5",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:1751",
+        "src/aikey/aiport_candidate.py:2869",
+        "src/aikey/aiport_candidate.py:2898",
+        "src/aikey/aiport_candidate.py:2916",
+        "src/aikey/aiport_candidate.py:2933",
+        "src/aikey/aiport_candidate.py:2940",
+        "src/aikey/aiport_candidate.py:2955",
+        "src/aikey/aiport_candidate.py:2962",
+        "src/aikey/aiport_candidate.py:2976",
+        "src/aikey/aiport_candidate.py:2983",
+        "src/aikey/aiport_candidate.py:3030",
+        "src/aikey/aiport_candidate.py:3109",
+        "src/aikey/aiport_candidate.py:3165",
+        "src/aikey/aiport_candidate.py:3187",
+        "src/aikey/aiport_candidate.py:3215",
+        "src/aikey/aiport_candidate.py:3250",
+        "src/aikey/aiport_candidate.py:3270"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Inspect the status-code handling in your own Protect installation, or use a bounded no-camera emulator trial recording only numeric status and progression. Separate our locally selected refusal code from a proven manufacturer-defined meaning.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "aiport_status:501",
+      "fact": "aiport_status: 501",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:1370",
+        "src/aikey/aiport_candidate.py:1781",
+        "src/aikey/aiport_candidate.py:1789",
+        "src/aikey/aiport_candidate.py:1808",
+        "src/aikey/aiport_candidate.py:1887",
+        "src/aikey/aiport_candidate.py:2923",
+        "src/aikey/aiport_candidate.py:3004",
+        "src/aikey/aiport_candidate.py:3023",
+        "src/aikey/aiport_candidate.py:3087",
+        "src/aikey/aiport_candidate.py:3145",
+        "src/aikey/aiport_candidate.py:3155"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Inspect the status-code handling in your own Protect installation, or use a bounded no-camera emulator trial recording only numeric status and progression. Separate our locally selected refusal code from a proven manufacturer-defined meaning.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "discovery_layout:>BBH",
+      "fact": "discovery_layout: >BBH",
+      "code_locations": [
+        "src/aikey/discovery.py:27"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Run tools/discovery_observe.py --ip OWNED_DEVICE_IPV4 once against one owned camera; record version/command/length and TLV type/length only. This cannot prove field values, endianness, multicast behavior or genuine AI Key/AI Port behavior. For those, inspect only the corresponding parser in your own Protect installation or perform a bounded emulator/controller trial and report derived booleans without values. If not observable, mark this fact as a removal candidate; do not inspect vendor device firmware.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "discovery_layout:>BH",
+      "fact": "discovery_layout: >BH",
+      "code_locations": [
+        "src/aikey/discovery.py:28"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Run tools/discovery_observe.py --ip OWNED_DEVICE_IPV4 once against one owned camera; record version/command/length and TLV type/length only. This cannot prove field values, endianness, multicast behavior or genuine AI Key/AI Port behavior. For those, inspect only the corresponding parser in your own Protect installation or perform a bounded emulator/controller trial and report derived booleans without values. If not observable, mark this fact as a removal candidate; do not inspect vendor device firmware.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "discovery_tlv:0x01",
+      "fact": "discovery_tlv: 0x01 (type used by the independent response encoder; meaning/byte order still require evidence)",
+      "code_locations": [
+        "src/aikey/discovery.py:91"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Run tools/discovery_observe.py --ip OWNED_DEVICE_IPV4 once against one owned camera; record version/command/length and TLV type/length only. This cannot prove field values, endianness, multicast behavior or genuine AI Key/AI Port behavior. For those, inspect only the corresponding parser in your own Protect installation or perform a bounded emulator/controller trial and report derived booleans without values. If not observable, mark this fact as a removal candidate; do not inspect vendor device firmware.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "discovery_tlv:0x02",
+      "fact": "discovery_tlv: 0x02 (type used by the independent response encoder; meaning/byte order still require evidence)",
+      "code_locations": [
+        "src/aikey/discovery.py:90"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Run tools/discovery_observe.py --ip OWNED_DEVICE_IPV4 once against one owned camera; record version/command/length and TLV type/length only. This cannot prove field values, endianness, multicast behavior or genuine AI Key/AI Port behavior. For those, inspect only the corresponding parser in your own Protect installation or perform a bounded emulator/controller trial and report derived booleans without values. If not observable, mark this fact as a removal candidate; do not inspect vendor device firmware.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "discovery_tlv:0x03",
+      "fact": "discovery_tlv: 0x03 (type used by the independent response encoder; meaning/byte order still require evidence)",
+      "code_locations": [
+        "src/aikey/discovery.py:96"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Run tools/discovery_observe.py --ip OWNED_DEVICE_IPV4 once against one owned camera; record version/command/length and TLV type/length only. This cannot prove field values, endianness, multicast behavior or genuine AI Key/AI Port behavior. For those, inspect only the corresponding parser in your own Protect installation or perform a bounded emulator/controller trial and report derived booleans without values. If not observable, mark this fact as a removal candidate; do not inspect vendor device firmware.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "discovery_tlv:0x0a",
+      "fact": "discovery_tlv: 0x0a (type used by the independent response encoder; meaning/byte order still require evidence)",
+      "code_locations": [
+        "src/aikey/discovery.py:92"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Run tools/discovery_observe.py --ip OWNED_DEVICE_IPV4 once against one owned camera; record version/command/length and TLV type/length only. This cannot prove field values, endianness, multicast behavior or genuine AI Key/AI Port behavior. For those, inspect only the corresponding parser in your own Protect installation or perform a bounded emulator/controller trial and report derived booleans without values. If not observable, mark this fact as a removal candidate; do not inspect vendor device firmware.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "discovery_tlv:0x0b",
+      "fact": "discovery_tlv: 0x0b (type used by the independent response encoder; meaning/byte order still require evidence)",
+      "code_locations": [
+        "src/aikey/discovery.py:93"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Run tools/discovery_observe.py --ip OWNED_DEVICE_IPV4 once against one owned camera; record version/command/length and TLV type/length only. This cannot prove field values, endianness, multicast behavior or genuine AI Key/AI Port behavior. For those, inspect only the corresponding parser in your own Protect installation or perform a bounded emulator/controller trial and report derived booleans without values. If not observable, mark this fact as a removal candidate; do not inspect vendor device firmware.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "discovery_tlv:0x0c",
+      "fact": "discovery_tlv: 0x0c (type used by the independent response encoder; meaning/byte order still require evidence)",
+      "code_locations": [
+        "src/aikey/discovery.py:94"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Run tools/discovery_observe.py --ip OWNED_DEVICE_IPV4 once against one owned camera; record version/command/length and TLV type/length only. This cannot prove field values, endianness, multicast behavior or genuine AI Key/AI Port behavior. For those, inspect only the corresponding parser in your own Protect installation or perform a bounded emulator/controller trial and report derived booleans without values. If not observable, mark this fact as a removal candidate; do not inspect vendor device firmware.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "discovery_tlv:0x10",
+      "fact": "discovery_tlv: 0x10 (type used by the independent response encoder; meaning/byte order still require evidence)",
+      "code_locations": [
+        "src/aikey/discovery.py:97"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Run tools/discovery_observe.py --ip OWNED_DEVICE_IPV4 once against one owned camera; record version/command/length and TLV type/length only. This cannot prove field values, endianness, multicast behavior or genuine AI Key/AI Port behavior. For those, inspect only the corresponding parser in your own Protect installation or perform a bounded emulator/controller trial and report derived booleans without values. If not observable, mark this fact as a removal candidate; do not inspect vendor device firmware.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "discovery_tlv:0x17",
+      "fact": "discovery_tlv: 0x17 (type used by the independent response encoder; meaning/byte order still require evidence)",
+      "code_locations": [
+        "src/aikey/discovery.py:95"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Run tools/discovery_observe.py --ip OWNED_DEVICE_IPV4 once against one owned camera; record version/command/length and TLV type/length only. This cannot prove field values, endianness, multicast behavior or genuine AI Key/AI Port behavior. For those, inspect only the corresponding parser in your own Protect installation or perform a bounded emulator/controller trial and report derived booleans without values. If not observable, mark this fact as a removal candidate; do not inspect vendor device firmware.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "inventory:/api/1.2/manage",
+      "fact": "inventory: /api/1.2/manage",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2326"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "inventory:/api/adopt",
+      "fact": "inventory: /api/adopt",
+      "code_locations": [
+        "src/aikey/device.py:873",
+        "src/aikey/lab.py:201",
+        "src/aikey/lab.py:205"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "inventory:/api/info",
+      "fact": "inventory: /api/info",
+      "code_locations": [
+        "src/aikey/device.py:871",
+        "src/aikey/device.py:872",
+        "src/aikey/host_discovery.py:139"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "inventory:/camera/1.0/ws",
+      "fact": "inventory: /camera/1.0/ws",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:3486"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "inventory:/internal/aiprocessors",
+      "fact": "inventory: /internal/aiprocessors",
+      "code_locations": [
+        "src/aikey/deep_mode.py:14",
+        "src/aikey/deep_mode.py:274",
+        "src/aikey/deep_mode.py:298",
+        "src/aikey/deep_mode.py:40",
+        "src/aikey/deep_mode.py:7",
+        "src/aikey/device.py:1410",
+        "src/aikey/lab.py:173",
+        "src/aikey/lab.py:174",
+        "src/aikey/lab.py:219",
+        "src/aikey/lab.py:222",
+        "src/aikey/protocol.py:15",
+        "src/aikey/protocol.py:342",
+        "src/aikey/speech.py:6",
+        "src/aikey/worker.py:1146",
+        "src/aikey/worker.py:1439",
+        "src/aikey/worker.py:1497",
+        "src/aikey/worker.py:1505",
+        "src/aikey/worker.py:1582",
+        "src/aikey/worker.py:1597",
+        "src/aikey/worker.py:1694",
+        "src/aikey/worker.py:1718",
+        "src/aikey/worker.py:1877",
+        "src/aikey/worker.py:220",
+        "src/aikey/worker.py:222",
+        "src/aikey/worker.py:224",
+        "src/aikey/worker.py:225",
+        "src/aikey/worker.py:226",
+        "src/aikey/worker.py:338",
+        "src/aikey/worker.py:339",
+        "src/aikey/worker.py:340",
+        "src/aikey/worker.py:341"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "inventory:0xa5f0",
+      "fact": "inventory: 0xa5f0",
+      "code_locations": [
+        "src/aikey/config.py:270",
+        "src/aikey/config.py:74",
+        "src/aikey/device.py:864",
+        "src/aikey/device.py:974",
+        "src/aikey/search.py:459",
+        "src/aikey/worker.py:685"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `0xa5f0` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "inventory:0xa5f1",
+      "fact": "inventory: 0xa5f1",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:3484"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `0xa5f1` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "inventory:10001",
+      "fact": "inventory: 10001",
+      "code_locations": [
+        "src/aikey/aiport_deployment.py:181",
+        "src/aikey/aiport_deployment.py:26",
+        "src/aikey/config.py:87",
+        "src/aikey/discovery.py:25",
+        "src/aikey/first_run.py:72"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Run tools/discovery_observe.py --ip OWNED_DEVICE_IPV4 once against one owned camera; record version/command/length and TLV type/length only. This cannot prove field values, endianness, multicast behavior or genuine AI Key/AI Port behavior. For those, inspect only the corresponding parser in your own Protect installation or perform a bounded emulator/controller trial and report derived booleans without values. If not observable, mark this fact as a removal candidate; do not inspect vendor device firmware.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "inventory:233.89.188.1",
+      "fact": "inventory: 233.89.188.1",
+      "code_locations": [
+        "src/aikey/discovery.py:26"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Run tools/discovery_observe.py --ip OWNED_DEVICE_IPV4 once against one owned camera; record version/command/length and TLV type/length only. This cannot prove field values, endianness, multicast behavior or genuine AI Key/AI Port behavior. For those, inspect only the corresponding parser in your own Protect installation or perform a bounded emulator/controller trial and report derived booleans without values. If not observable, mark this fact as a removal candidate; do not inspect vendor device firmware.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "inventory:7442",
+      "fact": "inventory: 7442",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:746",
+        "src/aikey/aiport_deployment.py:27",
+        "src/aikey/config.py:293",
+        "src/aikey/config.py:77",
+        "src/aikey/device.py:493",
+        "src/aikey/device.py:907",
+        "src/aikey/device_workflow.py:507",
+        "src/aikey/state_snapshot.py:351"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `7442` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "inventory:7443",
+      "fact": "inventory: 7443",
+      "code_locations": [
+        "src/aikey/config.py:293",
+        "src/aikey/config.py:77",
+        "src/aikey/device_workflow.py:506",
+        "src/aikey/search.py:388",
+        "src/aikey/search.py:420"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `7443` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "inventory:ChangeVideoSettings",
+      "fact": "inventory: ChangeVideoSettings",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2891",
+        "src/aikey/aiport_candidate.py:2901",
+        "src/aikey/aiport_candidate.py:98"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `ChangeVideoSettings` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "inventory:EventAIPortStatus",
+      "fact": "inventory: EventAIPortStatus",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:105",
+        "src/aikey/aiport_candidate.py:1801",
+        "src/aikey/aiport_candidate.py:2793"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `EventAIPortStatus` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "inventory:GetStreamList",
+      "fact": "inventory: GetStreamList",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:3091",
+        "src/aikey/aiport_candidate.py:3096",
+        "src/aikey/aiport_candidate.py:93"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `GetStreamList` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "inventory:ResetAIPortStreams",
+      "fact": "inventory: ResetAIPortStreams",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2863",
+        "src/aikey/aiport_candidate.py:97"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `ResetAIPortStreams` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "inventory:UP-AI-KEY",
+      "fact": "inventory: UP-AI-KEY",
+      "code_locations": [
+        "src/aikey/config.py:270",
+        "src/aikey/config.py:74",
+        "src/aikey/device.py:1490",
+        "src/aikey/device.py:864",
+        "src/aikey/device.py:973",
+        "src/aikey/search.py:459",
+        "src/aikey/worker.py:685"
+      ],
+      "source_class": "live_trial",
+      "reference": "docs/evidence/live-protect-7.3.68.md#L3",
+      "reference_sha256": "30047af21c189e705e0b75124241cc1718a80ad9840e972327f5a85e2d24f20d",
+      "evidence_scope": "Observed adopted software profile identity only; not evidence about genuine AI Key hardware."
+    },
+    {
+      "inventory_key": "inventory:UiStreamControl",
+      "fact": "inventory: UiStreamControl",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:101",
+        "src/aikey/aiport_candidate.py:3091",
+        "src/aikey/aiport_candidate.py:3100",
+        "src/aikey/aiport_ingest.py:620"
+      ],
+      "source_class": "live_trial",
+      "reference": "docs/evidence/ai-port-controller-contract.md#L34",
+      "reference_sha256": "90b548b21c7dc953b5eb92aaad42ac10b75b096e9fdd2c9026f7e8a989058bd9",
+      "evidence_scope": "Native stream-command observation on 7.3.68; only the described stream scope."
+    },
+    {
+      "inventory_key": "inventory:UpdateUsernamePassword",
+      "fact": "inventory: UpdateUsernamePassword",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2927",
+        "src/aikey/aiport_candidate.py:99"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `UpdateUsernamePassword` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "inventory:a photo of",
+      "fact": "inventory: a photo of",
+      "code_locations": [
+        "src/aikey/encoding_identity.py:32",
+        "src/aikey/worker.py:244",
+        "src/aikey/worker.py:245",
+        "src/aikey/worker.py:246",
+        "src/aikey/worker.py:247",
+        "src/aikey/worker.py:248"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "In your own Protect installation or public model documentation, find an explicit short-query prefix requirement; alternatively compare bounded retrieval with/without the prefix using your own controller and report aggregate outcomes only. A successful query alone does not establish this preprocessing rule. If not supported, consider removing the vendor-compatibility claim or prefix in a separately tested change.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "inventory:secure_transfer",
+      "fact": "inventory: secure_transfer",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:3492",
+        "src/aikey/aiport_candidate.py:3495"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "inventory:ubnt_avclient",
+      "fact": "inventory: ubnt_avclient",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2709",
+        "src/aikey/aiport_candidate.py:2710",
+        "src/aikey/aiport_candidate.py:2724",
+        "src/aikey/aiport_candidate.py:2734",
+        "src/aikey/aiport_candidate.py:2838",
+        "src/aikey/aiport_candidate.py:2842",
+        "src/aikey/aiport_candidate.py:93",
+        "src/aikey/aiport_candidate.py:94"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `ubnt_avclient` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "inventory:ubntbox",
+      "fact": "inventory: ubntbox (retained public status/profile string, not a current firmware-source attribution)",
+      "code_locations": [
+        "src/aikey/discovery.py:133"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Run tools/discovery_observe.py --ip OWNED_DEVICE_IPV4 once against one owned camera; record version/command/length and TLV type/length only. This cannot prove field values, endianness, multicast behavior or genuine AI Key/AI Port behavior. For those, inspect only the corresponding parser in your own Protect installation or perform a bounded emulator/controller trial and report derived booleans without values. If not observable, mark this fact as a removal candidate; do not inspect vendor device firmware.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "inventory:ucp4",
+      "fact": "inventory: ucp4",
+      "code_locations": [
+        "src/aikey/cli.py:29",
+        "src/aikey/config.py:281",
+        "src/aikey/config.py:282",
+        "src/aikey/config.py:283",
+        "src/aikey/device.py:1031",
+        "src/aikey/device.py:1032",
+        "src/aikey/device.py:1042",
+        "src/aikey/device.py:1048",
+        "src/aikey/first_run_site.py:154",
+        "src/aikey/lab.py:116",
+        "src/aikey/lab.py:93",
+        "src/aikey/search.py:609"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "inventory:x-adopted",
+      "fact": "inventory: x-adopted",
+      "code_locations": [
+        "src/aikey/device.py:1047",
+        "src/aikey/device.py:976"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "inventory:x-ident",
+      "fact": "inventory: x-ident",
+      "code_locations": [
+        "src/aikey/device.py:973",
+        "src/aikey/lab.py:114",
+        "src/aikey/lab.py:146",
+        "src/aikey/lab.py:155",
+        "src/aikey/lab.py:81",
+        "src/aikey/lab.py:86",
+        "src/aikey/search.py:459",
+        "src/aikey/search.py:609",
+        "src/aikey/worker.py:685"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "inventory:x-mode",
+      "fact": "inventory: x-mode",
+      "code_locations": [
+        "src/aikey/device.py:975"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "ucp_record:two_records_types_1_2_format_1_empty_body_2",
+      "fact": "ucp_record: two_records_types_1_2_format_1_empty_body_2 (record layout and supported flags/formats, not just a label)",
+      "code_locations": [
+        "src/aikey/protocol.py:16"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Observe one bounded emulator/controller exchange using a new local diagnostic that reports only record type, format, compression, reserved flags and byte lengths; never record JSON bodies, IDs, tokens or certificates. Confirm each represented format separately; unsupported variants remain removal candidates.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:/api/1.2/login",
+      "fact": "wire_atom: /api/1.2/login",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2325"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:/api/1.2/manage",
+      "fact": "wire_atom: /api/1.2/manage",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2326"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:/camera/1.0/ws",
+      "fact": "wire_atom: /camera/1.0/ws",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:3486"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:/internal/aiprocessors/descriptions/",
+      "fact": "wire_atom: /internal/aiprocessors/descriptions/",
+      "code_locations": [
+        "src/aikey/protocol.py:342"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:/internal/aiprocessors/descriptions/fixture-task",
+      "fact": "wire_atom: /internal/aiprocessors/descriptions/fixture-task",
+      "code_locations": [
+        "src/aikey/lab.py:174",
+        "src/aikey/lab.py:219"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:/internal/aiprocessors/image/",
+      "fact": "wire_atom: /internal/aiprocessors/image/",
+      "code_locations": [
+        "src/aikey/deep_mode.py:274",
+        "src/aikey/deep_mode.py:298",
+        "src/aikey/worker.py:1439",
+        "src/aikey/worker.py:1497",
+        "src/aikey/worker.py:1505",
+        "src/aikey/worker.py:1597"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:/internal/aiprocessors/image/enhanced",
+      "fact": "wire_atom: /internal/aiprocessors/image/enhanced",
+      "code_locations": [
+        "src/aikey/worker.py:226"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:/internal/aiprocessors/image/fixture",
+      "fact": "wire_atom: /internal/aiprocessors/image/fixture",
+      "code_locations": [
+        "src/aikey/lab.py:173",
+        "src/aikey/lab.py:222"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:/internal/aiprocessors/recognize-anything",
+      "fact": "wire_atom: /internal/aiprocessors/recognize-anything",
+      "code_locations": [
+        "src/aikey/protocol.py:15",
+        "src/aikey/worker.py:222"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:/internal/aiprocessors/reverification",
+      "fact": "wire_atom: /internal/aiprocessors/reverification",
+      "code_locations": [
+        "src/aikey/worker.py:225"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:/internal/aiprocessors/snapshot/export-from-camera",
+      "fact": "wire_atom: /internal/aiprocessors/snapshot/export-from-camera",
+      "code_locations": [
+        "src/aikey/worker.py:341"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:/internal/aiprocessors/snapshot/generate",
+      "fact": "wire_atom: /internal/aiprocessors/snapshot/generate",
+      "code_locations": [
+        "src/aikey/worker.py:340"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:/internal/aiprocessors/speech-to-text",
+      "fact": "wire_atom: /internal/aiprocessors/speech-to-text",
+      "code_locations": [
+        "src/aikey/worker.py:224"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:/internal/aiprocessors/video/export",
+      "fact": "wire_atom: /internal/aiprocessors/video/export",
+      "code_locations": [
+        "src/aikey/worker.py:1146",
+        "src/aikey/worker.py:1694",
+        "src/aikey/worker.py:1718",
+        "src/aikey/worker.py:1877",
+        "src/aikey/worker.py:339"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom::7445/generate-embeddings",
+      "fact": "wire_atom: :7445/generate-embeddings",
+      "code_locations": [
+        "src/aikey/deep_mode.py:38",
+        "src/aikey/device.py:220"
+      ],
+      "source_class": "protect_own_installation",
+      "reference": "docs/evidence/live-protect-7.3.70.md#L40",
+      "reference_sha256": "815a50d0f5bfe4a235a21468cfe48ea5b4356f245b0acfa45d0734095503d484",
+      "evidence_scope": "Recorded static findings from the owner-copied Protect 7.3.70 bundle; no new bundle access or live proof."
+    },
+    {
+      "inventory_key": "wire_atom::7788/v1/models/second_verifier_mlabel/inference",
+      "fact": "wire_atom: :7788/v1/models/second_verifier_mlabel/inference",
+      "code_locations": [
+        "src/aikey/device.py:219",
+        "src/aikey/device.py:62",
+        "src/aikey/worker.py:241"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom::7968/anything",
+      "fact": "wire_atom: :7968/anything",
+      "code_locations": [
+        "src/aikey/device.py:61"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom::7968/describe",
+      "fact": "wire_atom: :7968/describe",
+      "code_locations": [
+        "src/aikey/deep_mode.py:39",
+        "src/aikey/device.py:218",
+        "src/aikey/device.py:60",
+        "src/aikey/lab.py:218",
+        "src/aikey/worker.py:1066"
+      ],
+      "source_class": "protect_own_installation",
+      "reference": "docs/evidence/live-protect-7.3.70.md#L40",
+      "reference_sha256": "815a50d0f5bfe4a235a21468cfe48ea5b4356f245b0acfa45d0734095503d484",
+      "evidence_scope": "Recorded static findings from the owner-copied Protect 7.3.70 bundle; no new bundle access or live proof."
+    },
+    {
+      "inventory_key": "wire_atom::7968/on_demand_inference",
+      "fact": "wire_atom: :7968/on_demand_inference",
+      "code_locations": [
+        "src/aikey/device.py:218",
+        "src/aikey/device.py:60",
+        "src/aikey/worker.py:1062",
+        "src/aikey/worker.py:1066"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom::7968/vlm_inference",
+      "fact": "wire_atom: :7968/vlm_inference",
+      "code_locations": [
+        "src/aikey/device.py:61"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:Adopted",
+      "fact": "wire_atom: Adopted",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:3485",
+        "src/aikey/processing_status.py:207",
+        "src/aikey/processing_status.py:292"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:Camera-Firmware",
+      "fact": "wire_atom: Camera-Firmware",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:3484"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:Camera-IP",
+      "fact": "wire_atom: Camera-IP",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:3483"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:Camera-MAC",
+      "fact": "wire_atom: Camera-MAC",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:3483"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:Camera-Model",
+      "fact": "wire_atom: Camera-Model",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:3484"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:ChangeAnalyticsSettings",
+      "fact": "wire_atom: ChangeAnalyticsSettings",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:103"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `ChangeAnalyticsSettings` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:ChangeAudioEventsSettings",
+      "fact": "wire_atom: ChangeAudioEventsSettings",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:103",
+        "src/aikey/aiport_candidate.py:1370",
+        "src/aikey/aiport_candidate.py:1384",
+        "src/aikey/aiport_candidate.py:2990"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `ChangeAudioEventsSettings` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:ChangeAvclientEventSettings",
+      "fact": "wire_atom: ChangeAvclientEventSettings",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:104"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `ChangeAvclientEventSettings` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:ChangeDeviceSettings",
+      "fact": "wire_atom: ChangeDeviceSettings",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:101",
+        "src/aikey/aiport_candidate.py:2969"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `ChangeDeviceSettings` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:ChangeEventSettings",
+      "fact": "wire_atom: ChangeEventSettings",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:104"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `ChangeEventSettings` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:ChangeIspSettings",
+      "fact": "wire_atom: ChangeIspSettings",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2891",
+        "src/aikey/aiport_candidate.py:98"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `ChangeIspSettings` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:ChangeNvrSettings",
+      "fact": "wire_atom: ChangeNvrSettings",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:100"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `ChangeNvrSettings` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:ChangeSmartDetectSettings",
+      "fact": "wire_atom: ChangeSmartDetectSettings",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:102",
+        "src/aikey/aiport_candidate.py:1781",
+        "src/aikey/aiport_candidate.py:1789",
+        "src/aikey/aiport_candidate.py:1808",
+        "src/aikey/aiport_candidate.py:1818",
+        "src/aikey/aiport_candidate.py:1834",
+        "src/aikey/aiport_candidate.py:1865",
+        "src/aikey/aiport_candidate.py:1887",
+        "src/aikey/aiport_candidate.py:3039"
+      ],
+      "source_class": "protect_own_installation",
+      "reference": "docs/evidence/live-protect-7.3.70.md#L40",
+      "reference_sha256": "815a50d0f5bfe4a235a21468cfe48ea5b4356f245b0acfa45d0734095503d484",
+      "evidence_scope": "Recorded static findings from the owner-copied Protect 7.3.70 bundle; no new bundle access or live proof."
+    },
+    {
+      "inventory_key": "wire_atom:ChangeSmartMotionSettings",
+      "fact": "wire_atom: ChangeSmartMotionSettings",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:102",
+        "src/aikey/aiport_candidate.py:1751",
+        "src/aikey/aiport_candidate.py:1764",
+        "src/aikey/aiport_candidate.py:3008"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `ChangeSmartMotionSettings` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:ChangeSoundLedSettings",
+      "fact": "wire_atom: ChangeSoundLedSettings",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:100",
+        "src/aikey/aiport_candidate.py:2948"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `ChangeSoundLedSettings` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:ChangeVideoSettings",
+      "fact": "wire_atom: ChangeVideoSettings",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2891",
+        "src/aikey/aiport_candidate.py:2901",
+        "src/aikey/aiport_candidate.py:98"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `ChangeVideoSettings` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:EventAIPortStatus",
+      "fact": "wire_atom: EventAIPortStatus",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:105",
+        "src/aikey/aiport_candidate.py:2793"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `EventAIPortStatus` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:EventFeatureFlagsUpdated",
+      "fact": "wire_atom: EventFeatureFlagsUpdated",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:105",
+        "src/aikey/aiport_candidate.py:2790"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `EventFeatureFlagsUpdated` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:EventSmartAudio",
+      "fact": "wire_atom: EventSmartAudio",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:1273",
+        "src/aikey/aiport_candidate.py:1297",
+        "src/aikey/aiport_candidate.py:2738"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `EventSmartAudio` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:EventSmartDetect",
+      "fact": "wire_atom: EventSmartDetect",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:1558",
+        "src/aikey/aiport_candidate.py:2082",
+        "src/aikey/aiport_candidate.py:2125",
+        "src/aikey/aiport_candidate.py:2276",
+        "src/aikey/aiport_candidate.py:2294",
+        "src/aikey/aiport_candidate.py:2308",
+        "src/aikey/aiport_candidate.py:2738",
+        "src/aikey/aiport_candidate.py:2745",
+        "src/aikey/aiport_candidate.py:3425",
+        "src/aikey/aiport_candidate.py:97"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `EventSmartDetect` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:EventSmartMotion",
+      "fact": "wire_atom: EventSmartMotion",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:1117",
+        "src/aikey/aiport_candidate.py:2738"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `EventSmartMotion` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:GetAvclientState",
+      "fact": "wire_atom: GetAvclientState",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:96"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `GetAvclientState` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:GetFeatures",
+      "fact": "wire_atom: GetFeatures",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:95"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `GetFeatures` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:GetIspSettings",
+      "fact": "wire_atom: GetIspSettings",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:96"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `GetIspSettings` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:GetRequest",
+      "fact": "wire_atom: GetRequest",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:101",
+        "src/aikey/aiport_candidate.py:3159",
+        "src/aikey/aiport_candidate.py:3270",
+        "src/aikey/aiport_candidate.py:3316"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `GetRequest` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:GetStreamList",
+      "fact": "wire_atom: GetStreamList",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:3091",
+        "src/aikey/aiport_candidate.py:3096",
+        "src/aikey/aiport_candidate.py:93"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `GetStreamList` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:GetSystemStats",
+      "fact": "wire_atom: GetSystemStats",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:95"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `GetSystemStats` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:GetUiStreamPoints",
+      "fact": "wire_atom: GetUiStreamPoints",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:96"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `GetUiStreamPoints` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:GetVideoSettings",
+      "fact": "wire_atom: GetVideoSettings",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:95"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `GetVideoSettings` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:IMAGE_SEARCH",
+      "fact": "wire_atom: IMAGE_SEARCH",
+      "code_locations": [
+        "src/aikey/protocol.py:206",
+        "src/aikey/protocol.py:216",
+        "src/aikey/search.py:655",
+        "src/aikey/search.py:708",
+        "src/aikey/search.py:709"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `IMAGE_SEARCH` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:NL_PARSE",
+      "fact": "wire_atom: NL_PARSE",
+      "code_locations": [
+        "src/aikey/lab.py:234",
+        "src/aikey/protocol.py:202",
+        "src/aikey/protocol.py:220",
+        "src/aikey/search.py:658",
+        "src/aikey/search.py:675",
+        "src/aikey/search.py:690",
+        "src/aikey/search.py:708"
+      ],
+      "source_class": "protect_own_installation",
+      "reference": "docs/evidence/live-protect-7.3.70.md#L40",
+      "reference_sha256": "815a50d0f5bfe4a235a21468cfe48ea5b4356f245b0acfa45d0734095503d484",
+      "evidence_scope": "Recorded static findings from the owner-copied Protect 7.3.70 bundle; no new bundle access or live proof."
+    },
+    {
+      "inventory_key": "wire_atom:NetworkStatus",
+      "fact": "wire_atom: NetworkStatus",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:95"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `NetworkStatus` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:OnvifStreamControl",
+      "fact": "wire_atom: OnvifStreamControl",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:101",
+        "src/aikey/aiport_candidate.py:3091"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `OnvifStreamControl` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:RequestAI",
+      "fact": "wire_atom: RequestAI",
+      "code_locations": [
+        "src/aikey/caption_preflight.py:167",
+        "src/aikey/device.py:1363",
+        "src/aikey/device.py:533",
+        "src/aikey/device.py:621",
+        "src/aikey/lab.py:223",
+        "src/aikey/lab.py:246"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `RequestAI` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:ResetAIPortStreams",
+      "fact": "wire_atom: ResetAIPortStreams",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2863",
+        "src/aikey/aiport_candidate.py:97"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `ResetAIPortStreams` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:StartService",
+      "fact": "wire_atom: StartService",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2909",
+        "src/aikey/aiport_candidate.py:99"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `StartService` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:StopService",
+      "fact": "wire_atom: StopService",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2909",
+        "src/aikey/aiport_candidate.py:2918",
+        "src/aikey/aiport_candidate.py:99"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `StopService` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:UiStreamControl",
+      "fact": "wire_atom: UiStreamControl",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:101"
+      ],
+      "source_class": "live_trial",
+      "reference": "docs/evidence/ai-port-controller-contract.md#L34",
+      "reference_sha256": "90b548b21c7dc953b5eb92aaad42ac10b75b096e9fdd2c9026f7e8a989058bd9",
+      "evidence_scope": "Native stream-command observation on 7.3.68; only the described stream scope."
+    },
+    {
+      "inventory_key": "wire_atom:UpdateFaceDBRequest",
+      "fact": "wire_atom: UpdateFaceDBRequest",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:106",
+        "src/aikey/aiport_candidate.py:2997"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `UpdateFaceDBRequest` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:UpdateFeatureFlags",
+      "fact": "wire_atom: UpdateFeatureFlags",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:105"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `UpdateFeatureFlags` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:UpdateFirmwareRequest",
+      "fact": "wire_atom: UpdateFirmwareRequest",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:106",
+        "src/aikey/aiport_candidate.py:3149"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `UpdateFirmwareRequest` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:UpdateUsernamePassword",
+      "fact": "wire_atom: UpdateUsernamePassword",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2927",
+        "src/aikey/aiport_candidate.py:99"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `UpdateUsernamePassword` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:changeAiInferAgentSettings",
+      "fact": "wire_atom: changeAiInferAgentSettings",
+      "code_locations": [
+        "src/aikey/device.py:1495",
+        "src/aikey/device.py:1520",
+        "src/aikey/device.py:534",
+        "src/aikey/device.py:621"
+      ],
+      "source_class": "protect_own_installation",
+      "reference": "docs/evidence/live-protect-7.3.70.md#L40",
+      "reference_sha256": "815a50d0f5bfe4a235a21468cfe48ea5b4356f245b0acfa45d0734095503d484",
+      "evidence_scope": "Recorded static findings from the owner-copied Protect 7.3.70 bundle; no new bundle access or live proof."
+    },
+    {
+      "inventory_key": "wire_atom:changeDescribePrompts",
+      "fact": "wire_atom: changeDescribePrompts",
+      "code_locations": [
+        "src/aikey/device.py:1505",
+        "src/aikey/device.py:535",
+        "src/aikey/device.py:621"
+      ],
+      "source_class": "protect_own_installation",
+      "reference": "docs/evidence/live-protect-7.3.70.md#L40",
+      "reference_sha256": "815a50d0f5bfe4a235a21468cfe48ea5b4356f245b0acfa45d0734095503d484",
+      "evidence_scope": "Recorded static findings from the owner-copied Protect 7.3.70 bundle; no new bundle access or live proof."
+    },
+    {
+      "inventory_key": "wire_atom:changeUserPassword",
+      "fact": "wire_atom: changeUserPassword",
+      "code_locations": [
+        "src/aikey/device.py:1552",
+        "src/aikey/device.py:1553",
+        "src/aikey/device.py:533",
+        "src/aikey/device.py:621"
+      ],
+      "source_class": "live_trial",
+      "reference": "docs/evidence/live-protect-7.3.70.md#L10",
+      "reference_sha256": "815a50d0f5bfe4a235a21468cfe48ea5b4356f245b0acfa45d0734095503d484",
+      "evidence_scope": "Observed command name and response progression; not every password field or fresh adoption."
+    },
+    {
+      "inventory_key": "wire_atom:consoleId",
+      "fact": "wire_atom: consoleId",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:90"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `consoleId` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:consoleName",
+      "fact": "wire_atom: consoleName",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:91"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `consoleName` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:controller",
+      "fact": "wire_atom: controller",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:90"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `controller` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:diskInfo",
+      "fact": "wire_atom: diskInfo",
+      "code_locations": [
+        "src/aikey/device.py:1487",
+        "src/aikey/device.py:333",
+        "src/aikey/device.py:621"
+      ],
+      "source_class": "live_trial",
+      "reference": "docs/evidence/live-protect-7.3.70.md#L26",
+      "reference_sha256": "815a50d0f5bfe4a235a21468cfe48ea5b4356f245b0acfa45d0734095503d484",
+      "evidence_scope": "Exact command names identified in a bounded window; not successful feature acceptance."
+    },
+    {
+      "inventory_key": "wire_atom:getDbCredential",
+      "fact": "wire_atom: getDbCredential",
+      "code_locations": [
+        "src/aikey/device.py:58"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `getDbCredential` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:getInfo",
+      "fact": "wire_atom: getInfo",
+      "code_locations": [
+        "src/aikey/device.py:1346",
+        "src/aikey/device.py:532",
+        "src/aikey/device.py:621",
+        "src/aikey/lab.py:210"
+      ],
+      "source_class": "live_trial",
+      "reference": "docs/evidence/live-protect-7.3.68.md#L9",
+      "reference_sha256": "30047af21c189e705e0b75124241cc1718a80ad9840e972327f5a85e2d24f20d",
+      "evidence_scope": "Exact command names counted on Protect 7.3.68; this does not prove all arguments or future versions."
+    },
+    {
+      "inventory_key": "wire_atom:getTaskQueueInfo",
+      "fact": "wire_atom: getTaskQueueInfo",
+      "code_locations": [
+        "src/aikey/device.py:1348",
+        "src/aikey/device.py:532",
+        "src/aikey/device.py:621"
+      ],
+      "source_class": "live_trial",
+      "reference": "docs/evidence/live-protect-7.3.68.md#L9",
+      "reference_sha256": "30047af21c189e705e0b75124241cc1718a80ad9840e972327f5a85e2d24f20d",
+      "evidence_scope": "Exact command names counted on Protect 7.3.68; this does not prove all arguments or future versions."
+    },
+    {
+      "inventory_key": "wire_atom:hosts",
+      "fact": "wire_atom: hosts",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:88",
+        "src/aikey/aiport_candidate.py:89"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `hosts` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:mgmt",
+      "fact": "wire_atom: mgmt",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:88"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `mgmt` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:mode",
+      "fact": "wire_atom: mode",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:88",
+        "src/aikey/aiport_candidate.py:89"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `mode` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:networkStatus",
+      "fact": "wire_atom: networkStatus",
+      "code_locations": [
+        "src/aikey/device.py:535"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `networkStatus` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:nvr",
+      "fact": "wire_atom: nvr",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:89"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `nvr` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:password",
+      "fact": "wire_atom: password",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:88",
+        "src/aikey/aiport_candidate.py:90"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `password` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:postVLM",
+      "fact": "wire_atom: postVLM",
+      "code_locations": [
+        "src/aikey/device.py:293",
+        "src/aikey/worker.py:1041",
+        "src/aikey/worker.py:1203",
+        "src/aikey/worker.py:1215",
+        "src/aikey/worker.py:1530",
+        "src/aikey/worker.py:1741"
+      ],
+      "source_class": "live_trial",
+      "reference": "docs/evidence/live-protect-7.3.70.md#L13",
+      "reference_sha256": "815a50d0f5bfe4a235a21468cfe48ea5b4356f245b0acfa45d0734095503d484",
+      "evidence_scope": "Recorded worker-level command occurrence; callback completion is not native persistence."
+    },
+    {
+      "inventory_key": "wire_atom:protocol",
+      "fact": "wire_atom: protocol",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:88",
+        "src/aikey/aiport_candidate.py:89"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `protocol` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:recognizeFaces",
+      "fact": "wire_atom: recognizeFaces",
+      "code_locations": [
+        "src/aikey/caption_preflight.py:24",
+        "src/aikey/worker.py:1792",
+        "src/aikey/worker.py:1795",
+        "src/aikey/worker.py:1796",
+        "src/aikey/worker.py:2250",
+        "src/aikey/worker.py:2265",
+        "src/aikey/worker.py:264",
+        "src/aikey/worker.py:2985",
+        "src/aikey/worker.py:50"
+      ],
+      "source_class": "live_trial",
+      "reference": "docs/evidence/live-protect-7.3.70.md#L13",
+      "reference_sha256": "815a50d0f5bfe4a235a21468cfe48ea5b4356f245b0acfa45d0734095503d484",
+      "evidence_scope": "Recorded worker-level command occurrence; callback completion is not native persistence."
+    },
+    {
+      "inventory_key": "wire_atom:recognizeKeyFrames",
+      "fact": "wire_atom: recognizeKeyFrames",
+      "code_locations": [
+        "src/aikey/caption_preflight.py:168",
+        "src/aikey/device.py:1178",
+        "src/aikey/device.py:1429",
+        "src/aikey/device.py:1433",
+        "src/aikey/device.py:533",
+        "src/aikey/device.py:603",
+        "src/aikey/device.py:622",
+        "src/aikey/device.py:837",
+        "src/aikey/worker.py:1017",
+        "src/aikey/worker.py:1023",
+        "src/aikey/worker.py:1039",
+        "src/aikey/worker.py:1198",
+        "src/aikey/worker.py:1212",
+        "src/aikey/worker.py:1251",
+        "src/aikey/worker.py:1255",
+        "src/aikey/worker.py:1834",
+        "src/aikey/worker.py:186",
+        "src/aikey/worker.py:2250",
+        "src/aikey/worker.py:2265",
+        "src/aikey/worker.py:266",
+        "src/aikey/worker.py:276",
+        "src/aikey/worker.py:2990",
+        "src/aikey/worker.py:2995"
+      ],
+      "source_class": "live_trial",
+      "reference": "docs/evidence/live-protect-7.3.68.md#L11",
+      "reference_sha256": "30047af21c189e705e0b75124241cc1718a80ad9840e972327f5a85e2d24f20d",
+      "evidence_scope": "Command occurrence and bounded caption result; not all task variants or general quality."
+    },
+    {
+      "inventory_key": "wire_atom:setClientCertificate",
+      "fact": "wire_atom: setClientCertificate",
+      "code_locations": [
+        "src/aikey/device.py:58"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `setClientCertificate` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:setConsoleInfo",
+      "fact": "wire_atom: setConsoleInfo",
+      "code_locations": [
+        "src/aikey/device.py:1552",
+        "src/aikey/device.py:1556",
+        "src/aikey/device.py:532",
+        "src/aikey/device.py:621"
+      ],
+      "source_class": "live_trial",
+      "reference": "docs/evidence/live-protect-7.3.68.md#L9",
+      "reference_sha256": "30047af21c189e705e0b75124241cc1718a80ad9840e972327f5a85e2d24f20d",
+      "evidence_scope": "Exact command names counted on Protect 7.3.68; this does not prove all arguments or future versions."
+    },
+    {
+      "inventory_key": "wire_atom:setDbCredential",
+      "fact": "wire_atom: setDbCredential",
+      "code_locations": [
+        "src/aikey/device.py:58"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `setDbCredential` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:setInfo",
+      "fact": "wire_atom: setInfo",
+      "code_locations": [
+        "src/aikey/device.py:1552",
+        "src/aikey/device.py:1569",
+        "src/aikey/device.py:532",
+        "src/aikey/device.py:621"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `setInfo` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:speechToText",
+      "fact": "wire_atom: speechToText",
+      "code_locations": [
+        "src/aikey/caption_preflight.py:24",
+        "src/aikey/device.py:1408",
+        "src/aikey/device.py:533",
+        "src/aikey/device.py:623",
+        "src/aikey/worker.py:1013",
+        "src/aikey/worker.py:1704",
+        "src/aikey/worker.py:1708",
+        "src/aikey/worker.py:265",
+        "src/aikey/worker.py:2969",
+        "src/aikey/worker.py:50"
+      ],
+      "source_class": "live_trial",
+      "reference": "docs/evidence/live-protect-7.3.70.md#L13",
+      "reference_sha256": "815a50d0f5bfe4a235a21468cfe48ea5b4356f245b0acfa45d0734095503d484",
+      "evidence_scope": "Recorded worker-level command occurrence; callback completion is not native persistence."
+    },
+    {
+      "inventory_key": "wire_atom:sshService",
+      "fact": "wire_atom: sshService",
+      "code_locations": [
+        "src/aikey/device.py:535"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `sshService` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:supportAiSummary",
+      "fact": "wire_atom: supportAiSummary",
+      "code_locations": [
+        "src/aikey/device.py:39"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `supportAiSummary` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:supportFaceEnhancement",
+      "fact": "wire_atom: supportFaceEnhancement",
+      "code_locations": [
+        "src/aikey/device.py:39"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `supportFaceEnhancement` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:supportFaceRecognition",
+      "fact": "wire_atom: supportFaceRecognition",
+      "code_locations": [
+        "src/aikey/device.py:40"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `supportFaceRecognition` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:supportLicensePlateRecognition",
+      "fact": "wire_atom: supportLicensePlateRecognition",
+      "code_locations": [
+        "src/aikey/device.py:40"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `supportLicensePlateRecognition` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:supportRecognizeAnything",
+      "fact": "wire_atom: supportRecognizeAnything",
+      "code_locations": [
+        "src/aikey/device.py:40"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `supportRecognizeAnything` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:supportRetroactiveProcessing",
+      "fact": "wire_atom: supportRetroactiveProcessing",
+      "code_locations": [
+        "src/aikey/device.py:39"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `supportRetroactiveProcessing` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:timeSync",
+      "fact": "wire_atom: timeSync",
+      "code_locations": [
+        "src/aikey/device.py:1057",
+        "src/aikey/device.py:58",
+        "src/aikey/lab.py:105"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `timeSync` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:token",
+      "fact": "wire_atom: token",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:89"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `token` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:ubnt_avclient_features",
+      "fact": "wire_atom: ubnt_avclient_features",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:94"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `ubnt_avclient_features` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:ubnt_avclient_hello",
+      "fact": "wire_atom: ubnt_avclient_hello",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:93"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `ubnt_avclient_hello` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:ubnt_avclient_paramAgreement",
+      "fact": "wire_atom: ubnt_avclient_paramAgreement",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:93"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `ubnt_avclient_paramAgreement` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:ubnt_avclient_time",
+      "fact": "wire_atom: ubnt_avclient_time",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:94"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `ubnt_avclient_time` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:ubnt_avclient_timeSync",
+      "fact": "wire_atom: ubnt_avclient_timeSync",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:94"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `ubnt_avclient_timeSync` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:updateLcmSettings",
+      "fact": "wire_atom: updateLcmSettings",
+      "code_locations": [
+        "src/aikey/device.py:1536",
+        "src/aikey/device.py:333",
+        "src/aikey/device.py:621"
+      ],
+      "source_class": "live_trial",
+      "reference": "docs/evidence/live-protect-7.3.70.md#L26",
+      "reference_sha256": "815a50d0f5bfe4a235a21468cfe48ea5b4356f245b0acfa45d0734095503d484",
+      "evidence_scope": "Exact command names identified in a bounded window; not successful feature acceptance."
+    },
+    {
+      "inventory_key": "wire_atom:updateTimezone",
+      "fact": "wire_atom: updateTimezone",
+      "code_locations": [
+        "src/aikey/device.py:1552",
+        "src/aikey/device.py:1573",
+        "src/aikey/device.py:532",
+        "src/aikey/device.py:621"
+      ],
+      "source_class": "live_trial",
+      "reference": "docs/evidence/live-protect-7.3.68.md#L9",
+      "reference_sha256": "30047af21c189e705e0b75124241cc1718a80ad9840e972327f5a85e2d24f20d",
+      "evidence_scope": "Exact command names counted on Protect 7.3.68; this does not prove all arguments or future versions."
+    },
+    {
+      "inventory_key": "wire_atom:username",
+      "fact": "wire_atom: username",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:88",
+        "src/aikey/aiport_candidate.py:90"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `username` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:x-adopted",
+      "fact": "wire_atom: x-adopted",
+      "code_locations": [
+        "src/aikey/device.py:1047",
+        "src/aikey/device.py:976"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:x-ident",
+      "fact": "wire_atom: x-ident",
+      "code_locations": [
+        "src/aikey/device.py:973"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:x-ip",
+      "fact": "wire_atom: x-ip",
+      "code_locations": [
+        "src/aikey/device.py:974"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:x-mode",
+      "fact": "wire_atom: x-mode",
+      "code_locations": [
+        "src/aikey/device.py:975"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:x-sysid",
+      "fact": "wire_atom: x-sysid",
+      "code_locations": [
+        "src/aikey/device.py:974"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:x-token",
+      "fact": "wire_atom: x-token",
+      "code_locations": [
+        "src/aikey/device.py:1047",
+        "src/aikey/device.py:1053",
+        "src/aikey/device.py:979"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:x-type",
+      "fact": "wire_atom: x-type",
+      "code_locations": [
+        "src/aikey/device.py:973"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_atom:x-version",
+      "fact": "wire_atom: x-version",
+      "code_locations": [
+        "src/aikey/device.py:975"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:action",
+      "fact": "wire_field: action",
+      "code_locations": [
+        "src/aikey/device.py:1160",
+        "src/aikey/protocol.py:201"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `action` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:aiMode",
+      "fact": "wire_field: aiMode",
+      "code_locations": [
+        "src/aikey/device.py:824",
+        "src/aikey/device.py:862"
+      ],
+      "source_class": "protect_own_installation",
+      "reference": "docs/evidence/live-protect-7.3.70.md#L40",
+      "reference_sha256": "815a50d0f5bfe4a235a21468cfe48ea5b4356f245b0acfa45d0734095503d484",
+      "evidence_scope": "Recorded static findings from the owner-copied Protect 7.3.70 bundle; no new bundle access or live proof."
+    },
+    {
+      "inventory_key": "wire_field:camera",
+      "fact": "wire_field: camera",
+      "code_locations": [
+        "src/aikey/device.py:1412",
+        "src/aikey/device.py:1437",
+        "src/aikey/device.py:1454",
+        "src/aikey/device.py:274"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `camera` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:cameraId",
+      "fact": "wire_field: cameraId",
+      "code_locations": [
+        "src/aikey/protocol.py:282",
+        "src/aikey/protocol.py:295"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `cameraId` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:clockWall",
+      "fact": "wire_field: clockWall",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2742"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `clockWall` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:connectionSecurePort",
+      "fact": "wire_field: connectionSecurePort",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2716"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `connectionSecurePort` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:controller",
+      "fact": "wire_field: controller",
+      "code_locations": [
+        "src/aikey/device.py:1557"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `controller` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:descEmbedding",
+      "fact": "wire_field: descEmbedding",
+      "code_locations": [
+        "src/aikey/protocol.py:332",
+        "src/aikey/protocol.py:333"
+      ],
+      "source_class": "protect_own_installation",
+      "reference": "docs/evidence/live-protect-7.3.70.md#L40",
+      "reference_sha256": "815a50d0f5bfe4a235a21468cfe48ea5b4356f245b0acfa45d0734095503d484",
+      "evidence_scope": "Recorded static findings from the owner-copied Protect 7.3.70 bundle; no new bundle access or live proof."
+    },
+    {
+      "inventory_key": "wire_field:describeConfigHash",
+      "fact": "wire_field: describeConfigHash",
+      "code_locations": [
+        "src/aikey/device.py:863"
+      ],
+      "source_class": "protect_own_installation",
+      "reference": "docs/evidence/live-protect-7.3.70.md#L40",
+      "reference_sha256": "815a50d0f5bfe4a235a21468cfe48ea5b4356f245b0acfa45d0734095503d484",
+      "evidence_scope": "Recorded static findings from the owner-copied Protect 7.3.70 bundle; no new bundle access or live proof."
+    },
+    {
+      "inventory_key": "wire_field:description",
+      "fact": "wire_field: description",
+      "code_locations": [
+        "src/aikey/protocol.py:276",
+        "src/aikey/protocol.py:297"
+      ],
+      "source_class": "protect_own_installation",
+      "reference": "docs/evidence/live-protect-7.3.70.md#L40",
+      "reference_sha256": "815a50d0f5bfe4a235a21468cfe48ea5b4356f245b0acfa45d0734095503d484",
+      "evidence_scope": "Recorded static findings from the owner-copied Protect 7.3.70 bundle; no new bundle access or live proof."
+    },
+    {
+      "inventory_key": "wire_field:deviceID",
+      "fact": "wire_field: deviceID",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:1746",
+        "src/aikey/aiport_candidate.py:1786",
+        "src/aikey/aiport_candidate.py:2774",
+        "src/aikey/aiport_candidate.py:2794"
+      ],
+      "source_class": "live_trial",
+      "reference": "docs/evidence/ai-port-controller-contract.md#L37",
+      "reference_sha256": "90b548b21c7dc953b5eb92aaad42ac10b75b096e9fdd2c9026f7e8a989058bd9",
+      "evidence_scope": "Field name recorded in a native stream-start shape; not evidence of every use or field value."
+    },
+    {
+      "inventory_key": "wire_field:enableSmartDetect",
+      "fact": "wire_field: enableSmartDetect",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:1793"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `enableSmartDetect` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:enabled",
+      "fact": "wire_field: enabled",
+      "code_locations": [
+        "src/aikey/device.py:823",
+        "src/aikey/device.py:848",
+        "src/aikey/device.py:857"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `enabled` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:end",
+      "fact": "wire_field: end",
+      "code_locations": [
+        "src/aikey/device.py:1238",
+        "src/aikey/device.py:286"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `end` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:error",
+      "fact": "wire_field: error",
+      "code_locations": [
+        "src/aikey/device.py:1129",
+        "src/aikey/protocol.py:267"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `error` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:errorCode",
+      "fact": "wire_field: errorCode",
+      "code_locations": [
+        "src/aikey/device.py:1128",
+        "src/aikey/protocol.py:267"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `errorCode` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:event",
+      "fact": "wire_field: event",
+      "code_locations": [
+        "src/aikey/device.py:276"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `event` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:eventId",
+      "fact": "wire_field: eventId",
+      "code_locations": [
+        "src/aikey/protocol.py:276",
+        "src/aikey/protocol.py:296"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `eventId` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:exact_match",
+      "fact": "wire_field: exact_match",
+      "code_locations": [
+        "src/aikey/protocol.py:240"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `exact_match` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:failed",
+      "fact": "wire_field: failed",
+      "code_locations": [
+        "src/aikey/protocol.py:335",
+        "src/aikey/protocol.py:337"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `failed` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:featureFlags",
+      "fact": "wire_field: featureFlags",
+      "code_locations": [
+        "src/aikey/device.py:867"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `featureFlags` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:features",
+      "fact": "wire_field: features",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2717"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `features` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:from",
+      "fact": "wire_field: from",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2709",
+        "src/aikey/aiport_candidate.py:2724",
+        "src/aikey/aiport_candidate.py:2734"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `from` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:functionName",
+      "fact": "wire_field: functionName",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2710",
+        "src/aikey/aiport_candidate.py:2725",
+        "src/aikey/aiport_candidate.py:2735",
+        "src/aikey/aiport_candidate.py:2815"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `functionName` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:fwVersion",
+      "fact": "wire_field: fwVersion",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2712"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `fwVersion` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:hosts",
+      "fact": "wire_field: hosts",
+      "code_locations": [
+        "src/aikey/device.py:897",
+        "src/aikey/device.py:915"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `hosts` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:id",
+      "fact": "wire_field: id",
+      "code_locations": [
+        "src/aikey/device.py:1127",
+        "src/aikey/device.py:1159",
+        "src/aikey/protocol.py:199",
+        "src/aikey/protocol.py:266"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `id` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:imgEmbed",
+      "fact": "wire_field: imgEmbed",
+      "code_locations": [
+        "src/aikey/protocol.py:219"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `imgEmbed` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:imgUri",
+      "fact": "wire_field: imgUri",
+      "code_locations": [
+        "src/aikey/protocol.py:207"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `imgUri` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:inResponseTo",
+      "fact": "wire_field: inResponseTo",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2711",
+        "src/aikey/aiport_candidate.py:2726",
+        "src/aikey/aiport_candidate.py:2736",
+        "src/aikey/aiport_candidate.py:2821",
+        "src/aikey/aiport_candidate.py:2838"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `inResponseTo` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:ip",
+      "fact": "wire_field: ip",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2715"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `ip` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:isAudioEventReady",
+      "fact": "wire_field: isAudioEventReady",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2796"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `isAudioEventReady` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:isSmartDetectReady",
+      "fact": "wire_field: isSmartDetectReady",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2795"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `isSmartDetectReady` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:isStreaming",
+      "fact": "wire_field: isStreaming",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2794"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `isStreaming` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:keyMoments",
+      "fact": "wire_field: keyMoments",
+      "code_locations": [
+        "src/aikey/device.py:1305",
+        "src/aikey/device.py:290"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `keyMoments` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:keyTags",
+      "fact": "wire_field: keyTags",
+      "code_locations": [
+        "src/aikey/protocol.py:226",
+        "src/aikey/protocol.py:228"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `keyTags` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:labels",
+      "fact": "wire_field: labels",
+      "code_locations": [
+        "src/aikey/protocol.py:331"
+      ],
+      "source_class": "protect_own_installation",
+      "reference": "docs/evidence/live-protect-7.3.70.md#L40",
+      "reference_sha256": "815a50d0f5bfe4a235a21468cfe48ea5b4356f245b0acfa45d0734095503d484",
+      "evidence_scope": "Recorded static findings from the owner-copied Protect 7.3.70 bundle; no new bundle access or live proof."
+    },
+    {
+      "inventory_key": "wire_field:mac",
+      "fact": "wire_field: mac",
+      "code_locations": [
+        "src/aikey/device.py:865"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `mac` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:messageId",
+      "fact": "wire_field: messageId",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2711",
+        "src/aikey/aiport_candidate.py:2726",
+        "src/aikey/aiport_candidate.py:2736",
+        "src/aikey/aiport_candidate.py:2843",
+        "src/aikey/aiport_candidate.py:2865",
+        "src/aikey/aiport_candidate.py:2893",
+        "src/aikey/aiport_candidate.py:2911",
+        "src/aikey/aiport_candidate.py:2929",
+        "src/aikey/aiport_candidate.py:2950",
+        "src/aikey/aiport_candidate.py:2971",
+        "src/aikey/aiport_candidate.py:2992",
+        "src/aikey/aiport_candidate.py:2999",
+        "src/aikey/aiport_candidate.py:3010",
+        "src/aikey/aiport_candidate.py:3041",
+        "src/aikey/aiport_candidate.py:3093",
+        "src/aikey/aiport_candidate.py:3153",
+        "src/aikey/aiport_candidate.py:3161"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `messageId` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:mgmt",
+      "fact": "wire_field: mgmt",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2622",
+        "src/aikey/aiport_candidate.py:693"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `mgmt` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:mode",
+      "fact": "wire_field: mode",
+      "code_locations": [
+        "src/aikey/device.py:894",
+        "src/aikey/device.py:916"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `mode` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:model",
+      "fact": "wire_field: model",
+      "code_locations": [
+        "src/aikey/protocol.py:188"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `model` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:motionDetect",
+      "fact": "wire_field: motionDetect",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2789"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `motionDetect` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:nightMode",
+      "fact": "wire_field: nightMode",
+      "code_locations": [
+        "src/aikey/device.py:1539"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `nightMode` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:objectTypes",
+      "fact": "wire_field: objectTypes",
+      "code_locations": [
+        "src/aikey/protocol.py:225"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `objectTypes` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:password",
+      "fact": "wire_field: password",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2613",
+        "src/aikey/aiport_candidate.py:2624",
+        "src/aikey/aiport_candidate.py:2642",
+        "src/aikey/device.py:888",
+        "src/aikey/device.py:947"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `password` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:passwordNew",
+      "fact": "wire_field: passwordNew",
+      "code_locations": [
+        "src/aikey/device.py:1580"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `passwordNew` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:passwordOld",
+      "fact": "wire_field: passwordOld",
+      "code_locations": [
+        "src/aikey/device.py:1579",
+        "src/aikey/device.py:802"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `passwordOld` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:payload",
+      "fact": "wire_field: payload",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2712",
+        "src/aikey/aiport_candidate.py:2727",
+        "src/aikey/aiport_candidate.py:2737",
+        "src/aikey/aiport_candidate.py:2868",
+        "src/aikey/aiport_candidate.py:2897",
+        "src/aikey/aiport_candidate.py:2915",
+        "src/aikey/aiport_candidate.py:2938",
+        "src/aikey/aiport_candidate.py:2960",
+        "src/aikey/aiport_candidate.py:2981",
+        "src/aikey/aiport_candidate.py:2995",
+        "src/aikey/aiport_candidate.py:3018",
+        "src/aikey/aiport_candidate.py:3027",
+        "src/aikey/aiport_candidate.py:3046",
+        "src/aikey/aiport_candidate.py:3058",
+        "src/aikey/aiport_candidate.py:3062",
+        "src/aikey/aiport_candidate.py:3104",
+        "src/aikey/aiport_candidate.py:3118",
+        "src/aikey/aiport_candidate.py:3134",
+        "src/aikey/aiport_candidate.py:3171",
+        "src/aikey/aiport_candidate.py:3212",
+        "src/aikey/device.py:1367"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `payload` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:poeType",
+      "fact": "wire_field: poeType",
+      "code_locations": [
+        "src/aikey/device.py:866"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `poeType` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:postVLM",
+      "fact": "wire_field: postVLM",
+      "code_locations": [
+        "src/aikey/device.py:293"
+      ],
+      "source_class": "live_trial",
+      "reference": "docs/evidence/live-protect-7.3.70.md#L13",
+      "reference_sha256": "815a50d0f5bfe4a235a21468cfe48ea5b4356f245b0acfa45d0734095503d484",
+      "evidence_scope": "Recorded worker-level command occurrence; callback completion is not native persistence."
+    },
+    {
+      "inventory_key": "wire_field:protocol",
+      "fact": "wire_field: protocol",
+      "code_locations": [
+        "src/aikey/device.py:894",
+        "src/aikey/device.py:916"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `protocol` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:protocolVersion",
+      "fact": "wire_field: protocolVersion",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2713"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `protocolVersion` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:querySentence",
+      "fact": "wire_field: querySentence",
+      "code_locations": [
+        "src/aikey/protocol.py:203"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `querySentence` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:ramType",
+      "fact": "wire_field: ramType",
+      "code_locations": [
+        "src/aikey/device.py:1231",
+        "src/aikey/device.py:289"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `ramType` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:region",
+      "fact": "wire_field: region",
+      "code_locations": [
+        "src/aikey/device.py:1526"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `region` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:responseExpected",
+      "fact": "wire_field: responseExpected",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2710",
+        "src/aikey/aiport_candidate.py:2725",
+        "src/aikey/aiport_candidate.py:2735",
+        "src/aikey/aiport_candidate.py:2823"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `responseExpected` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:smartDetect",
+      "fact": "wire_field: smartDetect",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2775"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `smartDetect` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:start",
+      "fact": "wire_field: start",
+      "code_locations": [
+        "src/aikey/device.py:1238",
+        "src/aikey/device.py:286"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `start` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:status",
+      "fact": "wire_field: status",
+      "code_locations": [
+        "src/aikey/protocol.py:276",
+        "src/aikey/protocol.py:298"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `status` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:statusCode",
+      "fact": "wire_field: statusCode",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2727"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `statusCode` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:storageSize",
+      "fact": "wire_field: storageSize",
+      "code_locations": [
+        "src/aikey/device.py:867"
+      ],
+      "source_class": "protect_own_installation",
+      "reference": "docs/evidence/live-protect-7.3.70.md#L35",
+      "reference_sha256": "815a50d0f5bfe4a235a21468cfe48ea5b4356f245b0acfa45d0734095503d484",
+      "evidence_scope": "Explicit owner-copied 7.3.70 getInfo/diskInfo field description; not every nested usage."
+    },
+    {
+      "inventory_key": "wire_field:supportAiSummary",
+      "fact": "wire_field: supportAiSummary",
+      "code_locations": [
+        "src/aikey/device.py:848"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `supportAiSummary` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:supportDeepMode",
+      "fact": "wire_field: supportDeepMode",
+      "code_locations": [
+        "src/aikey/device.py:824",
+        "src/aikey/device.py:861"
+      ],
+      "source_class": "protect_own_installation",
+      "reference": "docs/evidence/live-protect-7.3.70.md#L40",
+      "reference_sha256": "815a50d0f5bfe4a235a21468cfe48ea5b4356f245b0acfa45d0734095503d484",
+      "evidence_scope": "Recorded static findings from the owner-copied Protect 7.3.70 bundle; no new bundle access or live proof."
+    },
+    {
+      "inventory_key": "wire_field:supportVlm",
+      "fact": "wire_field: supportVlm",
+      "code_locations": [
+        "src/aikey/device.py:824",
+        "src/aikey/device.py:861"
+      ],
+      "source_class": "protect_own_installation",
+      "reference": "docs/evidence/live-protect-7.3.70.md#L40",
+      "reference_sha256": "815a50d0f5bfe4a235a21468cfe48ea5b4356f245b0acfa45d0734095503d484",
+      "evidence_scope": "Recorded static findings from the owner-copied Protect 7.3.70 bundle; no new bundle access or live proof."
+    },
+    {
+      "inventory_key": "wire_field:sysid",
+      "fact": "wire_field: sysid",
+      "code_locations": [
+        "src/aikey/device.py:864"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `sysid` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:tagHierarchy",
+      "fact": "wire_field: tagHierarchy",
+      "code_locations": [
+        "src/aikey/protocol.py:204"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `tagHierarchy` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:targetUri",
+      "fact": "wire_field: targetUri",
+      "code_locations": [
+        "src/aikey/device.py:1364"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `targetUri` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:thumbnailMeta",
+      "fact": "wire_field: thumbnailMeta",
+      "code_locations": [
+        "src/aikey/device.py:1268"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `thumbnailMeta` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:thumbnailMs",
+      "fact": "wire_field: thumbnailMs",
+      "code_locations": [
+        "src/aikey/device.py:1272"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `thumbnailMs` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:timeStamp",
+      "fact": "wire_field: timeStamp",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2741"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `timeStamp` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:timeTag",
+      "fact": "wire_field: timeTag",
+      "code_locations": [
+        "src/aikey/protocol.py:238"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `timeTag` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:timeoutMs",
+      "fact": "wire_field: timeoutMs",
+      "code_locations": [
+        "src/aikey/device.py:1369"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `timeoutMs` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:timestamp",
+      "fact": "wire_field: timestamp",
+      "code_locations": [
+        "src/aikey/protocol.py:200",
+        "src/aikey/protocol.py:266"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `timestamp` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:to",
+      "fact": "wire_field: to",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2709",
+        "src/aikey/aiport_candidate.py:2724",
+        "src/aikey/aiport_candidate.py:2734"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `to` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:token",
+      "fact": "wire_field: token",
+      "code_locations": [
+        "src/aikey/device.py:896",
+        "src/aikey/device.py:916"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `token` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:txtEmbed",
+      "fact": "wire_field: txtEmbed",
+      "code_locations": [
+        "src/aikey/protocol.py:185",
+        "src/aikey/protocol.py:186",
+        "src/aikey/protocol.py:234"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `txtEmbed` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:type",
+      "fact": "wire_field: type",
+      "code_locations": [
+        "src/aikey/device.py:1124",
+        "src/aikey/device.py:864",
+        "src/aikey/protocol.py:197",
+        "src/aikey/protocol.py:266"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `type` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:uptime",
+      "fact": "wire_field: uptime",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2714",
+        "src/aikey/device.py:866"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `uptime` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:username",
+      "fact": "wire_field: username",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:2613",
+        "src/aikey/aiport_candidate.py:2623",
+        "src/aikey/aiport_candidate.py:2642",
+        "src/aikey/device.py:1578",
+        "src/aikey/device.py:802",
+        "src/aikey/device.py:888",
+        "src/aikey/device.py:947"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `username` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:version",
+      "fact": "wire_field: version",
+      "code_locations": [
+        "src/aikey/device.py:823",
+        "src/aikey/device.py:857",
+        "src/aikey/device.py:865"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "Locate the exact interface token `version` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:x-adopted",
+      "fact": "wire_field: x-adopted",
+      "code_locations": [
+        "src/aikey/device.py:976"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:x-ident",
+      "fact": "wire_field: x-ident",
+      "code_locations": [
+        "src/aikey/device.py:973"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:x-ip",
+      "fact": "wire_field: x-ip",
+      "code_locations": [
+        "src/aikey/device.py:974"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:x-mode",
+      "fact": "wire_field: x-mode",
+      "code_locations": [
+        "src/aikey/device.py:975"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:x-sysid",
+      "fact": "wire_field: x-sysid",
+      "code_locations": [
+        "src/aikey/device.py:974"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:x-type",
+      "fact": "wire_field: x-type",
+      "code_locations": [
+        "src/aikey/device.py:973"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
+      "removal_candidate_if_unobservable": true
+    },
+    {
+      "inventory_key": "wire_field:x-version",
+      "fact": "wire_field: x-version",
+      "code_locations": [
+        "src/aikey/device.py:975"
+      ],
+      "source_class": "needs_observation",
+      "reference": "",
+      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
+      "removal_candidate_if_unobservable": true
+    }
+  ]
+}
