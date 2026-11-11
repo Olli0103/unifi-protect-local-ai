@@ -237,7 +237,7 @@ def read_project_archive(path, expected_digest, revision):
         with tarfile.open(fileobj=io.BytesIO(raw), mode="r:") as archive:
             require(archive.pax_headers.get("comment") == revision,
                     "project_archive_revision_mismatch")
-            names, metadata = set(), None
+            names, regular_names, metadata = set(), set(), None
             for number, member in enumerate(archive):
                 require(number < 10000 and member.name not in names
                         and not member.name.startswith("/")
@@ -246,11 +246,13 @@ def read_project_archive(path, expected_digest, revision):
                         and member.offset_data + member.size <= len(raw),
                         "project_archive_members_refused")
                 names.add(member.name)
+                if member.isfile():
+                    regular_names.add(member.name)
                 if member.name == "pyproject.toml":
                     require(member.isfile() and 0 < member.size <= 1024 * 1024,
                             "project_archive_metadata_refused")
                     metadata = tomllib.loads(archive.extractfile(member).read().decode("utf-8"))
-        require({"pyproject.toml", "LICENSE", "src/aikey/__init__.py"} <= names,
+        require({"pyproject.toml", "LICENSE", "src/aikey/__init__.py"} <= regular_names,
                 "project_archive_source_incomplete")
         project = metadata["project"]
         require(project["name"] == "local-aikey" and isinstance(project["version"], str)
@@ -261,7 +263,7 @@ def read_project_archive(path, expected_digest, revision):
         raise CheckError("project_archive_unreadable") from None
     return dict(archive=path.name, archive_sha256=expected_digest, revision=revision,
                 name=project["name"], version=project["version"],
-                source_modules=sum(n.startswith("src/aikey/") and n.endswith(".py") for n in names),
+                source_modules=sum(n.startswith("src/aikey/") and n.endswith(".py") for n in regular_names),
                 provenance="caller-pinned Git archive; independent origin trust required")
 
 

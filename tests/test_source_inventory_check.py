@@ -292,8 +292,12 @@ def project_archive(tmp_path, *, revision='a' * 40, fault=None):
     with tarfile.open(path, 'w', format=tarfile.PAX_FORMAT, pax_headers={'comment': revision}) as archive:
         for name, raw in files.items():
             info = tarfile.TarInfo('../escape' if fault == 'traversal' and name == 'LICENSE' else name)
-            info.size = len(raw)
-            archive.addfile(info, io.BytesIO(raw))
+            if fault == 'source_directory' and name == 'src/aikey/__init__.py':
+                info.type = tarfile.DIRTYPE
+                archive.addfile(info)
+            else:
+                info.size = len(raw)
+                archive.addfile(info, io.BytesIO(raw))
             if fault == 'duplicate' and name == 'pyproject.toml':
                 archive.addfile(info, io.BytesIO(raw))
     return path, check.file_digest(path)
@@ -317,7 +321,7 @@ def test_project_source_requires_exact_separate_archive_revision_and_location(tm
     assert check.project_candidate(package, project, 'a' * 40) is None
 
 
-@pytest.mark.parametrize('fault', ['revision', 'bytes', 'missing_source', 'duplicate', 'traversal'])
+@pytest.mark.parametrize('fault', ['revision', 'bytes', 'missing_source', 'source_directory', 'duplicate', 'traversal'])
 def test_project_source_refuses_self_inconsistent_or_redirected_archive(tmp_path, fault):
     archive, pin = project_archive(tmp_path, fault=fault)
     if fault == 'bytes':
