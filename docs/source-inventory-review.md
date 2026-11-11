@@ -240,3 +240,33 @@ only. `complete_corresponding_source=false` and `release_approved=false` are
 unchanged. Vendored dependencies beyond the catalogued records, binary rebuilds,
 patch/build obligations, optional images/models, recipient delivery and genuine
 human provenance/rights/release decisions remain separate.
+
+
+## Exact merged-main refresh, 11 November 2026
+
+The successful main-branch [native image run](https://github.com/Olli0103/unifi-protect-local-ai/actions/runs/43024747881)
+checks out exactly `c92686a2916afaa656f6500d63a000563d1ea9a2` for all four
+default profile/architecture combinations; no PR merge/head equivalence waiver
+is used in this refresh. Both downloaded ZIPs match their authenticated GitHub
+artifact metadata before bounded extraction:
+
+| Artifact | ID | ZIP SHA-256 |
+| --- | --- | --- |
+| container-install-amd64 | 13857136211 | `69bda1371cbdcfb99706f5136b557e5de150eb092dc7aff2f5b68637072f6f09` |
+| container-install-arm64 | 13855903610 | `a42ae8346636d4cbaf9d78c394cbaebe3a83fc1e24f4a69a8e9f8aabd8b7dfef` |
+
+The unchanged 764-file upstream source manifest is pinned to
+`e97fc8ea5f02166fe9d7280c7b16dc5f3ceed911077ddb191c7e5cea7d38bdb8`.
+All 1,288,871,052 original bytes match. The exact authenticated main Git object
+was archived separately: project tar SHA-256
+`7fbd923defc34b291d420204241cfa2538f209a88591eefa8c4cc071bc45d62d`,
+183 package modules. The actual source checker exits zero: 345 archive
+candidates per AMD64 profile, 341 per ARM64 profile, no unmatched catalogued
+package records, both architectures and profiles at the exact expected revision.
+The retained complete report SHA-256 is
+`1facbfec02f99dfa215692b933a2f07eee5d56e78079adba0e2b6356ef1afb5f`.
+
+This refresh is not a binary rebuild, complete corresponding-source audit,
+optional-profile/database inventory, rights approval, signature, tagged release
+or automatic approval of later source/images. Both completeness and release
+approval fields remain false; #4/#16 retain their separate original gates.
