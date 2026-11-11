@@ -607,3 +607,23 @@ def test_original_notice_file_drift_refuses_before_any_registry_action(native_at
         candidate.image_intent(root, packet, results, 'amd64', destination,
                                qualified=results.parent / 'qualified', run=docker)
     assert not destination.exists() and calls == []
+
+
+@pytest.mark.parametrize("version", ["0.1.0a1", "0.1.0rc1", "0.1.0"])
+def test_release_kind_registry_references_are_attempt_bound_and_read_only(tmp_path, version):
+    packet = dict(plan(), version=version)
+    calls = []
+
+    def observe(argv, root):
+        calls.append(argv)
+        assert argv[:5] == ["docker", "buildx", "imagetools", "inspect", "--raw"]
+        assert root == tmp_path
+        return b'{"schemaVersion":2}'
+
+    for profile in ("aikey", "aiport"):
+        for arch in ("amd64", "arm64", None):
+            ref = candidate.tagged(packet, profile, arch)
+            _, manifest = candidate.observed_tag(tmp_path, ref, run=observe)
+            assert manifest == {"schemaVersion": 2}
+            assert ref.endswith("-run" + packet["workflow_run_id"])
+    assert len(calls) == 6

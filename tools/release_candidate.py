@@ -106,7 +106,7 @@ def observed_tag(root, reference, *, run=docker):
     require(
         re.fullmatch(
             r"ghcr\.io/olli0103/[a-z0-9][a-z0-9._-]{0,100}:"
-            r"[0-9]+\.[0-9]+\.[0-9]+(?:rc[1-9][0-9]*)?-(?:amd64|arm64|index)-run[1-9][0-9]*",
+            r"[0-9]+\.[0-9]+\.[0-9]+(?:(?:a|rc)[1-9][0-9]*)?-(?:amd64|arm64|index)-run[1-9][0-9]*",
             reference,
         ),
         "release_candidate_reference_refused",

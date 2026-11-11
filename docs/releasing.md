@@ -7,11 +7,15 @@ There is no completed signed public release established by this document.
 
 ## Versions, compatibility and support
 
-Changes are recorded in [the changelog](../CHANGELOG.md). Development version
-`0.1.0` is not evidence of a published/supportable binary release. Use increasing
-`N.N.NrcN` candidates and matching public `vN.N.NrcN` tags; a final `vN.N.N` tag
-requires the corresponding non-RC project version and actual maintainer release
-decision. Version spelling never upgrades experimental behavior into parity.
+Changes are recorded in [the changelog](../CHANGELOG.md). A package version
+is not evidence of a published/supportable binary release. Use increasing
+`N.N.NaN` alphas or `N.N.NrcN` release candidates with matching public tags
+`vN.N.NaN` / `vN.N.NrcN`; the counter is a positive integer without leading zeros.
+Both kinds are published as GitHub prereleases. A final `vN.N.N` tag requires
+the matching final project version and actual maintainer release decision.
+Alpha spelling does not bypass any source, rights, signing or publication gate.
+The first proposed alpha is described in [the alpha delivery scope](alpha-release.md).
+Version spelling never upgrades experimental behavior into parity.
 
 | Surface | Present qualification | Support boundary |
 | --- | --- | --- |
@@ -44,8 +48,8 @@ The `publication` object in [release-evidence.json](legal/release-evidence.json)
 is deliberately pending. Only the maintainer may record a substantiated decision:
 
 - Exact existing public tag, matching `pyproject.toml` and the dispatched main
-  commit. Supported spelling is `vN.N.N` or `vN.N.NrcN` (for example, a hypothetical
-  `v0.1.0rc1` requires project version `0.1.0rc1`). No helper creates or moves tags.
+  commit. Supported spelling is `vN.N.N`, `vN.N.NaN` or `vN.N.NrcN` (for example,
+  `v0.1.0a1` requires project version `0.1.0a1`). No helper creates or moves tags.
 - Explicit package destination `github-release` and two distinct image package
   names `ghcr.io/olli0103/<approved-name>`, one for each profile. This source path
   does not implement PyPI publication or choose registry names for the owner.
