@@ -270,3 +270,34 @@ This refresh is not a binary rebuild, complete corresponding-source audit,
 optional-profile/database inventory, rights approval, signature, tagged release
 or automatic approval of later source/images. Both completeness and release
 approval fields remain false; #4/#16 retain their separate original gates.
+
+
+## Exact post-PR315 four-image subject
+
+A separate review qualifies the exact main subject
+`e1970e4c214fb45a16e2307d4eeda26fc5ddde07`, not a future documentation commit.
+[Container CI run 43031655628](https://github.com/Olli0103/unifi-protect-local-ai/actions/runs/43031655628)
+and [security/quality run 43031655506](https://github.com/Olli0103/unifi-protect-local-ai/actions/runs/43031655506)
+completed successfully on that subject.
+
+| Artifact | GitHub artifact ID | Independently compared ZIP SHA-256 |
+| --- | --- | --- |
+| container-install-amd64 | 13860279997 | `00e84dbc0228c8245d8f028913f9cd593187b402450dcca85495940d1c444546` |
+| container-install-arm64 | 13861515597 | `16c92d58229f23598f93a29feb26cd0e190a442027a85d14a5da7c771052346a` |
+
+The checker exits **0**: 764 source files / 1,288,871,052 bytes match the
+retained source manifest `e97fc8ea5f02166fe9d7280c7b16dc5f3ceed911077ddb191c7e5cea7d38bdb8`.
+Both AI Key and AI Port profiles have 345 candidates on AMD64 and 341 on ARM64,
+with no unmatched catalogued packages. The exact project Git archive contains
+183 source modules and has SHA-256
+`5ec1a9052fb4ea53005d5e5d0982480fd40db71c8759a5976dbe3aea1ad033da`.
+The copied private runner retained an older subject in its archive filename;
+its checked content, explicit pin and report identify **e1970e4**, not that
+inherited basename. No filename-based revision waiver was used.
+
+Report SHA-256:
+`24a0ed04e025b9b2aec3d9a476f37d9cc8c672cd95bc5a8e8b79f1bb2cad5e6f`.
+This remains **source-candidate mapping**, not complete corresponding source,
+reproducible binary builds, optional/database-profile coverage, legal origin/
+redistribution attestation, a signature or release approval. Issues #4/#16
+retain those original requirements. No production image or model was changed.
