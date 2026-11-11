@@ -57,7 +57,8 @@ def test_debian_explicit_source_version_not_binary_version():
 
 def test_no_cross_ecosystem_or_binary_name_inference():
     index = {("rust", "openssl", "1"): ["rust/openssl.crate"],
-             ("python", "openssl", "1"): ["python/openssl.tar.gz"]}
+             ("python", "openssl", "1"): ["python/openssl.tar.gz"],
+             ("python", "local-aikey", "0.1.0"): ["python/local-aikey.tar.gz"]}
     assert not check.match(component("openssl", "1", "deb"), index)["files"]
     assert not check.match(component("openssl", "1", "binary"), index)["files"]
     assert not check.match(component("local-aikey", "0.1.0", "python"), index)["files"]
@@ -278,3 +279,54 @@ def test_archive_and_location_ambiguity_fail_closed_without_extraction(tmp_path,
     with pytest.raises(check.CheckError):
         check.bundled_candidate(binaries[0], owners + binaries, check.ArchiveEvidence(root, index))
     assert not (tmp_path / 'outside').exists()
+
+
+def project_archive(tmp_path, *, revision='a' * 40, fault=None):
+    import io
+    import tarfile
+    path = tmp_path / 'project-source.tar'
+    files = {'pyproject.toml': b'[project]\nname="local-aikey"\nversion="0.1.0"\n',
+             'LICENSE': b'synthetic license fixture', 'src/aikey/__init__.py': b'# fixture'}
+    if fault == 'missing_source':
+        del files['src/aikey/__init__.py']
+    with tarfile.open(path, 'w', format=tarfile.PAX_FORMAT, pax_headers={'comment': revision}) as archive:
+        for name, raw in files.items():
+            info = tarfile.TarInfo('../escape' if fault == 'traversal' and name == 'LICENSE' else name)
+            info.size = len(raw)
+            archive.addfile(info, io.BytesIO(raw))
+            if fault == 'duplicate' and name == 'pyproject.toml':
+                archive.addfile(info, io.BytesIO(raw))
+    return path, check.file_digest(path)
+
+
+def test_project_source_requires_exact_separate_archive_revision_and_location(tmp_path):
+    archive, pin = project_archive(tmp_path)
+    project = check.read_project_archive(archive, pin, 'a' * 40)
+    assert project['source_modules'] == 1
+    for path in ('/app/src/local_aikey.egg-info/PKG-INFO',
+                 '/usr/local/lib/python3.12/site-packages/local_aikey-0.1.0.dist-info/METADATA'):
+        package = component('local-aikey', '0.1.0', 'python', **{'syft:location:0:path': path})
+        result = check.project_candidate(package, project, 'a' * 40)
+        assert result['resolution']['archive_sha256'] == pin and result['family'] == 'project'
+        assert check.project_candidate(package, project, 'b' * 40) is None
+        assert check.project_candidate(package, None, 'a' * 40) is None
+    package['version'] = '0.2.0'
+    assert check.project_candidate(package, project, 'a' * 40) is None
+    package['version'] = '0.1.0'
+    package['properties'][-1]['value'] = '/foreign/METADATA'
+    assert check.project_candidate(package, project, 'a' * 40) is None
+
+
+@pytest.mark.parametrize('fault', ['revision', 'bytes', 'missing_source', 'duplicate', 'traversal'])
+def test_project_source_refuses_self_inconsistent_or_redirected_archive(tmp_path, fault):
+    archive, pin = project_archive(tmp_path, fault=fault)
+    if fault == 'bytes':
+        archive.write_bytes(archive.read_bytes() + b'changed')
+    with pytest.raises(check.CheckError):
+        check.read_project_archive(archive, pin, ('b' if fault == 'revision' else 'a') * 40)
+
+
+def test_project_archive_and_pin_must_be_supplied_together(tmp_path):
+    root, pin, _ = bundle(tmp_path)
+    with pytest.raises(check.CheckError, match='pin_required'):
+        check.review(root, pin, [], 'a' * 40, project_archive=tmp_path / 'source.tar')

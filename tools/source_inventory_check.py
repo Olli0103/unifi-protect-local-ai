@@ -12,6 +12,7 @@ import json
 from pathlib import Path
 import re
 import tarfile
+import tomllib
 
 from image_sbom_check import CheckError, json_file, read_license_review, require
 
@@ -211,7 +212,8 @@ def match(component, index):
         source = props.get("syft:metadata:source", name)
         source_version = props.get("syft:metadata:sourceVersion", version)
     elif kind == "python":
-        family, source = "python", normalized(name)
+        source = normalized(name)
+        family = "project" if source == "local-aikey" else "python"
     elif name == "python":
         family, source = "interpreter", "cpython"
     candidates = sorted(index.get((family, source, source_version), []))
@@ -222,7 +224,62 @@ def match(component, index):
                 status="archive_candidate" if candidates else "needs_evidence")
 
 
-def inspect_image(directory, profile, inventory, index, expected_revision, evidence):
+
+def read_project_archive(path, expected_digest, revision):
+    require(HEX.fullmatch(expected_digest) is not None and path.is_file()
+            and not path.is_symlink(), "project_archive_pin_required")
+    with path.open("rb") as stream:
+        raw = stream.read(64 * 1024 * 1024 + 1)
+    require(len(raw) <= 64 * 1024 * 1024
+            and hashlib.sha256(raw).hexdigest() == expected_digest,
+            "project_archive_bytes_changed")
+    try:
+        with tarfile.open(fileobj=io.BytesIO(raw), mode="r:") as archive:
+            require(archive.pax_headers.get("comment") == revision,
+                    "project_archive_revision_mismatch")
+            names, metadata = set(), None
+            for number, member in enumerate(archive):
+                require(number < 10000 and member.name not in names
+                        and not member.name.startswith("/")
+                        and all(p not in ("", ".", "..") for p in member.name.rstrip("/").split("/"))
+                        and (member.isfile() or member.isdir())
+                        and member.offset_data + member.size <= len(raw),
+                        "project_archive_members_refused")
+                names.add(member.name)
+                if member.name == "pyproject.toml":
+                    require(member.isfile() and 0 < member.size <= 1024 * 1024,
+                            "project_archive_metadata_refused")
+                    metadata = tomllib.loads(archive.extractfile(member).read().decode("utf-8"))
+        require({"pyproject.toml", "LICENSE", "src/aikey/__init__.py"} <= names,
+                "project_archive_source_incomplete")
+        project = metadata["project"]
+        require(project["name"] == "local-aikey" and isinstance(project["version"], str)
+                and re.fullmatch(r"[A-Za-z0-9._+-]{1,80}", project["version"]) is not None,
+                "project_archive_metadata_refused")
+    except (tarfile.TarError, EOFError, UnicodeDecodeError, tomllib.TOMLDecodeError,
+            KeyError, TypeError):
+        raise CheckError("project_archive_unreadable") from None
+    return dict(archive=path.name, archive_sha256=expected_digest, revision=revision,
+                name=project["name"], version=project["version"],
+                source_modules=sum(n.startswith("src/aikey/") and n.endswith(".py") for n in names),
+                provenance="caller-pinned Git archive; independent origin trust required")
+
+
+def project_candidate(component, project, revision):
+    if (project is None or revision != project["revision"]
+            or component["name"] != project["name"] or component["version"] != project["version"]):
+        return None
+    version = project["version"]
+    admitted = {"/app/src/local_aikey.egg-info/PKG-INFO",
+                f"/usr/local/lib/python3.12/site-packages/local_aikey-{version}.dist-info/METADATA"}
+    metadata = [p for p in locations(component) if p.endswith(("/METADATA", "/PKG-INFO"))]
+    if len(metadata) != 1 or metadata[0] not in admitted:
+        return None
+    return dict(source=project["name"], source_version=version, family="project",
+                files=[project["archive"]], resolution={"kind": "project_source_candidate",
+                "revision": revision, "archive_sha256": project["archive_sha256"]})
+
+def inspect_image(directory, profile, inventory, index, expected_revision, evidence, project):
     receipt = inventory["profiles"][profile]
     require(receipt["schema"] == "aikey-image-inventory/2"
             and receipt["profile"] == profile
@@ -254,6 +311,10 @@ def inspect_image(directory, profile, inventory, index, expected_revision, evide
             candidate = bundled_candidate(component, components, evidence)
             if candidate is not None:
                 row.update(candidate, status="archive_candidate")
+        elif row["type"] == "python" and row["status"] == "needs_evidence":
+            candidate = project_candidate(component, project, receipt["revision"])
+            if candidate is not None:
+                row.update(candidate, status="archive_candidate")
         rows.append(row)
     return dict(profile=profile, architecture=receipt["architecture"],
                 revision=receipt["revision"], image_id=receipt["image_id"],
@@ -262,8 +323,12 @@ def inspect_image(directory, profile, inventory, index, expected_revision, evide
                 counts=dict(Counter(r["status"] for r in rows)), packages=rows)
 
 
-def review(source_root, expected_digest, directories, expected_revision):
+def review(source_root, expected_digest, directories, expected_revision,
+           project_archive=None, project_digest=None):
     require(REV.fullmatch(expected_revision) is not None, "source_revision_required")
+    require((project_archive is None) == (project_digest is None), "project_archive_pin_required")
+    project = (read_project_archive(project_archive, project_digest, expected_revision)
+               if project_archive is not None else None)
     index, count, size = read_sources(source_root, expected_digest)
     evidence = ArchiveEvidence(source_root, index)
     images, arches = [], set()
@@ -281,11 +346,11 @@ def review(source_root, expected_digest, directories, expected_revision):
                 "source_inventory_refused")
         arches.add(inventory["architecture"])
         for profile in ("aikey", "aiport"):
-            images.append(inspect_image(directory, profile, inventory, index, expected_revision, evidence))
+            images.append(inspect_image(directory, profile, inventory, index, expected_revision, evidence, project))
     require(arches == {"amd64", "arm64"}, "source_architecture_matrix_incomplete")
     current = all(i["current_revision"] for i in images)
     return dict(schema="aikey-source-inventory-review/1", expected_revision=expected_revision,
-                manifest_sha256=expected_digest, source_files_verified=count,
+                manifest_sha256=expected_digest, project_source=project, source_files_verified=count,
                 source_bytes_verified=size, current_revision=current, images=images,
                 complete_corresponding_source=False, release_approved=False,
                 limits=["Archive candidates are metadata/source-member matches, not binary reproduction.",
@@ -301,9 +366,12 @@ def main(argv=None):
     parser.add_argument("--manifest-sha256", required=True)
     parser.add_argument("--revision", required=True)
     parser.add_argument("--inventory", type=Path, action="append", required=True)
+    parser.add_argument("--project-archive", type=Path, help="Separately trusted exact-revision git archive (tar)")
+    parser.add_argument("--project-archive-sha256", help="Independent expected archive digest; required with --project-archive")
     args = parser.parse_args(argv)
     try:
-        result = review(args.sources, args.manifest_sha256, args.inventory, args.revision)
+        result = review(args.sources, args.manifest_sha256, args.inventory, args.revision,
+                        args.project_archive, args.project_archive_sha256)
         print(json.dumps(result, indent=2, sort_keys=True))
         # Zero means complete current-revision candidate matching only, never
         # approval. Missing packages or stale input remain machine-visible.

@@ -206,3 +206,37 @@ metadata. They are not assigned a third-party source archive. The report still
 exits 1, and `complete_corresponding_source` and `release_approved` remain false.
 No input receipt or old failed result is rewritten. These retained image
 inventories qualify their embedded revision, not a future image build.
+
+
+### Separate project-source subject
+
+Optionally add `--project-archive EXACT_COMMIT_SOURCE.tar` and
+`--project-archive-sha256 TRUSTED_64_HEX_DIGEST` to the invocation. Supply both
+or neither. Generate the tar from an authenticated, verified exact Git commit
+with `git archive --format=tar COMMIT`, not from a working directory; retain its
+digest separately. A self-generated replacement hash is not independent origin
+proof. The reader performs no Git, network or build operation.
+
+The bounded archive byte snapshot must match the supplied digest. Its Git PAX
+commit field must equal the expected full inventory revision, and it must have
+unique safe regular/directory members, project metadata, license and package
+source. Name/version and the exact observed build-tree/installed metadata paths
+are checked separately for each image. An ordinary upstream manifest row named
+`local-aikey` cannot satisfy this requirement. Stale image revisions never
+inherit the current project's archive. The report records the separate archive
+digest, commit and module count without claiming a build or rights attestation.
+
+The retained authenticated inventory revision
+`a4975f8d3e039d8398265b85b660c24865750a22` was archived directly from its fetched
+Git object. Its 9,840,640-byte tar has SHA-256
+`18cd580e1c49359d7d9b6fa2f0fcdd879ae2e37a60260c05d30ab9ea6516634f` and
+181 package source modules. With that exact separately pinned input, the real
+matrix has **345 candidates per AMD64 profile and 341 per ARM64 profile**, no
+unmatched catalogued package records, and exits 0. Without it, the two project
+records per image remain unresolved and exit status remains 1.
+
+This completes candidate-source mapping for these retained four default images
+only. `complete_corresponding_source=false` and `release_approved=false` are
+unchanged. Vendored dependencies beyond the catalogued records, binary rebuilds,
+patch/build obligations, optional images/models, recipient delivery and genuine
+human provenance/rights/release decisions remain separate.
