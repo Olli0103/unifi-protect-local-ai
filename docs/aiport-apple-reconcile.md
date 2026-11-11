@@ -7,7 +7,9 @@ not a daemon, installer, pairing tool or native-qualified replacement for the
 [instance issue](https://github.com/Olli0103/unifi-protect-local-ai/issues/45)
 remains OPEN: broader Mac/NAS creation/removal, recording continuity and native
 Protect verification are still required. A one-slot lifecycle does not qualify
-those remaining acceptance cases.
+those remaining acceptance cases. The [camera-free lifecycle and recovery record](evidence/apple-camera-free-recovery-20261111.md)
+separates actual container/PF operations from injected caller faults and the
+still-missing reboot, camera and NAS qualification.
 
 ## Existing components and supported contract
 

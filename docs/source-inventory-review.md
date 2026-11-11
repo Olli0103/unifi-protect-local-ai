@@ -100,9 +100,64 @@ The first real replay exposed the separate CycloneDX OS entry; it is now
 validated against the OS receipt rather than counted as a package. The corrected
 replay exits 1, as required for historical inputs and unresolved packages.
 
-Current CI artifact API requests for run `42256417344` returned `Forbidden`
-in this session. No current-image equality, new build, signing, publication,
-deployment, native Mac acceptance or issue closure is claimed. The next actual
-matrix must come from independently verified current CI artifacts. Optional
-profiles, the database image, complete build/patch correspondence, recipient
-delivery and independent origin/rights decisions remain open.
+The initial CI artifact API requests for run `42256417344` returned `Forbidden`.
+That failed attempt remains part of the historical record. The authenticated
+retrieval below supersedes the access blocker, not the unresolved source or
+rights decisions.
+
+## Authenticated four-image replay, 11 November 2026
+
+The already configured native GitHub credential path returned the expected
+account and complete artifact metadata. Both ZIPs were downloaded and their
+actual SHA-256 compared with the GitHub artifact digest before extraction:
+
+| Artifact | GitHub artifact ID | ZIP SHA-256 |
+| --- | --- | --- |
+| container-install-amd64 | 13523820155 | `f1a57ead602b67128fd4b63d9118d0d62dda2c813a1c25c83e9da967007020aa` |
+| container-install-arm64 | 13523570466 | `9d64dc5a48dcdeb9cebfa676aface3d13736dbbc6d88965ece6b7ed35c83a03e` |
+
+[Successful CI run](https://github.com/Olli0103/unifi-protect-local-ai/actions/runs/42256417344).
+Its PR head is `c97d96a3a288e89b6824d1957cd16992f25b9068`, but the inventories
+correctly record the actual checked-out PR merge commit
+`e2f619b8183346bc1cdb0917b8f6f09e5c0fac7f`. That commit was fetched and a
+complete Git tree diff against main `973904631db4b45307dc59091730b9f9b3cf0bcc`
+was empty. The checker was run against **the exact inventory merge revision**;
+this separate tree-equivalence observation is not a revision-check waiver.
+A first replay against the PR head correctly reported a revision mismatch.
+
+All 761 source files (1,288,233,863 bytes) again matched the independently
+retained manifest digest. For each profile, AMD64 has 329 archive candidates
+and 16 unresolved records; ARM64 has 325 and 16. The unresolved set remains
+14 bundled launcher records and two project-package records. Exit status is
+1 because unresolved source candidates remain, even with exact image revisions.
+
+These artifacts qualify the retained main tree above, **not future changes**
+or a signed release. The checker and host changes on the new branch require
+their own exact-head CI. No corresponding-source completeness, binary rebuild,
+signing, release publication or issue closure is claimed. Optional profiles,
+the database image, complete build/patch correspondence, recipient delivery
+and independent origin/rights decisions remain open.
+
+### Unresolved-record investigation
+
+The 16 records are no longer unidentified dependencies. Exact SBOM location
+properties in all four images identify:
+
+- Six Windows launchers under `pip/_vendor/distlib`, supplied by pip 25.0.1.
+  Its original source archive's `src/pip/_vendor/vendor.txt` pins distlib 0.3.9.
+  The separately retrieved original `distlib-0.3.9.tar.gz` is 613,923 bytes,
+  SHA-256 `a60f20dea646b8a33f3e7772f74dc0b2d0772d2837ee1342a00645c81edf9403`.
+  Its `PC/launcher.c`, Visual C++ project files and solution are present.
+  [Exact upstream version](https://pypi.org/project/distlib/0.3.9/).
+- Eight Windows launchers under `setuptools`. The already verified setuptools
+  84.0.0 source archive includes `launcher.c`, `tools/build_launchers.py`,
+  the launcher manifest and the binary files.
+- Two `local-aikey` records: build-tree `egg-info` and installed `dist-info`,
+  not two additional third-party packages. Their source subject is the exact
+  CI checkout revision above, rather than a similarly named PyPI archive.
+
+This is path/version/source-location evidence, not a byte-for-byte launcher
+rebuild or origin/rights clearance. The automated checker intentionally keeps
+these records unresolved; no name-only alias or blanket exemption was added.
+The extra distlib archive is retained separately with its upstream digest and
+receipt; it does not silently change the existing 761-file manifest.
