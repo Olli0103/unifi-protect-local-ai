@@ -93,6 +93,22 @@ def qualified_version(output):
     return re.findall(r'(?<![A-Za-z0-9.])v?([0-9]+\.[0-9]+\.[0-9]+(?:[-+][A-Za-z0-9.-]+)?)(?![A-Za-z0-9.])',output)==[RUNTIME_VERSION]
 
 
+def _environment(values):
+    # Apple Container serializes image environment through a dictionary. Order
+    # is not stable; duplicate keys would make order semantically significant.
+    if not isinstance(values,list):
+        raise AppleRuntimeError('apple_container_environment_ambiguous')
+    result={}
+    for value in values:
+        if not isinstance(value,str) or '\x00' in value:
+            raise AppleRuntimeError('apple_container_environment_ambiguous')
+        key,separator,item=value.partition('=')
+        if not separator or not re.fullmatch('[A-Za-z_][A-Za-z0-9_]*',key) or key in result:
+            raise AppleRuntimeError('apple_container_environment_ambiguous')
+        result[key]=item
+    return result
+
+
 def image_info(raw,reference):
     value=_decode(raw)
     if not isinstance(value,list) or len(value)!=1 or not isinstance(value[0],dict):
@@ -115,6 +131,7 @@ def image_info(raw,reference):
             or not isinstance(inner.get('Env',[]),list)
             or any(not isinstance(item,str) for item in inner.get('Env',[]))):
         raise AppleRuntimeError('apple_image_not_linux_arm64')
+    _environment(inner.get('Env',[]))
     return {'platform':('linux','arm64'),'env':inner.get('Env',[]),
             'workdir':inner.get('WorkingDir') or '/','reference':reference}
 
@@ -136,7 +153,7 @@ def inspect_selected(entry,instance,manifest,image):
         raise AppleRuntimeError('apple_container_process_drift')
     executable=init.get('executable')
     if (executable not in ('local-aiport-candidate','/usr/local/bin/local-aiport-candidate')
-            or init.get('environment',[])!=image['env']
+            or _environment(init.get('environment',[]))!=_environment(image['env'])
             or (init.get('workingDirectory') or image['workdir'])!=image['workdir']):
         raise AppleRuntimeError('apple_container_process_drift')
     expected={'configuration':{'image':{'reference':manifest['image']},

@@ -1,0 +1,304 @@
+[
+  {
+    "id": "000000000000000000000001",
+    "mac": "020000000001",
+    "modelKey": "camera",
+    "name": "Synthetic 1",
+    "type": "UVC G3 Instant",
+    "state": "CONNECTED",
+    "featureFlags": {
+      "smartDetectTypes": [
+        "person",
+        "vehicle",
+        "animal",
+        "package",
+        "face"
+      ],
+      "smartDetectAudioTypes": [
+        "alrmSpeak",
+        "alrmSmoke",
+        "alrmCmonx",
+        "alrmSiren",
+        "alrmBabyCry",
+        "alrmBark",
+        "alrmBurglar",
+        "alrmCarHorn",
+        "alrmGlassBreak"
+      ]
+    }
+  },
+  {
+    "id": "000000000000000000000002",
+    "mac": "020000000002",
+    "modelKey": "camera",
+    "name": "Synthetic 2",
+    "type": "UVC G4 Dome",
+    "state": "CONNECTED",
+    "featureFlags": {
+      "smartDetectTypes": [
+        "person",
+        "vehicle",
+        "animal",
+        "package",
+        "face"
+      ],
+      "smartDetectAudioTypes": [
+        "alrmSpeak",
+        "alrmSmoke",
+        "alrmCmonx",
+        "alrmSiren",
+        "alrmBabyCry",
+        "alrmBark",
+        "alrmBurglar",
+        "alrmCarHorn",
+        "alrmGlassBreak"
+      ]
+    }
+  },
+  {
+    "id": "000000000000000000000003",
+    "mac": "020000000003",
+    "modelKey": "camera",
+    "name": "Synthetic 3",
+    "type": "UVC G4 Bullet",
+    "state": "CONNECTED",
+    "featureFlags": {
+      "smartDetectTypes": [
+        "person",
+        "vehicle",
+        "animal",
+        "package",
+        "face"
+      ],
+      "smartDetectAudioTypes": [
+        "alrmSpeak",
+        "alrmSmoke",
+        "alrmCmonx",
+        "alrmSiren",
+        "alrmBabyCry",
+        "alrmBark",
+        "alrmBurglar",
+        "alrmCarHorn",
+        "alrmGlassBreak"
+      ]
+    }
+  },
+  {
+    "id": "000000000000000000000004",
+    "mac": "020000000004",
+    "modelKey": "camera",
+    "name": "Synthetic 4",
+    "type": "UVC G4 Doorbell Pro",
+    "state": "CONNECTED",
+    "featureFlags": {
+      "smartDetectTypes": [
+        "person",
+        "vehicle",
+        "animal",
+        "package",
+        "face"
+      ],
+      "smartDetectAudioTypes": [
+        "alrmSpeak",
+        "alrmSmoke",
+        "alrmCmonx",
+        "alrmSiren",
+        "alrmBabyCry",
+        "alrmBark",
+        "alrmBurglar",
+        "alrmCarHorn",
+        "alrmGlassBreak"
+      ]
+    }
+  },
+  {
+    "id": "000000000000000000000005",
+    "mac": "020000000005",
+    "modelKey": "camera",
+    "name": "Synthetic 5",
+    "type": "UVC G4 Bullet",
+    "state": "CONNECTED",
+    "featureFlags": {
+      "smartDetectTypes": [
+        "person",
+        "vehicle",
+        "animal",
+        "package",
+        "face"
+      ],
+      "smartDetectAudioTypes": [
+        "alrmSpeak",
+        "alrmSmoke",
+        "alrmCmonx",
+        "alrmSiren",
+        "alrmBabyCry",
+        "alrmBark",
+        "alrmBurglar",
+        "alrmCarHorn",
+        "alrmGlassBreak"
+      ]
+    }
+  },
+  {
+    "id": "000000000000000000000006",
+    "mac": "020000000006",
+    "modelKey": "camera",
+    "name": "Synthetic 6",
+    "type": "UVC G4 Pro",
+    "state": "CONNECTED",
+    "featureFlags": {
+      "smartDetectTypes": [
+        "person",
+        "vehicle",
+        "animal",
+        "package",
+        "face"
+      ],
+      "smartDetectAudioTypes": [
+        "alrmSpeak",
+        "alrmSmoke",
+        "alrmCmonx",
+        "alrmSiren",
+        "alrmBabyCry",
+        "alrmBark",
+        "alrmBurglar",
+        "alrmCarHorn",
+        "alrmGlassBreak"
+      ]
+    }
+  },
+  {
+    "id": "000000000000000000000007",
+    "mac": "020000000007",
+    "modelKey": "camera",
+    "name": "Synthetic 7",
+    "type": "UVC G4 Instant",
+    "state": "DISCONNECTED",
+    "featureFlags": {
+      "smartDetectTypes": [
+        "person",
+        "vehicle",
+        "animal"
+      ],
+      "smartDetectAudioTypes": [
+        "smoke_cmonx",
+        "alrmSmoke",
+        "alrmCmonx",
+        "alrmBabyCry",
+        "alrmSpeak"
+      ]
+    }
+  },
+  {
+    "id": "000000000000000000000008",
+    "mac": "020000000008",
+    "modelKey": "camera",
+    "name": "Synthetic 8",
+    "type": "UVC G3 Instant",
+    "state": "CONNECTED",
+    "featureFlags": {
+      "smartDetectTypes": [
+        "person",
+        "vehicle",
+        "animal",
+        "package",
+        "face"
+      ],
+      "smartDetectAudioTypes": [
+        "alrmSpeak",
+        "alrmSmoke",
+        "alrmCmonx",
+        "alrmSiren",
+        "alrmBabyCry",
+        "alrmBark",
+        "alrmBurglar",
+        "alrmCarHorn",
+        "alrmGlassBreak"
+      ]
+    }
+  },
+  {
+    "id": "000000000000000000000009",
+    "mac": "020000000009",
+    "modelKey": "camera",
+    "name": "Synthetic 9",
+    "type": "UVC G6 Instant",
+    "state": "CONNECTED",
+    "featureFlags": {
+      "smartDetectTypes": [
+        "person",
+        "vehicle",
+        "animal",
+        "face",
+        "licensePlate"
+      ],
+      "smartDetectAudioTypes": [
+        "alrmSmoke",
+        "alrmCmonx",
+        "alrmSiren",
+        "alrmBabyCry",
+        "alrmSpeak",
+        "alrmBurglar",
+        "alrmCarHorn",
+        "alrmBark",
+        "alrmGlassBreak"
+      ]
+    }
+  },
+  {
+    "id": "00000000000000000000000a",
+    "mac": "02000000000A",
+    "modelKey": "camera",
+    "name": "Synthetic 10",
+    "type": "UVC G4 Instant",
+    "state": "CONNECTED",
+    "featureFlags": {
+      "smartDetectTypes": [
+        "person",
+        "vehicle",
+        "animal",
+        "package",
+        "face"
+      ],
+      "smartDetectAudioTypes": [
+        "alrmSpeak",
+        "alrmSmoke",
+        "alrmCmonx",
+        "alrmSiren",
+        "alrmBabyCry",
+        "alrmBark",
+        "alrmBurglar",
+        "alrmCarHorn",
+        "alrmGlassBreak"
+      ]
+    }
+  },
+  {
+    "id": "00000000000000000000000b",
+    "mac": "02000000000B",
+    "modelKey": "camera",
+    "name": "Synthetic 11",
+    "type": "UVC G5 Flex",
+    "state": "CONNECTED",
+    "featureFlags": {
+      "smartDetectTypes": [
+        "person",
+        "vehicle",
+        "animal",
+        "package",
+        "face"
+      ],
+      "smartDetectAudioTypes": [
+        "alrmSpeak",
+        "alrmSmoke",
+        "alrmCmonx",
+        "alrmSiren",
+        "alrmBabyCry",
+        "alrmBark",
+        "alrmBurglar",
+        "alrmCarHorn",
+        "alrmGlassBreak"
+      ]
+    }
+  }
+]

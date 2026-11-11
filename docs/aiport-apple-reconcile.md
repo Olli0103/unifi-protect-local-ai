@@ -1,12 +1,15 @@
 # Reviewed AI Port instance reconciliation on Apple container
 
-**Implemented / fixture-tested, not native-verified.** This one-shot operator
+**Implemented / fixture-tested; bounded camera-free native lifecycle observed.** This one-shot operator
 adds the Mac create/start path for already prepared stable AI Port slots. It is
 not a daemon, installer, pairing tool or native-qualified replacement for the
 [historical Apple recipe](apple-container.md). The broader
 [instance issue](https://github.com/Olli0103/unifi-protect-local-ai/issues/45)
-remains OPEN: real Mac/NAS creation/removal, recording continuity and native
-Protect verification are still required.
+remains OPEN: broader Mac/NAS creation/removal, recording continuity and native
+Protect verification are still required. A one-slot lifecycle does not qualify
+those remaining acceptance cases. The [camera-free lifecycle and recovery record](evidence/apple-camera-free-recovery-20261111.md)
+separates actual container/PF operations from injected caller faults and the
+still-missing reboot, camera and NAS qualification.
 
 ## Existing components and supported contract
 
@@ -114,7 +117,10 @@ deployment; it is not automatically installed here.
 
 Add `--apply` to the complete reviewed `run` invocation for an authorized start.
 Running instances must match image, resources, DNS, network, mounts, process and
-identity exactly. Fresh own-CA/exact-leaf health must report the loaded config
+identity exactly. Environment variable order is not significant because Apple
+Container reorders unique names during serialization. Duplicate names, malformed
+entries and changed/added/removed values are refused before a daemon mutation.
+Fresh own-CA/exact-leaf health must report the loaded config
 SHA-256. Adopted Ports and Key must stay connected. A new unadopted Port is
 `awaiting_adoption`, not paired or native-qualified.
 
@@ -247,8 +253,36 @@ refresh of only the same authorized slot after fresh daemon and TLS checks;
 its write-ahead receipt retains uncertainty on any failed/unknown outcome. Do
 not hand-edit/delete those journals to bypass the gate.
 
-**Qualification:** offline actor/helper tests are not native source-operator
-acceptance. The earlier separately authorized PF adoption/restart experiment is
-not proof that this candidate is installed or qualified. Native installation,
-source-operator lifecycle, negative/recovery matrix and the original new-slot/
-removal criteria remain pending. No issue acceptance is inferred from fixtures.
+### Bounded native observation
+
+A real Apple Container 1.6.1 run exercised the ordinary source operator with
+one fresh, unadopted, camera-free slot and an independently installed fixed
+helper/policy. Cache-free helper preflight accepted the authorized slot and
+refused wrong slot, address, controller, pin, action and zero-operation apply
+requests. Only the exact helper invocation had passwordless sudo permission;
+permission queries did not execute a general root shell or arbitrary Python.
+
+The first create acknowledgement was followed by a process-guard refusal
+because the daemon reordered image environment variables. The original uncertain
+journal was retained; after the comparison fix, explicit positive reconciliation
+observed the owned stopped container without a daemon mutation. The subsequent
+source-operator start, idempotent running no-op, own-mapping removal, stop and
+same-identity restart succeeded. The guest address changed; the freshly pinned
+helper read-back verified the updated mapping. Final cleanup removed only the
+own mapping and stopped the own container, retaining identity and permissions.
+
+The installed guest's 181 Python modules matched its frozen image source; host
+inventory/environment fixes were recorded separately, not claimed inside that
+image. The preexisting controller identity/adoption/pairing and selected recording,
+smart-detection and AI processor settings projection was unchanged. The controller
+also discovered the own test identity: it remained unadopted, unprovisioned and
+without pairings, and was disconnected after stop. Discovery is not no effect
+on the controller inventory and must be reported separately from production.
+
+**Qualification:** this does not establish host reboot recovery, address-alias
+persistence, controller-authenticated adopted traffic, new-camera pairing,
+recording continuity, whole-host restore, sustained operation or the complete
+negative/recovery matrix. Main PF rules, forwarding, firewall and unrelated
+sudo rules were not changed. The original issue remains open. Future runs must
+recheck host prerequisites; the helper cannot repair a lost alias or expand its
+root policy. No broader issue acceptance is inferred from these observations.
