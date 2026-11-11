@@ -139,6 +139,61 @@ def test_actual_actor_create_start_readback_then_noop_preserves_all_state(tmp_pa
     assert result['mode']=='unchanged' and result['preserved']==[name] and not host.mutations()
 
 
+def test_daemon_environment_reordering_allows_start_and_idempotent_readback(tmp_path):
+    inputs=actor_fixture(tmp_path)
+    host=Host(inputs[0])
+    original=host.run
+    def reordered(argv,timeout):
+        raw=original(argv,timeout)
+        if argv[1]=='create':
+            for row in host.rows.values():
+                row['configuration']['initProcess']['environment']=list(reversed(ENV))
+        return raw
+    host.run=reordered
+    assert invoke(inputs,host,apply=True)['mode']=='applied'
+    host.calls=[]
+    assert invoke(inputs,host,apply=True)['mode']=='unchanged'
+    assert not host.mutations()
+
+
+def test_reordered_created_container_can_settle_lost_receipt_without_starting(tmp_path):
+    inputs=actor_fixture(tmp_path)
+    host=Host(inputs[0])
+    host.fail='create_ack'
+    with pytest.raises(AppleOutcomeUncertain):
+        invoke(inputs,host,apply=True)
+    for row in host.rows.values():
+        row['configuration']['initProcess']['environment']=list(reversed(ENV))
+    prior=deepcopy(host.mutations())
+    result=settle(*inputs,run=host.run,probe=host.probe)
+    assert result['outcome']=='no_new_running' and result['daemon_mutations']==0
+    assert host.mutations()==prior
+
+
+@pytest.mark.parametrize('environment',[
+    ENV+['PATH=/different'], ENV+[ENV[0]], ['MISSING_SEPARATOR'],
+    ['=empty-name'], ['BAD-NAME=value'], ['VALUE=embedded\x00null'], [None], 'PATH=value',
+])
+def test_ambiguous_environment_is_refused_before_any_daemon_mutation(tmp_path,environment):
+    inputs=actor_fixture(tmp_path)
+    row=inputs[0]['instances'][0]
+    own=entry(row,inputs[0],state='stopped')
+    own['configuration']['initProcess']['environment']=environment
+    host=Host(inputs[0],[own])
+    prior=deepcopy(host.rows)
+    with pytest.raises(AppleRuntimeError):
+        invoke(inputs,host,apply=True)
+    assert host.rows==prior and not host.mutations()
+
+
+@pytest.mark.parametrize('environment', [ENV+[ENV[0]], ['INVALID'], [None]])
+def test_image_environment_must_have_unambiguous_unique_names(environment):
+    raw=json.dumps([{'variants':[{'platform':{'os':'linux','architecture':'arm64'},
+        'config':{'config':{'Env':environment,'Labels':{'org.local-aikey.host-activation':'1'}}}}]}])
+    with pytest.raises(AppleRuntimeError):
+        image_info(raw,'fixture@sha256:'+'0'*64)
+
+
 @pytest.mark.parametrize('fault',['private_mount','wildcard_port','unknown_port','image','user','writable_root',
     'environment','version','host_preflight','key_offline','config_changed','receipt_unavailable'])
 def test_preflight_refusal_never_changes_prior_running_container(tmp_path,fault):
