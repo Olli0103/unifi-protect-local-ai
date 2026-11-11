@@ -209,12 +209,14 @@ def test_ci_needs_complete_fresh_workflow_jobs_not_a_success_status_context(tmp_
 
 
 @pytest.fixture
-def tagged_source(tmp_path):
+def tagged_source(tmp_path, request):
     """Real disposable Git/tag bytes; all approvals are explicitly fictional."""
     import os
     import subprocess
     import hashlib
 
+    version = getattr(request, "param", "0.1.0rc1")
+    tag = "v" + version
     root = tmp_path / "source"
     root.mkdir()
     (root / "tools").mkdir()
@@ -224,7 +226,7 @@ def tagged_source(tmp_path):
         (project / "tools/community_release_check.py").read_bytes()
     )
     (root / "LICENSE").write_bytes((project / "LICENSE").read_bytes())
-    (root / "pyproject.toml").write_text('[project]\nname="local-aikey"\nversion="0.1.0rc1"\nlicense-files=["LICENSE"]\n')
+    (root / "pyproject.toml").write_text(f'[project]\nname="local-aikey"\nversion="{version}"\nlicense-files=["LICENSE"]\n')
     (root / "README.md").write_text("FICTIONAL RELEASE FIXTURE ONLY. No real approval.\n")
     spec = importlib.util.spec_from_file_location(
         "fictional_community", root / "tools/community_release_check.py"
@@ -244,6 +246,7 @@ def tagged_source(tmp_path):
         },
         **decision(),
     }
+    record["publication"]["tag"] = tag
     evidence = root / "docs/legal/release-evidence.json"
     evidence.write_text(json.dumps(record))
     env = dict(
@@ -267,14 +270,14 @@ def tagged_source(tmp_path):
     evidence.write_text(json.dumps(record))
     git("add", ".")
     git("commit", "-m", "Fictional release gate fixture, not real approval")
-    git("tag", "v0.1.0rc1")
+    git("tag", tag)
     revision = git("rev-parse", "HEAD")
     calls = []
 
     def run(argv, **kwargs):
         if argv[:2] == ["git", "ls-remote"]:
             calls.append(argv)
-            return revision + "\trefs/tags/v0.1.0rc1\n"
+            return revision + "\trefs/tags/" + tag + "\n"
         if argv[:2] == ["gh", "api"]:
             calls.append(argv)
             if "/environments/" in argv[-1]:
@@ -452,3 +455,18 @@ def test_empty_source_bytes_are_explicit_not_empty_approval_records(tmp_path):
     with pytest.raises(gate.PreparationError):
         gate.read(path)
     assert gate.read(path, allow_empty=True) == b""
+
+
+@pytest.mark.parametrize("tagged_source", ["0.1.0a1", "0.1.0rc1", "0.1.0"], indirect=True)
+def test_release_kinds_preserve_full_source_and_publication_guards(tagged_source):
+    import tomllib
+
+    root, run, context, _, _ = tagged_source
+    version = tomllib.loads((root / "pyproject.toml").read_text())["project"]["version"]
+    result = gate.prepare(root, "v" + version, publish=True, env=context, run=run)
+    assert result["prerelease"] is (version != "0.1.0")
+    assert result["version"] == version
+    assert result["publication_requested"] and not result["uploaded"] and not result["signed"]
+    assert sum(len(row["job_ids"]) for row in result["continuous_integration"]) == 7
+    for suffix in ("a0", "a01", "a-1", "a1rc1", "b1", "a1+local", "a1;echo"):
+        assert gate.TAG.fullmatch("v0.1.0" + suffix) is None

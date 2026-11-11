@@ -415,8 +415,16 @@ def test_child_exit_and_deadline_are_not_inventory_success():
 
 
 def test_exact_locks_include_build_backend_and_local_distribution():
+    import ast
+
     expected = check.expected_python(TOOLS.parent)
-    assert expected["local-aikey"] == "0.1.0" and expected["setuptools"] == "84.0.0"
+    module = ast.parse((TOOLS.parent / "src/aikey/__init__.py").read_text())
+    version = next(
+        ast.literal_eval(node.value) for node in module.body
+        if isinstance(node, ast.Assign)
+        and any(isinstance(target, ast.Name) and target.id == "__version__" for target in node.targets)
+    )
+    assert expected["local-aikey"] == version and expected["setuptools"] == "84.0.0"
     assert expected["typing-extensions"] == "4.16.0" and len(expected) == 18
 
 

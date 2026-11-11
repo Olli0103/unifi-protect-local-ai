@@ -1,7 +1,16 @@
 # Changelog
 
-No completed signed public release is established yet. `0.1.0` remains an
-experimental source/package version, not a supported public-release claim.
+A source/package version is not a completed or supported public-release claim.
+Use the repository's Releases and its signed manifest for actual availability.
+
+## 0.1.0a1 alpha specification
+
+- Prepare default AI Key/AI Port OCI images for native Linux AMD64/ARM64;
+  Apple Container uses the same ARM64 image, without bundled model weights.
+- Accept explicit alpha versions in the owner-gated publisher and its
+  attempt-bound image-reference checks; all existing review gates remain.
+- Record [delivery scope and remaining prerequisites](docs/alpha-release.md).
+  This entry alone does not claim publication or close the original issues.
 
 ## Unreleased
 
