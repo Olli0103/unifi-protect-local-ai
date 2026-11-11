@@ -57,7 +57,8 @@ def test_debian_explicit_source_version_not_binary_version():
 
 def test_no_cross_ecosystem_or_binary_name_inference():
     index = {("rust", "openssl", "1"): ["rust/openssl.crate"],
-             ("python", "openssl", "1"): ["python/openssl.tar.gz"]}
+             ("python", "openssl", "1"): ["python/openssl.tar.gz"],
+             ("python", "local-aikey", "0.1.0"): ["python/local-aikey.tar.gz"]}
     assert not check.match(component("openssl", "1", "deb"), index)["files"]
     assert not check.match(component("openssl", "1", "binary"), index)["files"]
     assert not check.match(component("local-aikey", "0.1.0", "python"), index)["files"]
@@ -173,3 +174,163 @@ def test_matrix_tampering_refused(tmp_path, fault):
         path.write_text(json.dumps(value))
     with pytest.raises(check.CheckError):
         check.review(root, sha, directories, revision)
+
+
+def launcher_bundle(tmp_path, *, fault=None):
+    import io
+    import tarfile
+    root = tmp_path / 'launchers'
+    (root / 'python').mkdir(parents=True)
+    payloads = {
+        'pip': ('25.0.1', {'src/pip/_vendor/vendor.txt': b'distlib==0.3.9\n'}),
+        'distlib': ('0.3.9', {'PC/launcher.c': b'/* synthetic C source */',
+                             'PC/CLISimpleLauncher.vcxproj': b'<Project/>',
+                             'PC/GUISimpleLauncher.vcxproj': b'<Project/>'}),
+        'setuptools': ('84.0.0', {'launcher.c': b'/* synthetic C source */',
+                                 'tools/build_launchers.py': b'# synthetic builder'}),
+    }
+    if fault == 'missing_c':
+        del payloads['distlib'][1]['PC/launcher.c']
+    if fault == 'ambiguous_vendor':
+        payloads['pip'][1]['src/pip/_vendor/vendor.txt'] *= 2
+    if fault == 'wrong_vendor':
+        payloads['pip'][1]['src/pip/_vendor/vendor.txt'] = b'distlib==0.3.8\n'
+    rows = []
+    for name, (version, members) in payloads.items():
+        relative = f'python/{name}-{version}.tar.gz'
+        path = root / relative
+        with tarfile.open(path, 'w:gz') as archive:
+            for member, data in members.items():
+                info = tarfile.TarInfo(f'{name}-{version}/{member}')
+                if name == 'distlib' and member == 'PC/launcher.c' and fault == 'symlink':
+                    info.type = tarfile.SYMTYPE
+                    info.linkname = '/outside/canary'
+                    archive.addfile(info)
+                else:
+                    info.size = len(data)
+                    archive.addfile(info, io.BytesIO(data))
+                    if name == 'distlib' and member == 'PC/launcher.c' and fault == 'duplicate':
+                        archive.addfile(info, io.BytesIO(data))
+        rows.append(dict(path=relative, component=name, version=version,
+                         upstream_url='https://example.invalid/source',
+                         size=path.stat().st_size, sha256=check.file_digest(path)))
+    manifest = dict(schema='selected-upstream-source-delivery/1', files=rows,
+                    file_count=len(rows), bytes=sum(r['size'] for r in rows),
+                    release_approved=False, complete_corresponding_source=False)
+    pin = root / 'manifest.json'
+    pin.write_text(json.dumps(manifest))
+    index, _, _ = check.read_sources(root, check.file_digest(pin))
+    base = '/usr/local/lib/python3.12/site-packages/'
+    owners = [component(name, version, 'python', **{'syft:location:0:path':
+              base + name + '-' + version + '.dist-info/METADATA'})
+              for name, (version, _) in payloads.items() if name != 'distlib']
+    binaries = [component('Simple Launcher', '1.1.0.14', 'binary',
+                **{'syft:location:0:path': base + 'pip/_vendor/distlib/' + filename})
+                for filename in ('t32.exe', 't64.exe', 't64-arm.exe', 'w32.exe', 'w64.exe', 'w64-arm.exe')]
+    binaries += [component(name, 'UNKNOWN', 'binary', **{'syft:location:0:path':
+                 base + 'setuptools/' + name + '.exe'}) for name in
+                 ('cli', 'cli-32', 'cli-64', 'cli-arm64', 'gui', 'gui-32', 'gui-64', 'gui-arm64')]
+    return root, index, owners, binaries
+
+
+def test_verified_archives_resolve_all_fourteen_bundled_launchers_not_project(tmp_path):
+    root, index, owners, binaries = launcher_bundle(tmp_path)
+    evidence = check.ArchiveEvidence(root, index)
+    for binary in binaries:
+        result = check.bundled_candidate(binary, owners + binaries, evidence)
+        assert result['resolution']['kind'] == 'bundled_source_candidate'
+        assert result['files'] and result['resolution']['source_members']
+        assert result['source'] in ('distlib', 'setuptools')
+    assert check.bundled_candidate(component('local-aikey', '0.1.0', 'python'), owners, evidence) is None
+    # Without the image's owner and archive evidence there is still no name alias.
+    assert all(check.match(b, index)['status'] == 'needs_evidence' for b in binaries)
+
+
+@pytest.mark.parametrize('fault', ['missing_c', 'ambiguous_vendor', 'wrong_vendor',
+    'missing_owner', 'duplicate_owner', 'wrong_owner_metadata', 'foreign_path',
+    'bare_filename', 'wrong_binary_version', 'multiple_locations'])
+def test_bundled_resolution_never_guesses_missing_or_conflicting_evidence(tmp_path, fault):
+    root, index, owners, binaries = launcher_bundle(tmp_path, fault=fault)
+    binary = binaries[0]
+    if fault == 'missing_owner':
+        owners = owners[1:]
+    elif fault == 'duplicate_owner':
+        owners.append(deepcopy(owners[0]))
+    elif fault == 'wrong_owner_metadata':
+        owners[0]['properties'][-1]['value'] = '/foreign/METADATA'
+    elif fault == 'foreign_path':
+        binary['properties'][-1]['value'] = '/foreign/pip/_vendor/distlib/t32.exe'
+    elif fault == 'bare_filename':
+        binary['properties'][-1]['value'] = 't32.exe'
+    elif fault == 'wrong_binary_version':
+        binary['version'] = '1.1.0.15'
+    elif fault == 'multiple_locations':
+        binary['properties'].append({'name': 'syft:location:1:path', 'value': '/other/t32.exe'})
+    assert check.bundled_candidate(binary, owners + binaries, check.ArchiveEvidence(root, index)) is None
+
+
+@pytest.mark.parametrize('fault', ['symlink', 'duplicate', 'changed_bytes', 'duplicate_location'])
+def test_archive_and_location_ambiguity_fail_closed_without_extraction(tmp_path, fault):
+    root, index, owners, binaries = launcher_bundle(tmp_path, fault=fault)
+    if fault == 'changed_bytes':
+        (root / 'python/distlib-0.3.9.tar.gz').write_bytes(b'changed after manifest verification')
+    elif fault == 'duplicate_location':
+        binaries[0]['properties'].append(deepcopy(binaries[0]['properties'][-1]))
+    with pytest.raises(check.CheckError):
+        check.bundled_candidate(binaries[0], owners + binaries, check.ArchiveEvidence(root, index))
+    assert not (tmp_path / 'outside').exists()
+
+
+def project_archive(tmp_path, *, revision='a' * 40, fault=None):
+    import io
+    import tarfile
+    path = tmp_path / 'project-source.tar'
+    files = {'pyproject.toml': b'[project]\nname="local-aikey"\nversion="0.1.0"\n',
+             'LICENSE': b'synthetic license fixture', 'src/aikey/__init__.py': b'# fixture'}
+    if fault == 'missing_source':
+        del files['src/aikey/__init__.py']
+    with tarfile.open(path, 'w', format=tarfile.PAX_FORMAT, pax_headers={'comment': revision}) as archive:
+        for name, raw in files.items():
+            info = tarfile.TarInfo('../escape' if fault == 'traversal' and name == 'LICENSE' else name)
+            if fault == 'source_directory' and name == 'src/aikey/__init__.py':
+                info.type = tarfile.DIRTYPE
+                archive.addfile(info)
+            else:
+                info.size = len(raw)
+                archive.addfile(info, io.BytesIO(raw))
+            if fault == 'duplicate' and name == 'pyproject.toml':
+                archive.addfile(info, io.BytesIO(raw))
+    return path, check.file_digest(path)
+
+
+def test_project_source_requires_exact_separate_archive_revision_and_location(tmp_path):
+    archive, pin = project_archive(tmp_path)
+    project = check.read_project_archive(archive, pin, 'a' * 40)
+    assert project['source_modules'] == 1
+    for path in ('/app/src/local_aikey.egg-info/PKG-INFO',
+                 '/usr/local/lib/python3.12/site-packages/local_aikey-0.1.0.dist-info/METADATA'):
+        package = component('local-aikey', '0.1.0', 'python', **{'syft:location:0:path': path})
+        result = check.project_candidate(package, project, 'a' * 40)
+        assert result['resolution']['archive_sha256'] == pin and result['family'] == 'project'
+        assert check.project_candidate(package, project, 'b' * 40) is None
+        assert check.project_candidate(package, None, 'a' * 40) is None
+    package['version'] = '0.2.0'
+    assert check.project_candidate(package, project, 'a' * 40) is None
+    package['version'] = '0.1.0'
+    package['properties'][-1]['value'] = '/foreign/METADATA'
+    assert check.project_candidate(package, project, 'a' * 40) is None
+
+
+@pytest.mark.parametrize('fault', ['revision', 'bytes', 'missing_source', 'source_directory', 'duplicate', 'traversal'])
+def test_project_source_refuses_self_inconsistent_or_redirected_archive(tmp_path, fault):
+    archive, pin = project_archive(tmp_path, fault=fault)
+    if fault == 'bytes':
+        archive.write_bytes(archive.read_bytes() + b'changed')
+    with pytest.raises(check.CheckError):
+        check.read_project_archive(archive, pin, ('b' if fault == 'revision' else 'a') * 40)
+
+
+def test_project_archive_and_pin_must_be_supplied_together(tmp_path):
+    root, pin, _ = bundle(tmp_path)
+    with pytest.raises(check.CheckError, match='pin_required'):
+        check.review(root, pin, [], 'a' * 40, project_archive=tmp_path / 'source.tar')
