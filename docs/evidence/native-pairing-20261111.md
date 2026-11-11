@@ -53,3 +53,12 @@ The initial deep link with day bounds selected live video and is not counted as
 stored-playback success; native rewind and the observed past-time route supplied
 the actual recorded-player readbacks. This is sampled playback with the original
 adaptive recording policy, not uninterrupted recording at every timestamp.
+
+The previously independently attributed onboard-motion event from 5 November
+was read again after these operations: its native event/camera/type/start/end
+match the retained original exactly. This accepts preservation of that existing
+onboard result, not a newly triggered 7.4.96 onboard detection or all smart classes.
+Together with the earlier accepted inside/outside/zone-change evidence, the
+recorded playback and guarded settings lifecycle complete the documented #74
+maintenance workflow. Unguarded native UI reset and broader #28/#24 acceptance
+remain explicit limitations rather than being relabeled fixed controller behavior.
