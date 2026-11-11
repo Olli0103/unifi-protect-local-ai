@@ -26,7 +26,11 @@ The same module exposes the multipart description/tagging callback. After parsin
 
 Module **13944**, `ramInferenceSchema`, distinguishes a full tagging result from a description-only result. The description-only schema includes `cameraId`, `eventId`, `status`, and a nonempty `description`.
 
-There is a source contract discrepancy: AI Key 2.2.8's inspected VLM sender constructs a three-field result without `cameraId`. The prototype must preserve this difference explicitly and provide a separate receiver-aligned profile. The discrepancy alone is not a runtime rejection finding; the exact middleware behavior has not been exercised.
+The receiver-aligned profile must include the controller's required fields.
+Historical device-side sender internals are not reproduced as a source; see
+the research-history notice in [provenance](../legal/provenance.md) and the
+[interface source map](../legal/interface-sources.md). A synthetic sender
+profile is not evidence that a real controller accepts it.
 
 Module **60814**, `waitByEventIdAndSaveRecognizeAnything`, resolves the existing event and camera and checks the processor's camera-specific Recognize Anything settings. It serializes saves by event ID. Different handlers process descriptions, tagging, faces, and plates.
 
@@ -38,13 +42,13 @@ Module **5335**, `saveEventTagging`, handles the fuller result: it transforms ta
 
 Module **76776**, `visionToLanguage`, chooses a connected external AI processor, builds a short video request around a timestamp, and invokes module **41386**, `requestAi`. That sends a `RequestAI` job to the worker's `:7968/on_demand_inference` target and waits for a description through a controller-provided callback.
 
-This matches the on-demand service found in AI Key 2.2.8 and is a more focused first integration experiment than implementing all search storage. The result is returned to the caller. This function alone does not establish persistent event indexing or the corresponding native UI behavior.
+This controller-side target provides a focused integration contract independent of removed device-side implementation detail. The result is returned to the caller. This function alone does not establish persistent event indexing or the corresponding native UI behavior.
 
 ## Newer session-description path
 
 Module **42220** can dispatch description jobs to `:7968/describe`, with a controller task ID in the callback URL and image/video inputs. Module **68823** accepts a description result with optional labels and a description embedding. Its HTTP acknowledgement also precedes asynchronous handling.
 
-The independent search investigation traced the task ledger and storage requirements in [search-evidence.md](search-evidence.md). The inspected AI Key 2.2.8 VLM file does not implement this target. This is a profile difference; it does not by itself prove the installed combination is broken, since feature flags and other versions can select different paths.
+The independent search investigation traced the task ledger and storage requirements in [search-evidence.md](search-evidence.md). Different controller profiles may select different targets; feature flags and version differences need their own observations. No claim about device-firmware implementation is retained here.
 
 ## What this validates
 

@@ -1,4 +1,6 @@
-"""Read-only subset of the version-1 discovery contract in AI Key ubntbox.
+"""Read-only subset of the version-1 device discovery interface.
+
+Interface fact sources and unresolved observations: docs/legal/interface-sources.md.
 
 Only empty information queries and a query targeting our configured MAC are
 answered. No mutation opcode, credential, shell command, or device inventory is
@@ -63,11 +65,11 @@ def _string(value: str, label: str, limit: int) -> bytes:
 
 def build_discovery_response(info: dict, *, ip: str, hostname: str, adopted: bool,
                              command: int = 0, platform: str | None = None) -> bytes:
-    """Encode only fields traced in ubntbox 0.1.7's fill_info_response.
+    """Encode the supported discovery fields (see docs/legal/interface-sources.md).
 
-    sysid uses the firmware's little-endian 16-bit field. Header/TLV lengths,
-    uptime and the factory-default flag are big-endian. Platform is configurable
-    because firmware can override its board platform through custom.platform.
+    sysid is a little-endian 16-bit field. Header/TLV lengths, uptime and the
+    factory-default flag are big-endian. The caller may select a platform label.
+    Source attribution remains distinct from synthetic format validation.
     """
     if command not in (0, 4) or type(adopted) is not bool:
         raise ContractError("Unsupported discovery response")

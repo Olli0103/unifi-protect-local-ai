@@ -7,11 +7,9 @@ clean-room process has been established.
 
 ## Current evidence
 
-The repository records AI Key 2.2.8 ARM64 binary inspection and Protect 7.2.105
-JavaScript inspection in [adoption evidence](../evidence/adoption-evidence.md).
-The [research index](../evidence/README.md) also names AI Port controller and
-firmware research. The records distinguish interface findings from raw analysis
-artifacts. This PR adds no vendor package, binary, key, source extract or media.
+Early research in September 2026 included static inspection, including disassembly, of selected AI Key 2.2.8 network binaries and reading of AI Port 5.1.12 configuration files. Those details have been removed from this repository. The interface facts used by the implementation are mapped to the maintainer's own Protect installation, observation of the maintainer's own UniFi devices, live interoperability trials or public documentation in [interface sources](../legal/interface-sources.md). No vendor code, binaries, keys or firmware are included.
+
+**Mapping status: needs_evidence.** The mapping sentence in the requested notice above is a completion target, not a completed provenance attestation. WP2 must inventory the interface facts and explicitly retain unresolved observations. Historical public-controller package records are not silently relabelled as observations of the maintainer's installed version. This change grants no legal or release approval.
 
 The current tree and Git metadata are available for audit. Commit author labels
 are metadata, not proof of a legal rightsholder. Historical AI-assisted commits
@@ -19,10 +17,12 @@ also need the owner's review; do not rewrite attribution or add retroactive
 sign-offs to manufacture clearance. A review against vendor code and every
 historical dependency has not been completed here.
 
-## Research evidence to retain privately
+## Research metadata and maintainer records
 
-Create one record for each examined artifact, including AI Port firmware, rather
-than treating one authorization as covering all vendor software.
+Record existing acquisition/research metadata per examined artifact; do not
+open firmware or private analysis files to populate it. Further AI Key or
+AI Port firmware/binary analysis is prohibited for people and agents. Private
+retention or deletion decisions are reserved to the maintainer.
 
 | Field | Required record |
 | --- | --- |
@@ -46,8 +46,8 @@ all private agreements or third-party contributions.
 
 The remaining artifact-specific fields are `needs_evidence`. Do not invent purchases, permissions,
 authorship separation or a legal conclusion. Publish only a reference and review
-status after the owner supplies the proof. Retain detailed extracted functions,
-disassemblies and private records outside public Git and build contexts.
+status after the owner supplies the proof. Keep detailed private research out of public Git and build contexts. Do not
+open or reuse extracted functions or disassemblies for this work.
 
 ## Component origin mapping
 
@@ -63,6 +63,6 @@ Use the following as a starting inventory, then cover every release component.
 
 Keep protocol names, schemas and short necessary interface descriptions. Review
 public documentation for unnecessary vendor implementation detail, translated
-functions and copied text. The existing references and offsets are traceability
-records, not permission to reproduce their source. The current scan does not
+functions and copied text. Historical package references are traceability records, not permission to
+reproduce their source or proof of a new own-installation observation. The current scan does not
 substitute for this content comparison.

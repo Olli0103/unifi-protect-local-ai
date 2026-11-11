@@ -6,7 +6,9 @@ They are not literal deployment manifests, private network inventories or proof
 that anonymized example addresses were tested. Start with the
 [deployment guide](../deployment.md) for current installation instructions.
 
-These records describe the interface observations used by the implementation. They contain package references and hashes. They are not proof of permission to analyze firmware, a complete code-origin audit, or an organizationally separate clean-room process. Those questions remain open in the [provenance record](../legal/provenance.md).
+Early research in September 2026 included static inspection, including disassembly, of selected AI Key 2.2.8 network binaries and reading of AI Port 5.1.12 configuration files. Those details have been removed from this repository. The interface facts used by the implementation are mapped to the maintainer's own Protect installation, observation of the maintainer's own UniFi devices, live interoperability trials or public documentation in [interface sources](../legal/interface-sources.md). No vendor code, binaries, keys or firmware are included.
+
+**Mapping status: needs_evidence.** The mapping sentence in the requested notice above is a completion target, not a completed provenance attestation. WP2 must inventory the interface facts and explicitly retain unresolved observations. Historical public-controller package records are not silently relabelled as observations of the maintainer's installed version. This change grants no legal or release approval.
 
 - [Adoption investigation](adoption-evidence.md)
 - [Controller callbacks and saving](controller-evidence.md)
@@ -34,7 +36,7 @@ Synthetic protocol fixtures live in `tests/fixtures/compatibility/`. They contai
 
 Public source packages were AI Key 2.2.8 and Protect 7.2.105 with its matching services. Live trials covered selected behaviors on Protect 7.3.56 and 7.3.60. Three public metadata queries for 7.3.56 returned empty results on 22 September 2026. Do not treat the inspected package as either live-tested version.
 
-The records identify package-relative paths and local analysis artifacts. Vendor binaries and extracted source are not included in the distribution. Before any further investigation, establish authorized access, necessity, scope and applicable terms. A public download link and a matching hash do not establish those rights.
+No further AI Key or AI Port firmware or binary analysis is permitted by the project, including by agents. Use repository records, public documentation and maintainer-supplied observations of their own installation/devices. A public download link and matching hash do not establish source rights; existing static package records must not be relabelled as new own-installation observations.
 
 - [3 November local Key face model-space binding](face-model-space-20261103.md): explicit encoder identity, no silent legacy relabelling, fictional migration/refusal checks; no native rollout or quality claim.
 
