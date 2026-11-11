@@ -13,7 +13,7 @@ from .camera_inventory import InventoryError
 
 
 SCHEMA = "aikey-processing-status/1"
-_KEY = ("adopted", "connected", "search_connected", "queued", "active", "pending",
+_KEY = ("adopted", "connected", "search_connected", "search_queries", "queued", "active", "pending",
         "capacity", "ledger", "captions", "speech", "reverification", "deep",
         "inference_gate", "failure_notes", "caption_policy")
 _PORT = ("adopted", "control_connected", "active_streams", "streams_with_decoded_frames",
@@ -208,6 +208,24 @@ class ProcessingStatus:
             ("Search connected", "search_connected"), ("Queued jobs", "queued"),
             ("Active jobs (worker-reported)", "active"), ("Pending jobs", "pending"),
             ("Queue capacity", "capacity"), ("In-memory journal entries", "ledger"))])
+        search = r.get("search_queries") or {}
+        last = search.get("last") or {}
+        outcomes = {"not_observed": "No completed request observed in this process",
+                    "succeeded": "Last request succeeded (reply only)",
+                    "failed": "Last request failed"}
+        body += _table("AI Key search requests", [
+            ("Text replies completed", search.get("text_completed")),
+            ("Text requests failed", search.get("text_failed")),
+            ("Image replies completed", search.get("image_completed")),
+            ("Image requests failed", search.get("image_failed")),
+            ("Last completed request", outcomes.get(last.get("outcome"))),
+            ("Last request kind", last.get("kind")),
+            ("Last failure category", last.get("failure"))])
+        body += ("<p>Search connected reports only the controller transport. These counters and the "
+                 "last completed request belong to the current process, not backend readiness, "
+                 "native persistence or retrieval quality. Earlier failures remain counted after "
+                 "recovery. Older runtimes may not report a last outcome. Viewing this page "
+                 "does not request model inference.</p>")
         gate = r.get("inference_gate") or {}
         body += _table("AI Key model queue", [(label, gate.get(key)) for label, key in (
             ("Inference capacity", "capacity"), ("Active inference", "active"),

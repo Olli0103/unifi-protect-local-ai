@@ -49,6 +49,10 @@ async def scenario(output, name, viewport, executable):
         site.aiport.snapshot()
         values = {
             "aikey": {"service": "local-aikey", "device": {"adopted": True, "connected": True},
+                "search": {"connected": True, "queries": 3, "query_failures": 2,
+                    "image_queries": 0, "image_failures": {},
+                    "last_query": {"kind": "text", "outcome": "failed", "failure": "text_failed"},
+                    "private_query": "CANARY-PRIVATE-QUERY"},
                 "worker": {"queued": 0, "active": 1, "pending": 1, "capacity": 20, "ledger": 32,
                     "captions": {"admitted": 5, "exhausted": 2, "deferred_fair_share": 1},
                     "caption_policy": {"mode": "metered",
@@ -139,6 +143,14 @@ async def scenario(output, name, viewport, executable):
                     await key_summary.focus()
                     await page.keyboard.press("Enter")
                     await expect(page.get_by_text("Metered continuous captions", exact=True)).to_be_visible()
+                    search_table = page.get_by_role("table", name="AI Key search requests", exact=True)
+                    for label in ("Text replies completed 3", "Text requests failed 2",
+                                  "Image replies completed 0", "Image requests failed 0",
+                                  "Last completed request Last request failed", "Last failure category text_failed"):
+                        await expect(search_table.get_by_role("row", name=label, exact=True)).to_be_visible()
+                    await expect(page.get_by_text("Search connected reports only the controller transport.", exact=False)).to_be_visible()
+                    await page.screenshot(path=str(output / (name + "-search-failure.png")), full_page=True)
+                    assert "CANARY" not in await page.content()
                     budget_table = page.get_by_role("table", name="Running caption policy and sampled budget", exact=True)
                     await expect(budget_table.get_by_role("row", name="Unreserved slots at sample time 7", exact=True)).to_be_visible()
                     await expect(page.get_by_text("A sampled unreserved slot is not an admission promise", exact=False)).to_be_visible()
@@ -147,10 +159,16 @@ async def scenario(output, name, viewport, executable):
                     values["aikey"]["worker"]["caption_policy"] = {
                         "mode": "unmetered", "scope": "continuous_captions_not_speech_port_or_all_paid_calls",
                         "budget": None}
+                    values["aikey"]["search"]["queries"] = 4
+                    values["aikey"]["search"]["last_query"] = {
+                        "kind": "text", "outcome": "succeeded", "failure": None}
                     site.runtime_observer.cache.clear()
                     await page.get_by_role("link", name="Refresh", exact=True).click()
                     await page.locator("summary", has_text="Processing details for AI Key").click()
                     await expect(page.get_by_text("Explicit unmetered continuous captions", exact=True)).to_be_visible()
+                    search_table = page.get_by_role("table", name="AI Key search requests", exact=True)
+                    await expect(search_table.get_by_role("row", name="Last completed request Last request succeeded (reply only)", exact=True)).to_be_visible()
+                    await expect(search_table.get_by_role("row", name="Text requests failed 2", exact=True)).to_be_visible()
                     summary = page.locator("summary", has_text="Processing details for AI Port")
                     await summary.focus()
                     await page.keyboard.press("Enter")
@@ -217,6 +235,7 @@ async def scenario(output, name, viewport, executable):
                     result = {"viewport": viewport, "browser_version": context.browser.version,
                         "zero_unknown_and_uncapped_distinct": True, "keyboard_region_and_details": True,
                         "metered_sample_and_explicit_unmetered_distinct": True,
+                        "connected_search_can_fail_then_recover_without_erasing_failures": True,
                         "camera_names_require_matching_runtime_order_and_inventory": True,
                         "zone_counts_unknown_zero_and_enabled_types": True,
                         "stale_inventory_preserves_counters_without_names": True,

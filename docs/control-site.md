@@ -869,6 +869,17 @@ profile details with Enter. The same data is available to authenticated clients
 at `GET /api/admin/v1/processing` (`processing_schema: aikey-processing-status/1`).
 Neither route accepts options or implements a POST/action.
 
+For the Key, **Search connected** describes the controller transport, not whether
+the selected encoder can answer. The separate **AI Key search requests** table
+shows completed text/image replies, failed requests and the last completed
+request outcome. A later success does not erase earlier failure counters.
+All observations are process-scoped; old runtimes without the new observation
+show an unknown last outcome. A successful reply is not proof of native result
+persistence, model readiness for the next request or retrieval relevance. These
+fields contain only counters and fixed outcome/category labels, never query
+text, media URLs or backend error bodies. Opening the page triggers no model
+inference. See [the native failure and recovery evidence](evidence/search-query-status-20261111.md).
+
 This uses the existing explicitly configured, CA-verified and leaf-pinned HTTPS
 health peers, byte/deadline bounds, concurrency limit and two-second cache. It
 does not discover peers, import browser sessions, fetch media, call a

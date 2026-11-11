@@ -280,3 +280,33 @@ def test_postgres_script_syntax_and_address_rejection(tmp_path):
         }, capture_output=True, text=True)
         assert result.returncode != 0
         assert "IPv4" in result.stderr or "CONSOLE_IP" in result.stderr
+
+
+async def test_query_failure_is_visible_while_transport_connected_and_success_recovers(tmp_path, embedding_api):
+    url, _ = embedding_api
+    service = SearchService({'embeddings': {'backend': 'http', 'base_url': url}}, tmp_path)
+    service.status['connected'] = True
+    assert service.status['last_query']['outcome'] == 'not_observed'
+    original = service.embeddings.encode_queries
+    async def fail(_):
+        raise EmbeddingError('CANARY-private-backend-detail')
+    service.embeddings.encode_queries = fail
+    def wire(action, body):
+        return encode_message({'id': 'synthetic-status', 'type': 'request', 'timestamp': 1,
+                               'action': action}, body)
+    request = wire('NL_PARSE', {'querySentence': 'synthetic object', 'model': 'multilingual-e5-small'})
+    try:
+        failed = decode_message(await service.handle_message(request))
+        assert failed.header['errorCode'] == 1 and failed.body == {}
+        assert service.status['connected'] is True and service.status['last_error'] is None
+        assert service.status['last_query'] == {'kind': 'text', 'outcome': 'failed', 'failure': 'text_failed'}
+        assert 'CANARY' not in json.dumps(service.status)
+        await service.handle_message(wire('echo', {'hello': 'synthetic'}))
+        assert service.status['last_query']['outcome'] == 'failed'
+        service.embeddings.encode_queries = original
+        succeeded = decode_message(await service.handle_message(request))
+        assert succeeded.header['errorCode'] == 0 and len(succeeded.body['txtEmbed']) == 384
+        assert service.status['last_query'] == {'kind': 'text', 'outcome': 'succeeded', 'failure': None}
+        assert service.status['query_failures'] == 1 and service.status['queries'] == 1
+    finally:
+        await service.stop()

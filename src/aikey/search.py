@@ -24,6 +24,7 @@ import uuid
 import aiohttp
 
 from . import clip
+from .search_status import record_query, image_failure
 from .provider_network import ProviderAddressError, ProviderConnector, validate_provider_host
 from .protocol import ContractError, decode_message, encode_message
 from .device import VerifiedConnector
@@ -406,7 +407,8 @@ class SearchService:
         self.status: dict[str, Any] = {"connected": False, "profile": self.profile, "last_error": None,
                                        "queries": 0, "query_failures": 0, "ignored_frames": 0,
                                        "image_queries": 0, "image_failures": {},
-                                       "object_filters": 0, "time_filters": 0}
+                                       "object_filters": 0, "time_filters": 0,
+                                       "last_query": {"kind": None, "outcome": "not_observed", "failure": None}}
 
     def _url(self) -> str:
         controller = self.config.get("controller", {})
@@ -692,12 +694,17 @@ class SearchService:
                           "dim": DIMENSIONS, "exact_match": False}
                 self.status["queries"] += 1
         except ImageSearchError as exc:
+            record_query(self.status, "image", image_failure(exc.category))
             failures = self.status["image_failures"]
             failures[exc.category] = failures.get(exc.category, 0) + 1
             reply.update(error="Image search failed", errorCode=1)
             result = {}
         except EmbeddingError as exc:
+            record_query(self.status, "text", "text_failed")
             self.status["query_failures"] += 1
             reply.update(error=str(exc), errorCode=1)
             result = {}
-        return encode_message(reply, result)
+        wire_reply = encode_message(reply, result)
+        if reply["errorCode"] == 0 and header.get("action") in {"NL_PARSE", "IMAGE_SEARCH"}:
+            record_query(self.status, "image" if header["action"] == "IMAGE_SEARCH" else "text")
+        return wire_reply

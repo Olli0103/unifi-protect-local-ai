@@ -562,6 +562,7 @@ async def test_search_by_image_returns_a_local_clip_vector(controller, tmp_path)
             assert url == uri and headers["x-ident"] == "0200000000A1"
         assert controller.clip_requests[-1] == {"jpeg": True, "regions": [[0.0, 0.0, 1.0, 1.0]]}
         assert service.status["image_queries"] == 2 and service.status["image_failures"] == {}
+        assert service.status["last_query"] == {"kind": "image", "outcome": "succeeded", "failure": None}
     finally:
         service._media_session = None
         await service.stop()
@@ -585,6 +586,7 @@ async def test_search_by_image_fetches_only_the_console_upload_route(tmp_path, u
     response = decode_message(await service.handle_message(image_search(uri)))
     assert response.header["errorCode"] == 1 and response.body == {}
     assert service._media_session.requests == [] and service.status["image_failures"] == {category: 1}
+    assert service.status["last_query"] == {"kind": "image", "outcome": "failed", "failure": "image_uri"}
 
 
 async def test_search_by_image_refuses_non_images_and_http_errors(tmp_path):

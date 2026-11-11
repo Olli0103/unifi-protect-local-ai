@@ -11,7 +11,10 @@ from test_control_site_secrets import signed_in, assert_private_page
 
 
 def key_processing():
-    return {**key_health(), "worker": {"queued": 0, "active": 1, "pending": 1,
+    return {**key_health(), "search": {"connected": True, "queries": 3, "query_failures": 2,
+        "image_queries": 0, "image_failures": {"CANARY-private-image-error": 4},
+        "last_query": {"kind": "text", "outcome": "failed", "failure": "text_failed"},
+        "private": "CANARY-query-sentence"}, "worker": {"queued": 0, "active": 1, "pending": 1,
         "capacity": 20, "ledger": 31,
         "captions": {"admitted": 7, "exhausted": 2, "deferred_fair_share": 3},
         "caption_policy": {"mode": "metered",
@@ -69,6 +72,9 @@ async def test_processing_api_and_page_share_pinned_observations_without_private
         rows = data["profiles"]
         assert [row["profile"] for row in rows] == ["aikey", "aiport"]
         assert rows[0]["runtime"]["queued"] == 0 and rows[0]["runtime"]["captions"]["admitted"] == 7
+        assert rows[0]["runtime"]["search_queries"]["text_failed"] == 2
+        assert rows[0]["runtime"]["search_queries"]["image_failed"] == 4
+        assert rows[0]["runtime"]["search_queries"]["last"]["outcome"] == "failed"
         assert rows[0]["runtime"]["failure_notes"]["current_process"]["written"] == 4
         assert rows[0]["runtime"]["caption_policy"]["budget"]["remaining_reservations"] == 7
         assert rows[1]["runtime"]["inference"]["api_request_cap"] is None
@@ -82,7 +88,8 @@ async def test_processing_api_and_page_share_pinned_observations_without_private
         assert_private_page(page, html)
         for required in ("Unknown is not zero", "not failed jobs", "12 new attempts",
                          "Not configured", "Runtime camera 1", "not saved inventory names",
-                         "not event, object, paid-request or quality counts"):
+                         "not event, object, paid-request or quality counts", "Last request failed",
+                         "controller transport", "does not request model inference"):
             assert required in html
         assert "CANARY" not in html and str(tmp_path) not in html
         assert "Metered continuous captions" in html and "not an admission promise" in html
@@ -227,3 +234,37 @@ async def test_corrupt_health_keeps_other_profile_available_and_never_echoes_pri
             await peer.close()
         await client.close()
         await server.close()
+
+
+def test_legacy_search_counts_remain_available_with_unknown_last_outcome():
+    value = key_health()
+    value['search'].update(queries=5, query_failures=7, image_queries=0, image_failures={})
+    result = _normalize('aikey', value)
+    assert result['search_connected'] is True
+    assert result['search_queries'] == {'text_completed': 5, 'text_failed': 7,
+        'image_completed': 0, 'image_failed': 0, 'last': None}
+
+
+@pytest.mark.parametrize('bad', [
+    {'kind': 'text', 'outcome': 'failed', 'failure': 'CANARY-private-error'},
+    {'kind': 'image', 'outcome': 'failed', 'failure': 'text_failed'},
+    {'kind': 'text', 'outcome': 'succeeded', 'failure': 'text_failed'},
+    {'kind': None, 'outcome': 'not_observed', 'failure': 'text_failed'},
+    {'kind': [], 'outcome': 'failed', 'failure': 'text_failed'},
+    {'kind': 'text', 'outcome': 'failed', 'failure': []},
+    {'kind': 'text', 'outcome': 'failed', 'failure': 'text_failed', 'query': 'CANARY'},
+])
+def test_search_observation_rejects_malformed_or_private_values(bad):
+    value = key_health()
+    value['search']['last_query'] = bad
+    with pytest.raises(ValueError):
+        _normalize('aikey', value)
+
+
+@pytest.mark.parametrize('bad', [{'uri': None}, {'uri': -1}, {'uri': True}, {'uri': 'CANARY'},
+                               {'a': 2**63 - 1, 'b': 1}, []])
+def test_search_failure_totals_are_strict_bounded_counts(bad):
+    value = key_health()
+    value['search']['image_failures'] = bad
+    with pytest.raises(ValueError):
+        _normalize('aikey', value)

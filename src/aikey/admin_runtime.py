@@ -101,6 +101,23 @@ def _normalize(kind, value):
         device, worker, search = (_object(value, key) for key in ("device", "worker", "search"))
         result = {"adopted": _flag(device, "adopted"), "connected": _flag(device, "connected"),
                   "search_connected": _flag(search, "connected")}
+        from .search_status import last_query
+        failed_images = search.get("image_failures")
+        if failed_images is not None and not isinstance(failed_images, dict):
+            raise ValueError("Invalid image query failure counts")
+        counts = ([_count(failed_images, key) for key in failed_images]
+                  if failed_images is not None else None)
+        if counts is not None and any(value is None for value in counts):
+            raise ValueError("Invalid image query failure count")
+        image_failed = sum(counts) if counts is not None else None
+        if image_failed is not None and image_failed > 2**63 - 1:
+            raise ValueError("Invalid total image query failures")
+        result["search_queries"] = {
+            "text_completed": _count(search, "queries"),
+            "text_failed": _count(search, "query_failures"),
+            "image_completed": _count(search, "image_queries"),
+            "image_failed": image_failed,
+            "last": last_query(search)}
         result.update({name: _count(worker, name) for name in ("queued", "active", "pending", "ledger", "capacity")})
         captions = _object(worker, "captions") if "captions" in worker else None
         result["captions"] = ({name: _count(captions, name) for name in (
