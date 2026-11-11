@@ -136,6 +136,8 @@ async def test_inventory_outage_still_allows_explicit_disable_all_but_not_undo(p
     response = await client.get('/camera-pairing')
     html = await response.text()
     assert response.status == 200 and 'Review disabling all saved local capture' in html
+    assert 'Re-pairing may reset object/audio selections and zone classes.' in html
+    assert 'guarded host pairing workflow' in html
     fields = form(html, '/camera-pairing/preview')
     response = await client.post('/camera-pairing/preview', data=fields, headers=headers)
     assert response.status == 200, await response.text()
