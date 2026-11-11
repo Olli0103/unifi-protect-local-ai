@@ -173,3 +173,108 @@ def test_matrix_tampering_refused(tmp_path, fault):
         path.write_text(json.dumps(value))
     with pytest.raises(check.CheckError):
         check.review(root, sha, directories, revision)
+
+
+def launcher_bundle(tmp_path, *, fault=None):
+    import io
+    import tarfile
+    root = tmp_path / 'launchers'
+    (root / 'python').mkdir(parents=True)
+    payloads = {
+        'pip': ('25.0.1', {'src/pip/_vendor/vendor.txt': b'distlib==0.3.9\n'}),
+        'distlib': ('0.3.9', {'PC/launcher.c': b'/* synthetic C source */',
+                             'PC/CLISimpleLauncher.vcxproj': b'<Project/>',
+                             'PC/GUISimpleLauncher.vcxproj': b'<Project/>'}),
+        'setuptools': ('84.0.0', {'launcher.c': b'/* synthetic C source */',
+                                 'tools/build_launchers.py': b'# synthetic builder'}),
+    }
+    if fault == 'missing_c':
+        del payloads['distlib'][1]['PC/launcher.c']
+    if fault == 'ambiguous_vendor':
+        payloads['pip'][1]['src/pip/_vendor/vendor.txt'] *= 2
+    if fault == 'wrong_vendor':
+        payloads['pip'][1]['src/pip/_vendor/vendor.txt'] = b'distlib==0.3.8\n'
+    rows = []
+    for name, (version, members) in payloads.items():
+        relative = f'python/{name}-{version}.tar.gz'
+        path = root / relative
+        with tarfile.open(path, 'w:gz') as archive:
+            for member, data in members.items():
+                info = tarfile.TarInfo(f'{name}-{version}/{member}')
+                if name == 'distlib' and member == 'PC/launcher.c' and fault == 'symlink':
+                    info.type = tarfile.SYMTYPE
+                    info.linkname = '/outside/canary'
+                    archive.addfile(info)
+                else:
+                    info.size = len(data)
+                    archive.addfile(info, io.BytesIO(data))
+                    if name == 'distlib' and member == 'PC/launcher.c' and fault == 'duplicate':
+                        archive.addfile(info, io.BytesIO(data))
+        rows.append(dict(path=relative, component=name, version=version,
+                         upstream_url='https://example.invalid/source',
+                         size=path.stat().st_size, sha256=check.file_digest(path)))
+    manifest = dict(schema='selected-upstream-source-delivery/1', files=rows,
+                    file_count=len(rows), bytes=sum(r['size'] for r in rows),
+                    release_approved=False, complete_corresponding_source=False)
+    pin = root / 'manifest.json'
+    pin.write_text(json.dumps(manifest))
+    index, _, _ = check.read_sources(root, check.file_digest(pin))
+    base = '/usr/local/lib/python3.12/site-packages/'
+    owners = [component(name, version, 'python', **{'syft:location:0:path':
+              base + name + '-' + version + '.dist-info/METADATA'})
+              for name, (version, _) in payloads.items() if name != 'distlib']
+    binaries = [component('Simple Launcher', '1.1.0.14', 'binary',
+                **{'syft:location:0:path': base + 'pip/_vendor/distlib/' + filename})
+                for filename in ('t32.exe', 't64.exe', 't64-arm.exe', 'w32.exe', 'w64.exe', 'w64-arm.exe')]
+    binaries += [component(name, 'UNKNOWN', 'binary', **{'syft:location:0:path':
+                 base + 'setuptools/' + name + '.exe'}) for name in
+                 ('cli', 'cli-32', 'cli-64', 'cli-arm64', 'gui', 'gui-32', 'gui-64', 'gui-arm64')]
+    return root, index, owners, binaries
+
+
+def test_verified_archives_resolve_all_fourteen_bundled_launchers_not_project(tmp_path):
+    root, index, owners, binaries = launcher_bundle(tmp_path)
+    evidence = check.ArchiveEvidence(root, index)
+    for binary in binaries:
+        result = check.bundled_candidate(binary, owners + binaries, evidence)
+        assert result['resolution']['kind'] == 'bundled_source_candidate'
+        assert result['files'] and result['resolution']['source_members']
+        assert result['source'] in ('distlib', 'setuptools')
+    assert check.bundled_candidate(component('local-aikey', '0.1.0', 'python'), owners, evidence) is None
+    # Without the image's owner and archive evidence there is still no name alias.
+    assert all(check.match(b, index)['status'] == 'needs_evidence' for b in binaries)
+
+
+@pytest.mark.parametrize('fault', ['missing_c', 'ambiguous_vendor', 'wrong_vendor',
+    'missing_owner', 'duplicate_owner', 'wrong_owner_metadata', 'foreign_path',
+    'bare_filename', 'wrong_binary_version', 'multiple_locations'])
+def test_bundled_resolution_never_guesses_missing_or_conflicting_evidence(tmp_path, fault):
+    root, index, owners, binaries = launcher_bundle(tmp_path, fault=fault)
+    binary = binaries[0]
+    if fault == 'missing_owner':
+        owners = owners[1:]
+    elif fault == 'duplicate_owner':
+        owners.append(deepcopy(owners[0]))
+    elif fault == 'wrong_owner_metadata':
+        owners[0]['properties'][-1]['value'] = '/foreign/METADATA'
+    elif fault == 'foreign_path':
+        binary['properties'][-1]['value'] = '/foreign/pip/_vendor/distlib/t32.exe'
+    elif fault == 'bare_filename':
+        binary['properties'][-1]['value'] = 't32.exe'
+    elif fault == 'wrong_binary_version':
+        binary['version'] = '1.1.0.15'
+    elif fault == 'multiple_locations':
+        binary['properties'].append({'name': 'syft:location:1:path', 'value': '/other/t32.exe'})
+    assert check.bundled_candidate(binary, owners + binaries, check.ArchiveEvidence(root, index)) is None
+
+
+@pytest.mark.parametrize('fault', ['symlink', 'duplicate', 'changed_bytes', 'duplicate_location'])
+def test_archive_and_location_ambiguity_fail_closed_without_extraction(tmp_path, fault):
+    root, index, owners, binaries = launcher_bundle(tmp_path, fault=fault)
+    if fault == 'changed_bytes':
+        (root / 'python/distlib-0.3.9.tar.gz').write_bytes(b'changed after manifest verification')
+    elif fault == 'duplicate_location':
+        binaries[0]['properties'].append(deepcopy(binaries[0]['properties'][-1]))
+    with pytest.raises(check.CheckError):
+        check.bundled_candidate(binaries[0], owners + binaries, check.ArchiveEvidence(root, index))
+    assert not (tmp_path / 'outside').exists()

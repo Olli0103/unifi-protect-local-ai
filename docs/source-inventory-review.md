@@ -161,3 +161,48 @@ rebuild or origin/rights clearance. The automated checker intentionally keeps
 these records unresolved; no name-only alias or blanket exemption was added.
 The extra distlib archive is retained separately with its upstream digest and
 receipt; it does not silently change the existing 761-file manifest.
+
+
+## Automatic bundled-source resolution
+
+The checker now resolves the 14 observed launcher records through their exact
+SBOM locations and a unique installed Python owner, not through binary-name
+aliases. Only the observed Python 3.12 site-packages layout is admitted:
+
+- Six exact pip/distlib executable paths, `Simple Launcher` version 1.1.0.14.
+  The image must contain exactly one pip distribution with its matching
+  versioned metadata location. Its verified source archive must contain one
+  unambiguous `distlib==VERSION` vendor pin. That exact distlib source archive
+  must contain regular, nonempty C source and both CLI/GUI project files.
+- Eight exact setuptools executable paths, with their observed `UNKNOWN`
+  scanner version. A unique installed setuptools owner and its matching
+  versioned metadata location are required. That exact source archive must
+  contain regular C source and the launcher build script.
+
+All archives must already belong to the hash-pinned source manifest. Source
+bytes are rechecked when reading members. Archive size, declared uncompressed
+extent, member count and selected member size are bounded; duplicate selected
+members and links are refused. No archive is extracted to the filesystem and
+no package, compiler or build script is executed. Missing or conflicting owner,
+path, vendor version or source members never become a guessed candidate.
+
+Resolved rows retain the binary identity and location, owner/version, selected
+source archive/member paths and supporting vendor archive. They remain
+`archive_candidate`, **not** proof that the C source built the included PE file.
+License, patches, build correspondence and release gates are unchanged.
+
+An actual replay against the authenticated PR311 four-image inventories and
+the separately pinned 764-file source collection yields:
+
+| Architecture | Profile | Archive candidates | Still needs evidence |
+| --- | --- | ---: | ---: |
+| AMD64 | AI Key | 343 | 2 |
+| AMD64 | AI Port | 343 | 2 |
+| ARM64 | AI Key | 339 | 2 |
+| ARM64 | AI Port | 339 | 2 |
+
+The remaining two records per image are project build-tree and installed
+metadata. They are not assigned a third-party source archive. The report still
+exits 1, and `complete_corresponding_source` and `release_approved` remain false.
+No input receipt or old failed result is rewritten. These retained image
+inventories qualify their embedded revision, not a future image build.

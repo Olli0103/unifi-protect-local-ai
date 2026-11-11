@@ -1,15 +1,17 @@
 """Offline source-archive candidate matching; never a corresponding-source clearance.
 
-No network, extraction, package execution, publication or approval mutation.
+No network, filesystem extraction, package execution, publication or approval mutation.
 """
 from __future__ import annotations
 
 import argparse
 from collections import Counter, defaultdict
 import hashlib
+import io
 import json
 from pathlib import Path
 import re
+import tarfile
 
 from image_sbom_check import CheckError, json_file, read_license_review, require
 
@@ -34,6 +36,12 @@ def file_digest(path):
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
+class SourceIndex(defaultdict):
+    def __init__(self):
+        super().__init__(list)
+        self.digests = {}
+
+
 def read_sources(root, expected_digest):
     require(HEX.fullmatch(expected_digest) is not None, "source_digest_required")
     manifest_path = regular(root, "manifest.json")
@@ -46,7 +54,7 @@ def read_sources(root, expected_digest):
     files = manifest["files"]
     require(isinstance(files, list) and 0 < len(files) <= 10000
             and len(files) == manifest["file_count"], "source_manifest_count_refused")
-    paths, total, index = set(), 0, defaultdict(list)
+    paths, total, index = set(), 0, SourceIndex()
     for row in files:
         require(isinstance(row, dict) and
                 set(row) == {"path", "component", "version", "upstream_url", "sha256", "size"},
@@ -64,6 +72,7 @@ def read_sources(root, expected_digest):
                 "source_family_refused")
         name = normalized(row["component"]) if family == "python" else row["component"]
         index[family, name, row["version"]].append(row["path"])
+        index.digests[row["path"]] = row["sha256"]
         paths.add(row["path"])
         total += row["size"]
     require(total == manifest["bytes"], "source_manifest_size_refused")
@@ -83,6 +92,113 @@ def properties(component):
             result[key] = prop["value"]
     return result
 
+
+
+class ArchiveEvidence:
+    """Read only bounded, regular source members from already hash-verified archives."""
+
+    def __init__(self, root, index):
+        self.root, self.index, self.cache = root, index, {}
+
+    def member(self, name, version, member):
+        if re.fullmatch(r"[A-Za-z0-9._+-]{1,80}", version) is None:
+            return None
+        paths = self.index.get(("python", name, version), [])
+        if len(paths) != 1 or not paths[0].endswith(".tar.gz"):
+            return None
+        key = (paths[0], member)
+        path = regular(self.root, paths[0])
+        require(path.stat().st_size <= 64 * 1024 * 1024, "source_archive_size_refused")
+        require(file_digest(path) == self.index.digests[paths[0]], "source_bytes_changed")
+        if key not in self.cache:
+            found = []
+            with path.open("rb") as stream:
+                snapshot = stream.read(64 * 1024 * 1024 + 1)
+            require(len(snapshot) <= 64 * 1024 * 1024, "source_archive_size_refused")
+            require(hashlib.sha256(snapshot).hexdigest() == self.index.digests[paths[0]],
+                    "source_bytes_changed")
+            try:
+                with tarfile.open(fileobj=io.BytesIO(snapshot), mode="r:gz") as archive:
+                    for number, entry in enumerate(archive):
+                        require(number < 100000 and entry.offset_data + entry.size <= 128 * 1024 * 1024,
+                                "source_archive_member_limit")
+                        if entry.name == member:
+                            require(entry.isfile() and 0 < entry.size <= 2 * 1024 * 1024,
+                                    "source_archive_member_refused")
+                            found.append(archive.extractfile(entry).read(entry.size + 1))
+                require(len(found) <= 1, "source_archive_member_ambiguous")
+            except (tarfile.TarError, EOFError):
+                raise CheckError("source_archive_unreadable") from None
+            require(file_digest(path) == self.index.digests[paths[0]], "source_bytes_changed")
+            self.cache[key] = (paths[0], found[0]) if found else None
+        return self.cache[key]
+
+
+def locations(component):
+    values = {}
+    for prop in component.get("properties", []):
+        key = prop["name"]
+        if re.fullmatch(r"syft:location:[0-9]+:path", key):
+            require(key not in values and isinstance(prop["value"], str),
+                    "source_package_locations_ambiguous")
+            values[key] = prop["value"]
+    return list(values.values())
+
+
+def bundled_candidate(component, components, evidence):
+    """Exact observed launcher paths plus owner/version/source members, not aliases."""
+    base = "/usr/local/lib/python3.12/site-packages/"
+    paths = locations(component)
+    if len(paths) != 1:
+        return None
+    path = paths[0]
+    distlib_names = {"t32.exe", "t64.exe", "t64-arm.exe", "w32.exe", "w64.exe", "w64-arm.exe"}
+    setuptools_names = {prefix + suffix for prefix in ("cli", "gui")
+                        for suffix in (".exe", "-32.exe", "-64.exe", "-arm64.exe")}
+    if (component["name"] == "Simple Launcher" and component["version"] == "1.1.0.14"
+            and path.startswith(base + "pip/_vendor/distlib/")
+            and path.removeprefix(base + "pip/_vendor/distlib/") in distlib_names):
+        owner = "pip"
+    elif (component["name"] + ".exe" in setuptools_names and component["version"] == "UNKNOWN"
+          and path == base + "setuptools/" + component["name"] + ".exe"):
+        owner = "setuptools"
+    else:
+        return None
+    owners = [c for c in components if c["name"] == owner
+              and properties(c).get("syft:package:type") == "python"]
+    if len(owners) != 1:
+        return None
+    version = owners[0]["version"]
+    if (not isinstance(version, str) or re.fullmatch(r"[A-Za-z0-9._+-]{1,80}", version) is None
+            or base + owner + "-" + version + ".dist-info/METADATA" not in locations(owners[0])):
+        return None
+    dependencies = []
+    if owner == "pip":
+        vendor = evidence.member(owner, version, f"pip-{version}/src/pip/_vendor/vendor.txt")
+        if vendor is None:
+            return None
+        try:
+            matches = re.findall(r"^distlib==([A-Za-z0-9._+-]{1,80})$", vendor[1].decode("utf-8"), re.M)
+        except UnicodeDecodeError:
+            raise CheckError("source_vendor_manifest_unreadable") from None
+        if len(matches) != 1:
+            return None
+        source, source_version = "distlib", matches[0]
+        members = [f"distlib-{source_version}/PC/launcher.c",
+                   f"distlib-{source_version}/PC/CLISimpleLauncher.vcxproj",
+                   f"distlib-{source_version}/PC/GUISimpleLauncher.vcxproj"]
+        dependencies.append(vendor[0])
+    else:
+        source, source_version = owner, version
+        members = [f"setuptools-{version}/launcher.c", f"setuptools-{version}/tools/build_launchers.py"]
+    records = [evidence.member(source, source_version, member) for member in members]
+    if any(record is None for record in records):
+        return None
+    return dict(source=source, source_version=source_version, family="python",
+                files=sorted({record[0] for record in records}),
+                resolution={"kind": "bundled_source_candidate", "owner": owner,
+                            "owner_version": version, "binary_location": path,
+                            "source_members": members, "supporting_archives": dependencies})
 
 def match(component, index):
     props = properties(component)
@@ -106,7 +222,7 @@ def match(component, index):
                 status="archive_candidate" if candidates else "needs_evidence")
 
 
-def inspect_image(directory, profile, inventory, index, expected_revision):
+def inspect_image(directory, profile, inventory, index, expected_revision, evidence):
     receipt = inventory["profiles"][profile]
     require(receipt["schema"] == "aikey-image-inventory/2"
             and receipt["profile"] == profile
@@ -131,7 +247,14 @@ def inspect_image(directory, profile, inventory, index, expected_revision):
     require(len(components) == receipt["package_count"]
             and len({c["bom-ref"] for c in components}) == len(components),
             "source_package_count_refused")
-    rows = [match(c, index) for c in components]
+    rows = []
+    for component in components:
+        row = match(component, index)
+        if row["type"] == "binary" and row["status"] == "needs_evidence":
+            candidate = bundled_candidate(component, components, evidence)
+            if candidate is not None:
+                row.update(candidate, status="archive_candidate")
+        rows.append(row)
     return dict(profile=profile, architecture=receipt["architecture"],
                 revision=receipt["revision"], image_id=receipt["image_id"],
                 sbom_sha256=receipt["sbom_sha256"],
@@ -142,6 +265,7 @@ def inspect_image(directory, profile, inventory, index, expected_revision):
 def review(source_root, expected_digest, directories, expected_revision):
     require(REV.fullmatch(expected_revision) is not None, "source_revision_required")
     index, count, size = read_sources(source_root, expected_digest)
+    evidence = ArchiveEvidence(source_root, index)
     images, arches = [], set()
     for directory in directories:
         inventory = json_file(regular(directory, "image-inventory.json"))
@@ -157,14 +281,14 @@ def review(source_root, expected_digest, directories, expected_revision):
                 "source_inventory_refused")
         arches.add(inventory["architecture"])
         for profile in ("aikey", "aiport"):
-            images.append(inspect_image(directory, profile, inventory, index, expected_revision))
+            images.append(inspect_image(directory, profile, inventory, index, expected_revision, evidence))
     require(arches == {"amd64", "arm64"}, "source_architecture_matrix_incomplete")
     current = all(i["current_revision"] for i in images)
     return dict(schema="aikey-source-inventory-review/1", expected_revision=expected_revision,
                 manifest_sha256=expected_digest, source_files_verified=count,
                 source_bytes_verified=size, current_revision=current, images=images,
                 complete_corresponding_source=False, release_approved=False,
-                limits=["Archive candidates are name/version matches, not binary reproduction.",
+                limits=["Archive candidates are metadata/source-member matches, not binary reproduction.",
                         "Bundled native/build/patch correspondence requires separate evidence.",
                         "Optional profiles and database images are outside this matrix.",
                         "Input receipts require independently trusted CI artifact digests.",
