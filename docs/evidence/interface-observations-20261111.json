@@ -1,0 +1,1152 @@
+{
+  "schema": "interface-observations/1",
+  "date": "2026-11-11",
+  "protect_version": "7.4.96",
+  "rights_approval": false,
+  "scope": "Names, types, counts and derived booleans only; no fresh adoption, deployment, model task or settings mutation.",
+  "public_sources": [
+    {
+      "url": "https://raw.githubusercontent.com/nmap/nmap/4394ae5c1f5ca46725e13dcde5690258c1ab3d92/scripts/ubiquiti-discovery.nse",
+      "retrieved_at": "2026-11-11T20:45:03.937Z",
+      "scope": "public independent protocol documentation; never executed"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/uilibs/uiprotect/1f82f25dc92f72786034d40a48b27cabdd9d2f40/src/uiprotect/data/websocket.py",
+      "retrieved_at": "2026-11-11T20:45:03.928Z",
+      "scope": "public independent protocol documentation; never executed"
+    }
+  ],
+  "new_entries": [
+    {
+      "inventory_key": "discovery_layout:>BBH",
+      "status": "public_protocol_documentation",
+      "reference": "public-doc-0.json",
+      "claim": "Nmap ubiquiti-discovery.nse documents UDP 10001, v1 header, big-endian lengths and the named TLV.",
+      "limitations": [
+        "Generic discovery protocol, not a genuine AI Key/AI Port observation.",
+        "No Nmap probe or scanner was run. Camera unicast timed out.",
+        "Does not establish AI-specific values, sysid byte order, multicast, or optional TLVs."
+      ]
+    },
+    {
+      "inventory_key": "discovery_layout:>BH",
+      "status": "public_protocol_documentation",
+      "reference": "public-doc-0.json",
+      "claim": "Nmap ubiquiti-discovery.nse documents UDP 10001, v1 header, big-endian lengths and the named TLV.",
+      "limitations": [
+        "Generic discovery protocol, not a genuine AI Key/AI Port observation.",
+        "No Nmap probe or scanner was run. Camera unicast timed out.",
+        "Does not establish AI-specific values, sysid byte order, multicast, or optional TLVs."
+      ]
+    },
+    {
+      "inventory_key": "discovery_tlv:0x01",
+      "status": "public_protocol_documentation",
+      "reference": "public-doc-0.json",
+      "claim": "Nmap ubiquiti-discovery.nse documents UDP 10001, v1 header, big-endian lengths and the named TLV.",
+      "limitations": [
+        "Generic discovery protocol, not a genuine AI Key/AI Port observation.",
+        "No Nmap probe or scanner was run. Camera unicast timed out.",
+        "Does not establish AI-specific values, sysid byte order, multicast, or optional TLVs."
+      ]
+    },
+    {
+      "inventory_key": "discovery_tlv:0x02",
+      "status": "public_protocol_documentation",
+      "reference": "public-doc-0.json",
+      "claim": "Nmap ubiquiti-discovery.nse documents UDP 10001, v1 header, big-endian lengths and the named TLV.",
+      "limitations": [
+        "Generic discovery protocol, not a genuine AI Key/AI Port observation.",
+        "No Nmap probe or scanner was run. Camera unicast timed out.",
+        "Does not establish AI-specific values, sysid byte order, multicast, or optional TLVs."
+      ]
+    },
+    {
+      "inventory_key": "discovery_tlv:0x03",
+      "status": "public_protocol_documentation",
+      "reference": "public-doc-0.json",
+      "claim": "Nmap ubiquiti-discovery.nse documents UDP 10001, v1 header, big-endian lengths and the named TLV.",
+      "limitations": [
+        "Generic discovery protocol, not a genuine AI Key/AI Port observation.",
+        "No Nmap probe or scanner was run. Camera unicast timed out.",
+        "Does not establish AI-specific values, sysid byte order, multicast, or optional TLVs."
+      ]
+    },
+    {
+      "inventory_key": "discovery_tlv:0x0a",
+      "status": "public_protocol_documentation",
+      "reference": "public-doc-0.json",
+      "claim": "Nmap ubiquiti-discovery.nse documents UDP 10001, v1 header, big-endian lengths and the named TLV.",
+      "limitations": [
+        "Generic discovery protocol, not a genuine AI Key/AI Port observation.",
+        "No Nmap probe or scanner was run. Camera unicast timed out.",
+        "Does not establish AI-specific values, sysid byte order, multicast, or optional TLVs."
+      ]
+    },
+    {
+      "inventory_key": "discovery_tlv:0x0b",
+      "status": "public_protocol_documentation",
+      "reference": "public-doc-0.json",
+      "claim": "Nmap ubiquiti-discovery.nse documents UDP 10001, v1 header, big-endian lengths and the named TLV.",
+      "limitations": [
+        "Generic discovery protocol, not a genuine AI Key/AI Port observation.",
+        "No Nmap probe or scanner was run. Camera unicast timed out.",
+        "Does not establish AI-specific values, sysid byte order, multicast, or optional TLVs."
+      ]
+    },
+    {
+      "inventory_key": "discovery_tlv:0x0c",
+      "status": "public_protocol_documentation",
+      "reference": "public-doc-0.json",
+      "claim": "Nmap ubiquiti-discovery.nse documents UDP 10001, v1 header, big-endian lengths and the named TLV.",
+      "limitations": [
+        "Generic discovery protocol, not a genuine AI Key/AI Port observation.",
+        "No Nmap probe or scanner was run. Camera unicast timed out.",
+        "Does not establish AI-specific values, sysid byte order, multicast, or optional TLVs."
+      ]
+    },
+    {
+      "inventory_key": "inventory:10001",
+      "status": "public_protocol_documentation",
+      "reference": "public-doc-0.json",
+      "claim": "Nmap ubiquiti-discovery.nse documents UDP 10001, v1 header, big-endian lengths and the named TLV.",
+      "limitations": [
+        "Generic discovery protocol, not a genuine AI Key/AI Port observation.",
+        "No Nmap probe or scanner was run. Camera unicast timed out.",
+        "Does not establish AI-specific values, sysid byte order, multicast, or optional TLVs."
+      ]
+    },
+    {
+      "inventory_key": "inventory:7442",
+      "status": "direct_channel_observation",
+      "reference": "runtime-ports.json",
+      "claim": "Existing adopted emulator has a live connected control_port channel on 7442.",
+      "limitations": [
+        "Observed accepted configured endpoint, not proof that every controller version must use this port."
+      ]
+    },
+    {
+      "inventory_key": "inventory:7443",
+      "status": "direct_channel_observation",
+      "reference": "runtime-ports.json",
+      "claim": "Existing adopted emulator has a live connected search_port channel on 7443.",
+      "limitations": [
+        "Observed accepted configured endpoint, not proof that every controller version must use this port."
+      ]
+    },
+    {
+      "inventory_key": "inventory:GetStreamList",
+      "status": "direct_receive_observation",
+      "reference": "runtime-receive.json",
+      "claim": "Controller-origin function name received by unchanged adopted emulator: GetStreamList",
+      "limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
+    },
+    {
+      "inventory_key": "inventory:UpdateUsernamePassword",
+      "status": "direct_receive_observation",
+      "reference": "runtime-receive.json",
+      "claim": "Controller-origin function name received by unchanged adopted emulator: UpdateUsernamePassword",
+      "limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
+    },
+    {
+      "inventory_key": "ucp_record:two_records_types_1_2_format_1_empty_body_2",
+      "status": "combined_scoped_evidence",
+      "reference": "websocket-framing.json; public-doc-1.json; docs/evidence/find-anything-contract.md#live-verification-26-sep-2026",
+      "claim": "Current native UI socket: records 1/2, JSON format 1, uncompressed/reserved zero. Historical own-controller trial explicitly records the AI Key empty-string error body.",
+      "limitations": [
+        "Current UI update socket is not the AI Key control socket.",
+        "Format-2 empty-body behavior is historical evidence, not newly observed today."
+      ]
+    },
+    {
+      "inventory_key": "wire_atom:ChangeAudioEventsSettings",
+      "status": "direct_receive_observation",
+      "reference": "runtime-receive.json",
+      "claim": "Controller-origin function name received by unchanged adopted emulator: ChangeAudioEventsSettings",
+      "limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
+    },
+    {
+      "inventory_key": "wire_atom:ChangeDeviceSettings",
+      "status": "direct_receive_observation",
+      "reference": "runtime-receive.json",
+      "claim": "Controller-origin function name received by unchanged adopted emulator: ChangeDeviceSettings",
+      "limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
+    },
+    {
+      "inventory_key": "wire_atom:ChangeSmartMotionSettings",
+      "status": "direct_receive_observation",
+      "reference": "runtime-receive.json",
+      "claim": "Controller-origin function name received by unchanged adopted emulator: ChangeSmartMotionSettings",
+      "limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
+    },
+    {
+      "inventory_key": "wire_atom:ChangeSoundLedSettings",
+      "status": "direct_receive_observation",
+      "reference": "runtime-receive.json",
+      "claim": "Controller-origin function name received by unchanged adopted emulator: ChangeSoundLedSettings",
+      "limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
+    },
+    {
+      "inventory_key": "wire_atom:GetRequest",
+      "status": "direct_receive_observation",
+      "reference": "runtime-receive.json",
+      "claim": "Controller-origin function name received by unchanged adopted emulator: GetRequest",
+      "limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
+    },
+    {
+      "inventory_key": "wire_atom:GetStreamList",
+      "status": "direct_receive_observation",
+      "reference": "runtime-receive.json",
+      "claim": "Controller-origin function name received by unchanged adopted emulator: GetStreamList",
+      "limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
+    },
+    {
+      "inventory_key": "wire_atom:RequestAI",
+      "status": "direct_receive_observation",
+      "reference": "runtime-receive.json",
+      "claim": "Controller-origin function name received by unchanged adopted emulator: RequestAI",
+      "limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
+    },
+    {
+      "inventory_key": "wire_atom:StopService",
+      "status": "direct_receive_observation",
+      "reference": "runtime-receive.json",
+      "claim": "Controller-origin function name received by unchanged adopted emulator: StopService",
+      "limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
+    },
+    {
+      "inventory_key": "wire_atom:UpdateFaceDBRequest",
+      "status": "direct_receive_observation",
+      "reference": "runtime-receive.json",
+      "claim": "Controller-origin function name received by unchanged adopted emulator: UpdateFaceDBRequest",
+      "limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
+    },
+    {
+      "inventory_key": "wire_atom:UpdateFirmwareRequest",
+      "status": "direct_receive_observation",
+      "reference": "runtime-receive.json",
+      "claim": "Controller-origin function name received by unchanged adopted emulator: UpdateFirmwareRequest",
+      "limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
+    },
+    {
+      "inventory_key": "wire_atom:UpdateUsernamePassword",
+      "status": "direct_receive_observation",
+      "reference": "runtime-receive.json",
+      "claim": "Controller-origin function name received by unchanged adopted emulator: UpdateUsernamePassword",
+      "limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
+    },
+    {
+      "inventory_key": "wire_atom:networkStatus",
+      "status": "direct_receive_observation",
+      "reference": "runtime-receive.json",
+      "claim": "Controller-origin function name received by unchanged adopted emulator: networkStatus",
+      "limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
+    },
+    {
+      "inventory_key": "wire_atom:sshService",
+      "status": "direct_receive_observation",
+      "reference": "runtime-receive.json",
+      "claim": "Controller-origin function name received by unchanged adopted emulator: sshService",
+      "limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
+    },
+    {
+      "inventory_key": "wire_atom:ubnt_avclient_hello",
+      "status": "direct_receive_observation",
+      "reference": "runtime-receive.json",
+      "claim": "Controller-origin function name received by unchanged adopted emulator: ubnt_avclient_hello",
+      "limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
+    },
+    {
+      "inventory_key": "wire_atom:ubnt_avclient_paramAgreement",
+      "status": "direct_receive_observation",
+      "reference": "runtime-receive.json",
+      "claim": "Controller-origin function name received by unchanged adopted emulator: ubnt_avclient_paramAgreement",
+      "limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
+    },
+    {
+      "inventory_key": "wire_field:controller",
+      "status": "direct_shape_observation",
+      "reference": "runtime-receive.json; controller-state-shapes.json; own-runtime-validator-source.json",
+      "claim": "setConsoleInfo requires controller object and retained controller-origin state contains its allowed names/types.",
+      "limitations": [
+        "Only the stated incoming command context; not evidence for unrelated result or management schemas.",
+        "The deployed own implementation differs from WP2; the deployed receive-validator source was inspected separately."
+      ]
+    },
+    {
+      "inventory_key": "wire_field:end",
+      "status": "direct_shape_observation",
+      "reference": "runtime-receive.json; controller-state-shapes.json; own-runtime-validator-source.json",
+      "claim": "Positive valid-order/duration counters establish inbound start/end number fields.",
+      "limitations": [
+        "Only the stated incoming command context; not evidence for unrelated result or management schemas.",
+        "The deployed own implementation differs from WP2; the deployed receive-validator source was inspected separately."
+      ]
+    },
+    {
+      "inventory_key": "wire_field:keyMoments",
+      "status": "direct_shape_observation",
+      "reference": "runtime-receive.json; controller-state-shapes.json; own-runtime-validator-source.json",
+      "claim": "Positive non-empty keyMoments counters establish the received list in recognizeKeyFrames.",
+      "limitations": [
+        "Only the stated incoming command context; not evidence for unrelated result or management schemas.",
+        "The deployed own implementation differs from WP2; the deployed receive-validator source was inspected separately."
+      ]
+    },
+    {
+      "inventory_key": "wire_field:nightMode",
+      "status": "direct_shape_observation",
+      "reference": "runtime-receive.json; controller-state-shapes.json; own-runtime-validator-source.json",
+      "claim": "updateLcmSettings received a nightMode object with numeric offMinute/onMinute fields.",
+      "limitations": [
+        "Only the stated incoming command context; not evidence for unrelated result or management schemas.",
+        "The deployed own implementation differs from WP2; the deployed receive-validator source was inspected separately."
+      ]
+    },
+    {
+      "inventory_key": "wire_field:ramType",
+      "status": "direct_shape_observation",
+      "reference": "runtime-receive.json; controller-state-shapes.json; own-runtime-validator-source.json",
+      "claim": "3,104 inbound recognizeKeyFrames requests with recognized ramType labels.",
+      "limitations": [
+        "Only the stated incoming command context; not evidence for unrelated result or management schemas.",
+        "The deployed own implementation differs from WP2; the deployed receive-validator source was inspected separately."
+      ]
+    },
+    {
+      "inventory_key": "wire_field:region",
+      "status": "direct_shape_observation",
+      "reference": "runtime-receive.json; controller-state-shapes.json; own-runtime-validator-source.json",
+      "claim": "Persisted controller-origin changeAiInferAgentSettings contains a string region.",
+      "limitations": [
+        "Only the stated incoming command context; not evidence for unrelated result or management schemas.",
+        "The deployed own implementation differs from WP2; the deployed receive-validator source was inspected separately."
+      ]
+    },
+    {
+      "inventory_key": "wire_field:start",
+      "status": "direct_shape_observation",
+      "reference": "runtime-receive.json; controller-state-shapes.json; own-runtime-validator-source.json",
+      "claim": "Positive valid-order/duration counters establish inbound start/end number fields.",
+      "limitations": [
+        "Only the stated incoming command context; not evidence for unrelated result or management schemas.",
+        "The deployed own implementation differs from WP2; the deployed receive-validator source was inspected separately."
+      ]
+    },
+    {
+      "inventory_key": "wire_field:thumbnailMeta",
+      "status": "direct_shape_observation",
+      "reference": "runtime-receive.json; controller-state-shapes.json; own-runtime-validator-source.json",
+      "claim": "775 inbound recognizeKeyFrames requests include thumbnailMeta.",
+      "limitations": [
+        "Only the stated incoming command context; not evidence for unrelated result or management schemas.",
+        "The deployed own implementation differs from WP2; the deployed receive-validator source was inspected separately."
+      ]
+    }
+  ],
+  "unresolved_categories": {
+    "further_observation": 163,
+    "supporting_context_only": 6,
+    "local_design_or_synthetic_review": 4
+  },
+  "runtime_receive": {
+    "schema": "owned-runtime-receive-observation/1",
+    "observed_at": "2026-11-11T20:39:34.634238+00:00",
+    "runtimes": [
+      {
+        "slot": "key",
+        "exit": 0,
+        "metadata": {
+          "service": "local-aikey",
+          "adopted": true,
+          "connected": true,
+          "received_commands": {
+            "getInfo": {
+              "count": 4,
+              "last_result_code": 0,
+              "result_code_counts": {
+                "0": 4,
+                "5": 0,
+                "13": 0,
+                "22": 0,
+                "95": 0,
+                "110": 0,
+                "409": 0,
+                "other": 0
+              }
+            },
+            "getTaskQueueInfo": {
+              "count": 36810,
+              "last_result_code": 0,
+              "result_code_counts": {
+                "0": 36810,
+                "5": 0,
+                "13": 0,
+                "22": 0,
+                "95": 0,
+                "110": 0,
+                "409": 0,
+                "other": 0
+              }
+            },
+            "setConsoleInfo": {
+              "count": 2,
+              "last_result_code": 0,
+              "result_code_counts": {
+                "0": 2,
+                "5": 0,
+                "13": 0,
+                "22": 0,
+                "95": 0,
+                "110": 0,
+                "409": 0,
+                "other": 0
+              }
+            },
+            "updateTimezone": {
+              "count": 2,
+              "last_result_code": 0,
+              "result_code_counts": {
+                "0": 2,
+                "5": 0,
+                "13": 0,
+                "22": 0,
+                "95": 0,
+                "110": 0,
+                "409": 0,
+                "other": 0
+              }
+            },
+            "changeUserPassword": {
+              "count": 5,
+              "last_result_code": 0,
+              "result_code_counts": {
+                "0": 1,
+                "5": 2,
+                "13": 2,
+                "22": 0,
+                "95": 0,
+                "110": 0,
+                "409": 0,
+                "other": 0
+              }
+            },
+            "RequestAI": {
+              "count": 7,
+              "last_result_code": 0,
+              "result_code_counts": {
+                "0": 7,
+                "5": 0,
+                "13": 0,
+                "22": 0,
+                "95": 0,
+                "110": 0,
+                "409": 0,
+                "other": 0
+              }
+            },
+            "recognizeKeyFrames": {
+              "count": 3104,
+              "last_result_code": 0,
+              "result_code_counts": {
+                "0": 2939,
+                "5": 165,
+                "13": 0,
+                "22": 0,
+                "95": 0,
+                "110": 0,
+                "409": 0,
+                "other": 0
+              }
+            },
+            "speechToText": {
+              "count": 2327,
+              "last_result_code": 0,
+              "result_code_counts": {
+                "0": 2327,
+                "5": 0,
+                "13": 0,
+                "22": 0,
+                "95": 0,
+                "110": 0,
+                "409": 0,
+                "other": 0
+              }
+            },
+            "changeAiInferAgentSettings": {
+              "count": 3,
+              "last_result_code": 0,
+              "result_code_counts": {
+                "0": 3,
+                "5": 0,
+                "13": 0,
+                "22": 0,
+                "95": 0,
+                "110": 0,
+                "409": 0,
+                "other": 0
+              }
+            },
+            "networkStatus": {
+              "count": 2,
+              "last_result_code": 95,
+              "result_code_counts": {
+                "0": 0,
+                "5": 0,
+                "13": 0,
+                "22": 0,
+                "95": 2,
+                "110": 0,
+                "409": 0,
+                "other": 0
+              }
+            },
+            "sshService": {
+              "count": 2,
+              "last_result_code": 95,
+              "result_code_counts": {
+                "0": 0,
+                "5": 0,
+                "13": 0,
+                "22": 0,
+                "95": 2,
+                "110": 0,
+                "409": 0,
+                "other": 0
+              }
+            },
+            "diskInfo": {
+              "count": 2,
+              "last_result_code": 0,
+              "result_code_counts": {
+                "0": 2,
+                "5": 0,
+                "13": 0,
+                "22": 0,
+                "95": 0,
+                "110": 0,
+                "409": 0,
+                "other": 0
+              }
+            },
+            "updateLcmSettings": {
+              "count": 2,
+              "last_result_code": 0,
+              "result_code_counts": {
+                "0": 2,
+                "5": 0,
+                "13": 0,
+                "22": 0,
+                "95": 0,
+                "110": 0,
+                "409": 0,
+                "other": 0
+              }
+            },
+            "unknown": {
+              "count": 615,
+              "last_result_code": 95,
+              "result_code_counts": {
+                "0": 0,
+                "5": 0,
+                "13": 0,
+                "22": 0,
+                "95": 615,
+                "110": 0,
+                "409": 0,
+                "other": 0
+              }
+            }
+          },
+          "received_sync_shapes": {
+            "diskInfo": {},
+            "updateLcmSettings": {
+              "brightness": "number",
+              "nightMode": "object",
+              "nightMode.offMinute": "number",
+              "nightMode.onMinute": "number"
+            }
+          },
+          "received_management_counts": {
+            "info_post_requests": 0,
+            "info_credential_rejections": 0,
+            "adopt_requests": 0,
+            "adopt_credential_rejections": 0,
+            "adopt_invalid_payloads": 0,
+            "adopt_accepted": 0,
+            "last_adoption_result": null
+          },
+          "received_recognize_shapes": {
+            "camera_shape_counts": {
+              "missing": 0,
+              "null": 0,
+              "string": 3104,
+              "boolean": 0,
+              "number": 0,
+              "array": 0,
+              "object": 0,
+              "other": 0
+            },
+            "cameraId_shape_counts": {
+              "missing": 3104,
+              "null": 0,
+              "string": 0,
+              "boolean": 0,
+              "number": 0,
+              "array": 0,
+              "object": 0,
+              "other": 0
+            },
+            "camera_match_counts": {
+              "matches": 1782,
+              "different": 0,
+              "not_comparable": 1322
+            },
+            "cameraId_match_counts": {
+              "matches": 0,
+              "different": 0,
+              "not_comparable": 3104
+            },
+            "ram_type_counts": {
+              "video": 457,
+              "videoWithRecognition": 318,
+              "image": 2329,
+              "multipleImages": 0,
+              "missing": 0,
+              "invalid_type": 0,
+              "other_string": 0
+            },
+            "metadata_presence_counts": {
+              "personMeta": 186,
+              "faceMeta": 0,
+              "vehicleMeta": 0,
+              "thumbnailMeta": 775
+            },
+            "video_interval_counts": {
+              "missing": 0,
+              "invalid_type": 0,
+              "invalid_order_or_range": 0,
+              "up_to_10_seconds": 348,
+              "over_10_seconds": 2756
+            },
+            "duration_limit_counts": {
+              "within": 3032,
+              "exceeds": 72,
+              "not_comparable": 0
+            },
+            "key_moments_counts": {
+              "missing": 2329,
+              "invalid_type": 0,
+              "empty": 106,
+              "at_or_below_sampling_limit": 600,
+              "above_sampling_limit": 69,
+              "over_128_inputs": 0,
+              "duplicates": 0,
+              "non_integer": 0,
+              "outside_interval": 442,
+              "interval_not_comparable": 0
+            },
+            "thumbnail_meta_counts": {
+              "tasks_empty": 502,
+              "tasks_with_objects": 273,
+              "objects_inside": 0,
+              "objects_before_start": 0,
+              "objects_after_end": 0,
+              "objects_invalid": 514,
+              "name_hex24": 0,
+              "name_empty": 0,
+              "name_other": 0,
+              "ts_in_thumbnail_ms": 0,
+              "ts_not_in_thumbnail_ms": 0
+            },
+            "region_shape_counts": {
+              "thumbnailMeta": {
+                "entries": 514,
+                "roi_list": 514,
+                "coord_not4": 0,
+                "max_le_1": 0,
+                "max_le_1000": 514,
+                "max_gt_1000": 0,
+                "xywh_fits_1000": 514,
+                "xyxy_ordered": 42,
+                "type_person": 207,
+                "type_vehicle": 0,
+                "type_animal": 71,
+                "type_package": 0,
+                "type_face": 236,
+                "type_other": 0,
+                "type_missing": 0
+              },
+              "roiMeta": {
+                "entries": 787,
+                "roi_list": 787,
+                "coord_not4": 0,
+                "max_le_1": 0,
+                "max_le_1000": 786,
+                "max_gt_1000": 0,
+                "xywh_fits_1000": 786,
+                "xyxy_ordered": 70,
+                "type_person": 655,
+                "type_vehicle": 48,
+                "type_animal": 80,
+                "type_package": 3,
+                "type_face": 0,
+                "type_other": 0,
+                "type_missing": 0
+              },
+              "personMeta": {
+                "entries": 931,
+                "roi_list": 931,
+                "coord_not4": 0,
+                "max_le_1": 0,
+                "max_le_1000": 931,
+                "max_gt_1000": 0,
+                "xywh_fits_1000": 931,
+                "xyxy_ordered": 104,
+                "type_person": 931,
+                "type_vehicle": 0,
+                "type_animal": 0,
+                "type_package": 0,
+                "type_face": 0,
+                "type_other": 0,
+                "type_missing": 0
+              },
+              "vehicleMeta": {
+                "entries": 0,
+                "roi_list": 0,
+                "coord_not4": 0,
+                "max_le_1": 0,
+                "max_le_1000": 0,
+                "max_gt_1000": 0,
+                "xywh_fits_1000": 0,
+                "xyxy_ordered": 0,
+                "type_person": 0,
+                "type_vehicle": 0,
+                "type_animal": 0,
+                "type_package": 0,
+                "type_face": 0,
+                "type_other": 0,
+                "type_missing": 0
+              },
+              "faceMeta": {
+                "entries": 0,
+                "roi_list": 0,
+                "coord_not4": 0,
+                "max_le_1": 0,
+                "max_le_1000": 0,
+                "max_gt_1000": 0,
+                "xywh_fits_1000": 0,
+                "xyxy_ordered": 0,
+                "type_person": 0,
+                "type_vehicle": 0,
+                "type_animal": 0,
+                "type_package": 0,
+                "type_face": 0,
+                "type_other": 0,
+                "type_missing": 0
+              }
+            },
+            "key_moment_position_counts": {
+              "all_inside": 227,
+              "some_outside": 9,
+              "all_outside": 433,
+              "any_at_end": 442,
+              "before_start_up_to_1s": 0,
+              "before_start_over_1s": 0,
+              "after_end_up_to_1s": 0,
+              "after_end_over_1s": 0
+            },
+            "interval_detail_counts": {
+              "zero_length": 0,
+              "reversed": 0,
+              "over_limit_up_to_5min": 55,
+              "over_5min": 17
+            },
+            "matching_camera_result_code_counts": {
+              "0": 1628,
+              "5": 154,
+              "13": 0,
+              "22": 0,
+              "95": 0,
+              "110": 0,
+              "409": 0,
+              "other": 0
+            },
+            "matching_cameraId_result_code_counts": {
+              "0": 0,
+              "5": 0,
+              "13": 0,
+              "22": 0,
+              "95": 0,
+              "110": 0,
+              "409": 0,
+              "other": 0
+            },
+            "phase_counts": {
+              "scope_disabled": 0,
+              "camera_mismatch": 0,
+              "controller_version_unverified": 0,
+              "worker_admission": 3104,
+              "admitted": 2939,
+              "worker_rejected": 165,
+              "admission_timeout": 0,
+              "admission_cancelled": 0,
+              "admission_exception": 0,
+              "invalid_admission_result": 0
+            },
+            "worker_rejection_counts": {
+              "admission_expired": 0,
+              "budget_exhausted": 0,
+              "budget_unavailable": 0,
+              "budget_uncertain": 0,
+              "callback_origin": 0,
+              "callback_path": 0,
+              "callback_uncertain": 0,
+              "callback_url": 0,
+              "command_size_or_shape": 0,
+              "execution_uncertain": 0,
+              "export_query": 0,
+              "export_query_match": 0,
+              "face_metadata": 0,
+              "face_outside_export": 0,
+              "http_origin": 0,
+              "image_variant_refused": 0,
+              "index_empty": 0,
+              "invalid_json": 0,
+              "inventory_changed": 0,
+              "job_failed": 26,
+              "job_identity_conflict": 90,
+              "journal_full": 0,
+              "key_moments": 0,
+              "maintenance_binding_changed": 0,
+              "maintenance_unavailable": 0,
+              "media_origin": 0,
+              "media_path": 0,
+              "media_url": 0,
+              "mp4_format": 0,
+              "mp4_interval": 0,
+              "mp4_path": 0,
+              "mp4_query": 0,
+              "payload_fields": 0,
+              "permit_consumed": 0,
+              "permit_persistence": 0,
+              "permit_state": 0,
+              "queue_full": 0,
+              "region_metadata": 0,
+              "scope_kind": 0,
+              "unclassified_worker_error": 0,
+              "unindexed_camera": 0,
+              "video_contract": 49,
+              "video_interval": 0,
+              "worker_stopped": 0
+            }
+          }
+        }
+      },
+      {
+        "slot": "port-1",
+        "exit": 0,
+        "metadata": {
+          "service": "aiport-candidate",
+          "adopted": true,
+          "control_connected": true,
+          "observed_function_counts": {
+            "ubnt_avclient_hello": 2,
+            "ubnt_avclient_paramAgreement": 2,
+            "GetStreamList": 2,
+            "StopService": 2,
+            "UpdateUsernamePassword": 2,
+            "ChangeSoundLedSettings": 2,
+            "ChangeDeviceSettings": 2,
+            "UiStreamControl": 10,
+            "UpdateFaceDBRequest": 2,
+            "ChangeSmartMotionSettings": 29,
+            "ChangeSmartDetectSettings": 43,
+            "ChangeAudioEventsSettings": 14,
+            "GetRequest": 3299,
+            "UpdateFirmwareRequest": 3
+          },
+          "unlisted_envelope_counts": {
+            "request": 1,
+            "response": 0,
+            "other": 10
+          },
+          "hello_replies": 2,
+          "param_agreements": 2,
+          "last_manage_shape": null,
+          "manage_requests": 0,
+          "stream_controls_started": 8,
+          "stream_lists_answered": 2
+        }
+      },
+      {
+        "slot": "port-2",
+        "exit": 0,
+        "metadata": {
+          "service": "aiport-candidate",
+          "adopted": true,
+          "control_connected": true,
+          "observed_function_counts": {
+            "ubnt_avclient_hello": 2,
+            "ubnt_avclient_paramAgreement": 2,
+            "GetStreamList": 2,
+            "StopService": 2,
+            "UpdateUsernamePassword": 2,
+            "ChangeSoundLedSettings": 2,
+            "ChangeDeviceSettings": 2,
+            "UiStreamControl": 4,
+            "UpdateFaceDBRequest": 2,
+            "ChangeSmartMotionSettings": 806,
+            "ChangeSmartDetectSettings": 811,
+            "ChangeAudioEventsSettings": 1104,
+            "GetRequest": 1046,
+            "UpdateFirmwareRequest": 3
+          },
+          "unlisted_envelope_counts": {
+            "request": 1,
+            "response": 0,
+            "other": 4
+          },
+          "hello_replies": 2,
+          "param_agreements": 2,
+          "last_manage_shape": null,
+          "manage_requests": 0,
+          "stream_controls_started": 4,
+          "stream_lists_answered": 2
+        }
+      },
+      {
+        "slot": "port-3",
+        "exit": 0,
+        "metadata": {
+          "service": "aiport-candidate",
+          "adopted": true,
+          "control_connected": true,
+          "observed_function_counts": {
+            "ubnt_avclient_hello": 2,
+            "ubnt_avclient_paramAgreement": 2,
+            "GetStreamList": 2,
+            "StopService": 2,
+            "UpdateUsernamePassword": 2,
+            "ChangeSoundLedSettings": 2,
+            "ChangeDeviceSettings": 2,
+            "UiStreamControl": 4,
+            "UpdateFaceDBRequest": 2,
+            "ChangeSmartMotionSettings": 1598,
+            "ChangeSmartDetectSettings": 1603,
+            "ChangeAudioEventsSettings": 2202,
+            "GetRequest": 110,
+            "UpdateFirmwareRequest": 3
+          },
+          "unlisted_envelope_counts": {
+            "request": 1,
+            "response": 0,
+            "other": 4
+          },
+          "hello_replies": 2,
+          "param_agreements": 2,
+          "last_manage_shape": null,
+          "manage_requests": 0,
+          "stream_controls_started": 4,
+          "stream_lists_answered": 2
+        }
+      },
+      {
+        "slot": "port-4",
+        "exit": 0,
+        "metadata": {
+          "service": "aiport-candidate",
+          "adopted": true,
+          "control_connected": true,
+          "observed_function_counts": {
+            "ubnt_avclient_hello": 2,
+            "ubnt_avclient_paramAgreement": 2,
+            "GetStreamList": 2,
+            "StopService": 2,
+            "UpdateUsernamePassword": 2,
+            "ChangeSoundLedSettings": 2,
+            "ChangeDeviceSettings": 2,
+            "UiStreamControl": 4,
+            "UpdateFaceDBRequest": 2,
+            "ChangeSmartMotionSettings": 1597,
+            "ChangeAudioEventsSettings": 2199,
+            "ChangeSmartDetectSettings": 1601,
+            "UpdateFirmwareRequest": 3,
+            "GetRequest": 145
+          },
+          "unlisted_envelope_counts": {
+            "request": 1,
+            "response": 0,
+            "other": 4
+          },
+          "hello_replies": 2,
+          "param_agreements": 2,
+          "last_manage_shape": null,
+          "manage_requests": 0,
+          "stream_controls_started": 4,
+          "stream_lists_answered": 2
+        }
+      }
+    ]
+  },
+  "controller_state_shapes": {
+    "schema": "owned-controller-state-shapes/1",
+    "observed_at": "2026-11-11T20:46:57.550787+00:00",
+    "exit": 0,
+    "metadata": {
+      "controller_origin_state_shapes": {
+        "console_info": {
+          "consoleName": "string",
+          "id": "string",
+          "protectVersion": "string",
+          "supportsDbCredential": "boolean"
+        },
+        "ai_infer_agent_settings": {
+          "deepModeSupported": "boolean",
+          "enableFaceEnhance": "boolean",
+          "enableFaceRecognize": "boolean",
+          "enableLprRecognize": "boolean",
+          "enableRAM": "boolean",
+          "enableSTT": "boolean",
+          "region": "string"
+        },
+        "display": {
+          "brightness": "number",
+          "nightMode": "object"
+        }
+      },
+      "selected_protocol_parameters": {
+        "control_port": 7442,
+        "media_port": 7444,
+        "search_port": 7443,
+        "control_profile": "device-service"
+      },
+      "own_source_functions": {
+        "_headers": "e65a21e321cf319abbc01f6df101895f170318d2f35ecef9c87ad339fbb6a7a8",
+        "_run": "74bc17f20fc7299f393e892a35a669066ae2f21115681ce56cdb0a666fc3c131",
+        "_record_recognize_shape": "d75ee80d310dbee366355fc33acf91ec2257a63c9b32d418662e78a251960d95",
+        "_command": "72bacdfbd22e2014d569027892e7d2811e32a4a2122dc3b2751832c8a503e82d"
+      }
+    },
+    "checked_against_wp2_functions": {
+      "_headers": false,
+      "_run": false,
+      "_record_recognize_shape": false,
+      "_command": false
+    }
+  },
+  "native_update_socket": {
+    "schema": "owned-protect-websocket-framing/1",
+    "observed_at": "2026-11-11T20:44:41.429Z",
+    "protect_version": "7.4.96",
+    "route_template": "/proxy/protect/ws/updates?lastUpdateId=<private>",
+    "opened": true,
+    "frames": [
+      {
+        "length": 554,
+        "records": [
+          {
+            "record_type": 1,
+            "format": 1,
+            "compression": 0,
+            "reserved": 0,
+            "length": 194
+          },
+          {
+            "record_type": 2,
+            "format": 1,
+            "compression": 0,
+            "reserved": 0,
+            "length": 344
+          }
+        ],
+        "consumed_exactly": true
+      }
+    ],
+    "failure": null,
+    "settings_and_identity_unchanged": true,
+    "limits": [
+      "Native browser update socket, not AI Key control socket",
+      "No JSON body decoded or exported",
+      "Empty string body format not established by this sample",
+      "No messages sent; no media requests"
+    ]
+  },
+  "camera_discovery": {
+    "schema": "owned-camera-discovery-observation/1",
+    "model_family": "UVC G4 Dome",
+    "firmware_version": "5.5.45",
+    "protect_version": "7.4.96",
+    "transport": "existing verified NAS SSH; one unicast UDP request",
+    "exit": 1,
+    "metadata": null,
+    "failure": "timeout"
+  },
+  "runtime_ports": {
+    "schema": "owned-runtime-port-observation/1",
+    "observed_at": "2026-11-11T20:50:59.447481+00:00",
+    "metadata": {
+      "control_port": 7442,
+      "search_port": 7443,
+      "control_connected": true,
+      "search_connected": true,
+      "search_counter_fields": [
+        "queries",
+        "query_failures",
+        "image_queries"
+      ]
+    }
+  },
+  "deployed_own_receive_source_sha256": "05727756bd9468bea54b866c12a4315d0980d88a021a8560a65eef9f13ba34be"
+}

@@ -1,0 +1,86 @@
+{
+  "schema": "project-interface-design-decisions/1",
+  "reviewed_date": "2026-11-11",
+  "rights_approval": false,
+  "source_scope": "Original public project specification of local design/fictional lab identifiers; not an independent source for any manufacturer requirement and not a clean-room or native-compatibility attestation.",
+  "decisions": [
+    {
+      "inventory_key": "aiport_status:501",
+      "fact_kind": "project_defined_non_vendor",
+      "native_observation": false,
+      "manufacturer_requirement": false,
+      "description": "A locally selected unsupported-operation refusal code in the project's JSON control replies. It is not an HTTP response status here and is not claimed to have a manufacturer-defined meaning.",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:1370",
+        "src/aikey/aiport_candidate.py:1781",
+        "src/aikey/aiport_candidate.py:1789",
+        "src/aikey/aiport_candidate.py:1808",
+        "src/aikey/aiport_candidate.py:1887",
+        "src/aikey/aiport_candidate.py:2923",
+        "src/aikey/aiport_candidate.py:3004",
+        "src/aikey/aiport_candidate.py:3023",
+        "src/aikey/aiport_candidate.py:3087",
+        "src/aikey/aiport_candidate.py:3145",
+        "src/aikey/aiport_candidate.py:3155"
+      ]
+    },
+    {
+      "inventory_key": "aiport_status:5",
+      "fact_kind": "project_defined_non_vendor",
+      "native_observation": false,
+      "manufacturer_requirement": false,
+      "description": "A locally selected fail-closed refusal code for invalid/unavailable control operations. The project does not claim that this number is the manufacturer's required error code, or that all controller versions interpret it identically.",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:1751",
+        "src/aikey/aiport_candidate.py:2869",
+        "src/aikey/aiport_candidate.py:2898",
+        "src/aikey/aiport_candidate.py:2916",
+        "src/aikey/aiport_candidate.py:2933",
+        "src/aikey/aiport_candidate.py:2940",
+        "src/aikey/aiport_candidate.py:2955",
+        "src/aikey/aiport_candidate.py:2962",
+        "src/aikey/aiport_candidate.py:2976",
+        "src/aikey/aiport_candidate.py:2983",
+        "src/aikey/aiport_candidate.py:3030",
+        "src/aikey/aiport_candidate.py:3109",
+        "src/aikey/aiport_candidate.py:3165",
+        "src/aikey/aiport_candidate.py:3187",
+        "src/aikey/aiport_candidate.py:3215",
+        "src/aikey/aiport_candidate.py:3250",
+        "src/aikey/aiport_candidate.py:3270"
+      ]
+    },
+    {
+      "inventory_key": "inventory:ubntbox",
+      "fact_kind": "project_defined_non_vendor",
+      "native_observation": false,
+      "manufacturer_requirement": false,
+      "description": "The retained status profile string ubntbox-0.1.7-v1-info is a legacy project diagnostic identifier. Retaining its spelling avoids silently changing existing status consumers; it does not claim vendor implementation parity, vendor origin or independent observation of a binary.",
+      "code_locations": [
+        "src/aikey/discovery.py:133"
+      ]
+    },
+    {
+      "inventory_key": "wire_atom:/internal/aiprocessors/descriptions/fixture-task",
+      "fact_kind": "project_defined_non_vendor",
+      "native_observation": false,
+      "manufacturer_requirement": false,
+      "description": "An explicitly synthetic lab task path. The fixture suffix is invented by this project and is not a real controller task ID or an assertion of native endpoint acceptance.",
+      "code_locations": [
+        "src/aikey/lab.py:174",
+        "src/aikey/lab.py:219"
+      ]
+    },
+    {
+      "inventory_key": "wire_atom:/internal/aiprocessors/image/fixture",
+      "fact_kind": "project_defined_non_vendor",
+      "native_observation": false,
+      "manufacturer_requirement": false,
+      "description": "An explicitly synthetic lab image path. The fixture suffix is invented; this lab example neither carries camera media nor demonstrates native image-route acceptance.",
+      "code_locations": [
+        "src/aikey/lab.py:173",
+        "src/aikey/lab.py:222"
+      ]
+    }
+  ]
+}

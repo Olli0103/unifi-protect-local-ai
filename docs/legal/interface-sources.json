@@ -14,7 +14,8 @@
       "src/aikey/tls.py"
     ],
     "tls": "tls.py implements locally generated RSA/X.509 identity and independently pinned SHA-256 controller trust with standard cryptography APIs; these are local design choices, not claims about vendor-generated certificates or keys. No device firmware was consulted. General interoperability acceptance remains bounded by the referenced live reconnect records.",
-    "limits": "Local configuration keys, defensive size limits and standard TLS/HTTP choices are not automatically manufacturer facts. Tests do not recognize every future semantic protocol change; contributors must extend the reviewed inventory."
+    "limits": "Local configuration keys, defensive size limits and standard TLS/HTTP choices are not automatically manufacturer facts. Tests do not recognize every future semantic protocol change; contributors must extend the reviewed inventory.",
+    "project_decisions": "Five explicitly project-defined/non-vendor entries use public_documentation for the project's own public specification. They are not counted as device observations or independent evidence of manufacturer requirements; fact_kind and native_observation preserve that distinction."
   },
   "facts": [
     {
@@ -67,10 +68,16 @@
         "src/aikey/aiport_candidate.py:3250",
         "src/aikey/aiport_candidate.py:3270"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Inspect the status-code handling in your own Protect installation, or use a bounded no-camera emulator trial recording only numeric status and progression. Separate our locally selected refusal code from a proven manufacturer-defined meaning.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-project-decisions.md#decisions",
+      "fact_kind": "project_defined_non_vendor",
+      "manufacturer_requirement": false,
+      "native_observation": false,
+      "reference_sha256": "30fe97fed098f020ab32c82241a6435e576ad1eeadf278af0b12c58192d2ed69",
+      "source_scope": "A locally selected fail-closed refusal code for invalid/unavailable control operations. The project does not claim that this number is the manufacturer's required error code, or that all controller versions interpret it identically.",
+      "source_limitations": [
+        "Original project specification only; not independent vendor provenance or native behavior evidence."
+      ]
     },
     {
       "inventory_key": "aiport_status:501",
@@ -88,10 +95,16 @@
         "src/aikey/aiport_candidate.py:3145",
         "src/aikey/aiport_candidate.py:3155"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Inspect the status-code handling in your own Protect installation, or use a bounded no-camera emulator trial recording only numeric status and progression. Separate our locally selected refusal code from a proven manufacturer-defined meaning.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-project-decisions.md#decisions",
+      "fact_kind": "project_defined_non_vendor",
+      "manufacturer_requirement": false,
+      "native_observation": false,
+      "reference_sha256": "30fe97fed098f020ab32c82241a6435e576ad1eeadf278af0b12c58192d2ed69",
+      "source_scope": "A locally selected unsupported-operation refusal code in the project's JSON control replies. It is not an HTTP response status here and is not claimed to have a manufacturer-defined meaning.",
+      "source_limitations": [
+        "Original project specification only; not independent vendor provenance or native behavior evidence."
+      ]
     },
     {
       "inventory_key": "discovery_layout:>BBH",
@@ -99,10 +112,17 @@
       "code_locations": [
         "src/aikey/discovery.py:27"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Run tools/discovery_observe.py --ip OWNED_DEVICE_IPV4 once against one owned camera; record version/command/length and TLV type/length only. This cannot prove field values, endianness, multicast behavior or genuine AI Key/AI Port behavior. For those, inspect only the corresponding parser in your own Protect installation or perform a bounded emulator/controller trial and report derived booleans without values. If not observable, mark this fact as a removal candidate; do not inspect vendor device firmware.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Nmap ubiquiti-discovery.nse documents UDP 10001, v1 header, big-endian lengths and the named TLV.",
+      "source_limitations": [
+        "Generic discovery protocol, not a genuine AI Key/AI Port observation.",
+        "No Nmap probe or scanner was run. Camera unicast timed out.",
+        "Does not establish AI-specific values, sysid byte order, multicast, or optional TLVs."
+      ]
     },
     {
       "inventory_key": "discovery_layout:>BH",
@@ -110,10 +130,17 @@
       "code_locations": [
         "src/aikey/discovery.py:28"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Run tools/discovery_observe.py --ip OWNED_DEVICE_IPV4 once against one owned camera; record version/command/length and TLV type/length only. This cannot prove field values, endianness, multicast behavior or genuine AI Key/AI Port behavior. For those, inspect only the corresponding parser in your own Protect installation or perform a bounded emulator/controller trial and report derived booleans without values. If not observable, mark this fact as a removal candidate; do not inspect vendor device firmware.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Nmap ubiquiti-discovery.nse documents UDP 10001, v1 header, big-endian lengths and the named TLV.",
+      "source_limitations": [
+        "Generic discovery protocol, not a genuine AI Key/AI Port observation.",
+        "No Nmap probe or scanner was run. Camera unicast timed out.",
+        "Does not establish AI-specific values, sysid byte order, multicast, or optional TLVs."
+      ]
     },
     {
       "inventory_key": "discovery_tlv:0x01",
@@ -121,10 +148,17 @@
       "code_locations": [
         "src/aikey/discovery.py:91"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Run tools/discovery_observe.py --ip OWNED_DEVICE_IPV4 once against one owned camera; record version/command/length and TLV type/length only. This cannot prove field values, endianness, multicast behavior or genuine AI Key/AI Port behavior. For those, inspect only the corresponding parser in your own Protect installation or perform a bounded emulator/controller trial and report derived booleans without values. If not observable, mark this fact as a removal candidate; do not inspect vendor device firmware.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Nmap ubiquiti-discovery.nse documents UDP 10001, v1 header, big-endian lengths and the named TLV.",
+      "source_limitations": [
+        "Generic discovery protocol, not a genuine AI Key/AI Port observation.",
+        "No Nmap probe or scanner was run. Camera unicast timed out.",
+        "Does not establish AI-specific values, sysid byte order, multicast, or optional TLVs."
+      ]
     },
     {
       "inventory_key": "discovery_tlv:0x02",
@@ -132,10 +166,17 @@
       "code_locations": [
         "src/aikey/discovery.py:90"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Run tools/discovery_observe.py --ip OWNED_DEVICE_IPV4 once against one owned camera; record version/command/length and TLV type/length only. This cannot prove field values, endianness, multicast behavior or genuine AI Key/AI Port behavior. For those, inspect only the corresponding parser in your own Protect installation or perform a bounded emulator/controller trial and report derived booleans without values. If not observable, mark this fact as a removal candidate; do not inspect vendor device firmware.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Nmap ubiquiti-discovery.nse documents UDP 10001, v1 header, big-endian lengths and the named TLV.",
+      "source_limitations": [
+        "Generic discovery protocol, not a genuine AI Key/AI Port observation.",
+        "No Nmap probe or scanner was run. Camera unicast timed out.",
+        "Does not establish AI-specific values, sysid byte order, multicast, or optional TLVs."
+      ]
     },
     {
       "inventory_key": "discovery_tlv:0x03",
@@ -143,10 +184,17 @@
       "code_locations": [
         "src/aikey/discovery.py:96"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Run tools/discovery_observe.py --ip OWNED_DEVICE_IPV4 once against one owned camera; record version/command/length and TLV type/length only. This cannot prove field values, endianness, multicast behavior or genuine AI Key/AI Port behavior. For those, inspect only the corresponding parser in your own Protect installation or perform a bounded emulator/controller trial and report derived booleans without values. If not observable, mark this fact as a removal candidate; do not inspect vendor device firmware.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Nmap ubiquiti-discovery.nse documents UDP 10001, v1 header, big-endian lengths and the named TLV.",
+      "source_limitations": [
+        "Generic discovery protocol, not a genuine AI Key/AI Port observation.",
+        "No Nmap probe or scanner was run. Camera unicast timed out.",
+        "Does not establish AI-specific values, sysid byte order, multicast, or optional TLVs."
+      ]
     },
     {
       "inventory_key": "discovery_tlv:0x0a",
@@ -154,10 +202,17 @@
       "code_locations": [
         "src/aikey/discovery.py:92"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Run tools/discovery_observe.py --ip OWNED_DEVICE_IPV4 once against one owned camera; record version/command/length and TLV type/length only. This cannot prove field values, endianness, multicast behavior or genuine AI Key/AI Port behavior. For those, inspect only the corresponding parser in your own Protect installation or perform a bounded emulator/controller trial and report derived booleans without values. If not observable, mark this fact as a removal candidate; do not inspect vendor device firmware.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Nmap ubiquiti-discovery.nse documents UDP 10001, v1 header, big-endian lengths and the named TLV.",
+      "source_limitations": [
+        "Generic discovery protocol, not a genuine AI Key/AI Port observation.",
+        "No Nmap probe or scanner was run. Camera unicast timed out.",
+        "Does not establish AI-specific values, sysid byte order, multicast, or optional TLVs."
+      ]
     },
     {
       "inventory_key": "discovery_tlv:0x0b",
@@ -165,10 +220,17 @@
       "code_locations": [
         "src/aikey/discovery.py:93"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Run tools/discovery_observe.py --ip OWNED_DEVICE_IPV4 once against one owned camera; record version/command/length and TLV type/length only. This cannot prove field values, endianness, multicast behavior or genuine AI Key/AI Port behavior. For those, inspect only the corresponding parser in your own Protect installation or perform a bounded emulator/controller trial and report derived booleans without values. If not observable, mark this fact as a removal candidate; do not inspect vendor device firmware.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Nmap ubiquiti-discovery.nse documents UDP 10001, v1 header, big-endian lengths and the named TLV.",
+      "source_limitations": [
+        "Generic discovery protocol, not a genuine AI Key/AI Port observation.",
+        "No Nmap probe or scanner was run. Camera unicast timed out.",
+        "Does not establish AI-specific values, sysid byte order, multicast, or optional TLVs."
+      ]
     },
     {
       "inventory_key": "discovery_tlv:0x0c",
@@ -176,10 +238,17 @@
       "code_locations": [
         "src/aikey/discovery.py:94"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Run tools/discovery_observe.py --ip OWNED_DEVICE_IPV4 once against one owned camera; record version/command/length and TLV type/length only. This cannot prove field values, endianness, multicast behavior or genuine AI Key/AI Port behavior. For those, inspect only the corresponding parser in your own Protect installation or perform a bounded emulator/controller trial and report derived booleans without values. If not observable, mark this fact as a removal candidate; do not inspect vendor device firmware.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Nmap ubiquiti-discovery.nse documents UDP 10001, v1 header, big-endian lengths and the named TLV.",
+      "source_limitations": [
+        "Generic discovery protocol, not a genuine AI Key/AI Port observation.",
+        "No Nmap probe or scanner was run. Camera unicast timed out.",
+        "Does not establish AI-specific values, sysid byte order, multicast, or optional TLVs."
+      ]
     },
     {
       "inventory_key": "discovery_tlv:0x10",
@@ -246,10 +315,11 @@
       "code_locations": [
         "src/aikey/aiport_candidate.py:3486"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "Public camera WebSocket route template on the configured controller.",
+      "limits": "No connection to this upstream or a camera was initiated. AI Port-specific authentication/identity headers are not established by this reference."
     },
     {
       "inventory_key": "inventory:/internal/aiprocessors",
@@ -287,10 +357,13 @@
         "src/aikey/worker.py:340",
         "src/aikey/worker.py:341"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-worker-receipts-20261111.md#attributed-facts",
+      "reference_sha256": "eebf3f209143c741e7856f212541c001b09448bc00a52e869108295e517f1579",
+      "source_scope": "The internal AI processor route prefix occurs in the accepted fixed speech and RAM callback paths.",
+      "source_limitations": [
+        "Only the specifically documented child routes are established. The prefix is not a catch-all permission for arbitrary endpoints."
+      ]
     },
     {
       "inventory_key": "inventory:0xa5f0",
@@ -303,10 +376,13 @@
         "src/aikey/search.py:459",
         "src/aikey/worker.py:685"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `0xa5f0` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "The existing AI Key configuration offers sysid 0xa5f0 with the UP-AI-KEY model on its accepted controller channel.",
+      "source_limitations": [
+        "Acceptance may also involve model fallback. This is an independently observed accepted configuration, not proof of a genuine AI Key hardware identifier or a uniquely required value."
+      ]
     },
     {
       "inventory_key": "inventory:0xa5f1",
@@ -314,10 +390,13 @@
       "code_locations": [
         "src/aikey/aiport_candidate.py:3484"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `0xa5f1` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "The existing AI Port accepted connection uses the fixed 0xa5f1 interface atom.",
+      "source_limitations": [
+        "No new handshake was induced. This supports an accepted header combination, not that each field/value is necessary. The deployed connect loop enables control for an adopted device; its control-enable branch differs from the checkout, while the header/route construction was reviewed unchanged."
+      ]
     },
     {
       "inventory_key": "inventory:10001",
@@ -329,10 +408,17 @@
         "src/aikey/discovery.py:25",
         "src/aikey/first_run.py:72"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Run tools/discovery_observe.py --ip OWNED_DEVICE_IPV4 once against one owned camera; record version/command/length and TLV type/length only. This cannot prove field values, endianness, multicast behavior or genuine AI Key/AI Port behavior. For those, inspect only the corresponding parser in your own Protect installation or perform a bounded emulator/controller trial and report derived booleans without values. If not observable, mark this fact as a removal candidate; do not inspect vendor device firmware.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Nmap ubiquiti-discovery.nse documents UDP 10001, v1 header, big-endian lengths and the named TLV.",
+      "source_limitations": [
+        "Generic discovery protocol, not a genuine AI Key/AI Port observation.",
+        "No Nmap probe or scanner was run. Camera unicast timed out.",
+        "Does not establish AI-specific values, sysid byte order, multicast, or optional TLVs."
+      ]
     },
     {
       "inventory_key": "inventory:233.89.188.1",
@@ -340,10 +426,11 @@
       "code_locations": [
         "src/aikey/discovery.py:26"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Run tools/discovery_observe.py --ip OWNED_DEVICE_IPV4 once against one owned camera; record version/command/length and TLV type/length only. This cannot prove field values, endianness, multicast behavior or genuine AI Key/AI Port behavior. For those, inspect only the corresponding parser in your own Protect installation or perform a bounded emulator/controller trial and report derived booleans without values. If not observable, mark this fact as a removal candidate; do not inspect vendor device firmware.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "Publicly documented generic UniFi discovery multicast destination.",
+      "limits": "No multicast was sent. This is not a claim that a genuine AI Key/AI Port uses discovery, or that the current LAN delivers it."
     },
     {
       "inventory_key": "inventory:7442",
@@ -358,10 +445,15 @@
         "src/aikey/device_workflow.py:507",
         "src/aikey/state_snapshot.py:351"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Locate the exact interface token `7442` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Existing adopted emulator has a live connected control_port channel on 7442.",
+      "source_limitations": [
+        "Observed accepted configured endpoint, not proof that every controller version must use this port."
+      ]
     },
     {
       "inventory_key": "inventory:7443",
@@ -373,10 +465,15 @@
         "src/aikey/search.py:388",
         "src/aikey/search.py:420"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Locate the exact interface token `7443` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Existing adopted emulator has a live connected search_port channel on 7443.",
+      "source_limitations": [
+        "Observed accepted configured endpoint, not proof that every controller version must use this port."
+      ]
     },
     {
       "inventory_key": "inventory:ChangeVideoSettings",
@@ -386,10 +483,11 @@
         "src/aikey/aiport_candidate.py:2901",
         "src/aikey/aiport_candidate.py:98"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `ChangeVideoSettings` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "Public camera-control command/event name: ChangeVideoSettings.",
+      "limits": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants. Only the name and public dispatch/event context are attributed, not the complete local implementation."
     },
     {
       "inventory_key": "inventory:EventAIPortStatus",
@@ -412,10 +510,16 @@
         "src/aikey/aiport_candidate.py:3096",
         "src/aikey/aiport_candidate.py:93"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Locate the exact interface token `GetStreamList` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Controller-origin function name received by unchanged adopted emulator: GetStreamList",
+      "source_limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
     },
     {
       "inventory_key": "inventory:ResetAIPortStreams",
@@ -467,10 +571,16 @@
         "src/aikey/aiport_candidate.py:2927",
         "src/aikey/aiport_candidate.py:99"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Locate the exact interface token `UpdateUsernamePassword` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Controller-origin function name received by unchanged adopted emulator: UpdateUsernamePassword",
+      "source_limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
     },
     {
       "inventory_key": "inventory:a photo of",
@@ -483,10 +593,11 @@
         "src/aikey/worker.py:247",
         "src/aikey/worker.py:248"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "In your own Protect installation or public model documentation, find an explicit short-query prefix requirement; alternatively compare bounded retrieval with/without the prefix using your own controller and report aggregate outcomes only. A successful query alone does not establish this preprocessing rule. If not supported, consider removing the vendor-compatibility claim or prefix in a separately tested change.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "The photo-prompt phrase is independently documented by the CLIP authors.",
+      "limits": "The upstream does not document the local fewer-than-three-words policy, nor a Protect requirement. The retained native-short-photo identifier is a legacy local algorithm/profile ID, not a vendor attestation. Its short-query threshold is a project-selected policy; no claim of vendor preprocessing equivalence is made."
     },
     {
       "inventory_key": "inventory:secure_transfer",
@@ -495,10 +606,11 @@
         "src/aikey/aiport_candidate.py:3492",
         "src/aikey/aiport_candidate.py:3495"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "Public camera WebSocket subprotocol name.",
+      "limits": "Only the subprotocol is attributed. No TLS settings from the upstream were copied; this project's certificate verification remains unchanged."
     },
     {
       "inventory_key": "inventory:ubnt_avclient",
@@ -513,10 +625,11 @@
         "src/aikey/aiport_candidate.py:93",
         "src/aikey/aiport_candidate.py:94"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `ubnt_avclient` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "Public sender label in the common camera-control envelope.",
+      "limits": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants."
     },
     {
       "inventory_key": "inventory:ubntbox",
@@ -524,10 +637,16 @@
       "code_locations": [
         "src/aikey/discovery.py:133"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Run tools/discovery_observe.py --ip OWNED_DEVICE_IPV4 once against one owned camera; record version/command/length and TLV type/length only. This cannot prove field values, endianness, multicast behavior or genuine AI Key/AI Port behavior. For those, inspect only the corresponding parser in your own Protect installation or perform a bounded emulator/controller trial and report derived booleans without values. If not observable, mark this fact as a removal candidate; do not inspect vendor device firmware.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-project-decisions.md#decisions",
+      "fact_kind": "project_defined_non_vendor",
+      "manufacturer_requirement": false,
+      "native_observation": false,
+      "reference_sha256": "30fe97fed098f020ab32c82241a6435e576ad1eeadf278af0b12c58192d2ed69",
+      "source_scope": "The retained status profile string ubntbox-0.1.7-v1-info is a legacy project diagnostic identifier. Retaining its spelling avoids silently changing existing status consumers; it does not claim vendor implementation parity, vendor origin or independent observation of a binary.",
+      "source_limitations": [
+        "Original project specification only; not independent vendor provenance or native behavior evidence."
+      ]
     },
     {
       "inventory_key": "inventory:ucp4",
@@ -546,10 +665,13 @@
         "src/aikey/lab.py:93",
         "src/aikey/search.py:609"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "The existing compatible connection offers ucp4 and decodes UCP4 controller requests.",
+      "source_limitations": [
+        "The configured device-service profile permits the controller to select no subprotocol. This is NOT evidence that ucp4 was negotiated or is mandatory."
+      ]
     },
     {
       "inventory_key": "inventory:x-adopted",
@@ -558,10 +680,13 @@
         "src/aikey/device.py:1047",
         "src/aikey/device.py:976"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "Header name x-adopted belongs to the currently accepted stable AI Key connection combination.",
+      "source_limitations": [
+        "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+      ]
     },
     {
       "inventory_key": "inventory:x-ident",
@@ -577,10 +702,13 @@
         "src/aikey/search.py:609",
         "src/aikey/worker.py:685"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "Header name x-ident belongs to the currently accepted stable AI Key connection combination.",
+      "source_limitations": [
+        "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+      ]
     },
     {
       "inventory_key": "inventory:x-mode",
@@ -588,10 +716,13 @@
       "code_locations": [
         "src/aikey/device.py:975"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "Header name x-mode belongs to the currently accepted stable AI Key connection combination.",
+      "source_limitations": [
+        "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+      ]
     },
     {
       "inventory_key": "ucp_record:two_records_types_1_2_format_1_empty_body_2",
@@ -599,10 +730,16 @@
       "code_locations": [
         "src/aikey/protocol.py:16"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Observe one bounded emulator/controller exchange using a new local diagnostic that reports only record type, format, compression, reserved flags and byte lengths; never record JSON bodies, IDs, tokens or certificates. Confirm each represented format separately; unsupported variants remain removal candidates.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Current native UI socket: records 1/2, JSON format 1, uncompressed/reserved zero. Historical own-controller trial explicitly records the AI Key empty-string error body.",
+      "source_limitations": [
+        "Current UI update socket is not the AI Key control socket.",
+        "Format-2 empty-body behavior is historical evidence, not newly observed today."
+      ]
     },
     {
       "inventory_key": "wire_atom:/api/1.2/login",
@@ -632,10 +769,11 @@
       "code_locations": [
         "src/aikey/aiport_candidate.py:3486"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "Public camera WebSocket route template on the configured controller.",
+      "limits": "No connection to this upstream or a camera was initiated. AI Port-specific authentication/identity headers are not established by this reference."
     },
     {
       "inventory_key": "wire_atom:/internal/aiprocessors/descriptions/",
@@ -643,10 +781,13 @@
       "code_locations": [
         "src/aikey/protocol.py:342"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-worker-receipts-20261111.md#attributed-facts",
+      "reference_sha256": "eebf3f209143c741e7856f212541c001b09448bc00a52e869108295e517f1579",
+      "source_scope": "The owner-copied Protect source and historical native session-description trial document the task-description callback route.",
+      "source_limitations": [
+        "No current receipt is claimed: the nine current-journal sessionDescribe records are not completed HTTP-accepted callbacks. Current native session-description functionality is not certified."
+      ]
     },
     {
       "inventory_key": "wire_atom:/internal/aiprocessors/descriptions/fixture-task",
@@ -655,10 +796,16 @@
         "src/aikey/lab.py:174",
         "src/aikey/lab.py:219"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-project-decisions.md#decisions",
+      "fact_kind": "project_defined_non_vendor",
+      "manufacturer_requirement": false,
+      "native_observation": false,
+      "reference_sha256": "30fe97fed098f020ab32c82241a6435e576ad1eeadf278af0b12c58192d2ed69",
+      "source_scope": "An explicitly synthetic lab task path. The fixture suffix is invented by this project and is not a real controller task ID or an assertion of native endpoint acceptance.",
+      "source_limitations": [
+        "Original project specification only; not independent vendor provenance or native behavior evidence."
+      ]
     },
     {
       "inventory_key": "wire_atom:/internal/aiprocessors/image/",
@@ -694,10 +841,16 @@
         "src/aikey/lab.py:173",
         "src/aikey/lab.py:222"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-project-decisions.md#decisions",
+      "fact_kind": "project_defined_non_vendor",
+      "manufacturer_requirement": false,
+      "native_observation": false,
+      "reference_sha256": "30fe97fed098f020ab32c82241a6435e576ad1eeadf278af0b12c58192d2ed69",
+      "source_scope": "An explicitly synthetic lab image path. The fixture suffix is invented; this lab example neither carries camera media nor demonstrates native image-route acceptance.",
+      "source_limitations": [
+        "Original project specification only; not independent vendor provenance or native behavior evidence."
+      ]
     },
     {
       "inventory_key": "wire_atom:/internal/aiprocessors/recognize-anything",
@@ -706,10 +859,13 @@
         "src/aikey/protocol.py:15",
         "src/aikey/worker.py:222"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-worker-receipts-20261111.md#attributed-facts",
+      "reference_sha256": "eebf3f209143c741e7856f212541c001b09448bc00a52e869108295e517f1579",
+      "source_scope": "Existing audio-image tagging results were HTTP-accepted at the fixed RAM callback.",
+      "source_limitations": [
+        "HTTP 2xx proves endpoint acceptance, not saved/searchable enrichment. The bounded current journal has 67 callback_uncertain records and one callback_sending record, which are not successes. No new media export, transcription, model job or callback was initiated."
+      ]
     },
     {
       "inventory_key": "wire_atom:/internal/aiprocessors/reverification",
@@ -750,10 +906,13 @@
       "code_locations": [
         "src/aikey/worker.py:224"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-worker-receipts-20261111.md#attributed-facts",
+      "reference_sha256": "eebf3f209143c741e7856f212541c001b09448bc00a52e869108295e517f1579",
+      "source_scope": "Existing speech results were HTTP-accepted at the fixed speech callback.",
+      "source_limitations": [
+        "HTTP 2xx proves endpoint acceptance, not saved/searchable enrichment. The bounded current journal has 67 callback_uncertain records and one callback_sending record, which are not successes. No new media export, transcription, model job or callback was initiated."
+      ]
     },
     {
       "inventory_key": "wire_atom:/internal/aiprocessors/video/export",
@@ -765,10 +924,13 @@
         "src/aikey/worker.py:1877",
         "src/aikey/worker.py:339"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-worker-receipts-20261111.md#attributed-facts",
+      "reference_sha256": "eebf3f209143c741e7856f212541c001b09448bc00a52e869108295e517f1579",
+      "source_scope": "Existing successful speech processing used the fixed AI processor video-export route.",
+      "source_limitations": [
+        "No new export or media read was performed. This establishes the historical successful path, not current recording availability or every video format."
+      ]
     },
     {
       "inventory_key": "wire_atom::7445/generate-embeddings",
@@ -854,10 +1016,13 @@
         "src/aikey/processing_status.py:207",
         "src/aikey/processing_status.py:292"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "The existing AI Port accepted connection uses the fixed Adopted interface atom.",
+      "source_limitations": [
+        "No new handshake was induced. This supports an accepted header combination, not that each field/value is necessary. The deployed connect loop enables control for an adopted device; its control-enable branch differs from the checkout, while the header/route construction was reviewed unchanged."
+      ]
     },
     {
       "inventory_key": "wire_atom:Camera-Firmware",
@@ -865,10 +1030,13 @@
       "code_locations": [
         "src/aikey/aiport_candidate.py:3484"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "The existing AI Port accepted connection uses the fixed Camera-Firmware interface atom.",
+      "source_limitations": [
+        "No new handshake was induced. This supports an accepted header combination, not that each field/value is necessary. The deployed connect loop enables control for an adopted device; its control-enable branch differs from the checkout, while the header/route construction was reviewed unchanged."
+      ]
     },
     {
       "inventory_key": "wire_atom:Camera-IP",
@@ -876,10 +1044,13 @@
       "code_locations": [
         "src/aikey/aiport_candidate.py:3483"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "The existing AI Port accepted connection uses the fixed Camera-IP interface atom.",
+      "source_limitations": [
+        "No new handshake was induced. This supports an accepted header combination, not that each field/value is necessary. The deployed connect loop enables control for an adopted device; its control-enable branch differs from the checkout, while the header/route construction was reviewed unchanged."
+      ]
     },
     {
       "inventory_key": "wire_atom:Camera-MAC",
@@ -887,10 +1058,11 @@
       "code_locations": [
         "src/aikey/aiport_candidate.py:3483"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "Public camera-mac HTTP header name; HTTP field names are case-insensitive.",
+      "limits": "No header value is recorded. Other Camera-* headers and exact AI Port verifier requirements remain unproved."
     },
     {
       "inventory_key": "wire_atom:Camera-Model",
@@ -898,10 +1070,13 @@
       "code_locations": [
         "src/aikey/aiport_candidate.py:3484"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "The existing AI Port accepted connection uses the fixed Camera-Model interface atom.",
+      "source_limitations": [
+        "No new handshake was induced. This supports an accepted header combination, not that each field/value is necessary. The deployed connect loop enables control for an adopted device; its control-enable branch differs from the checkout, while the header/route construction was reviewed unchanged."
+      ]
     },
     {
       "inventory_key": "wire_atom:ChangeAnalyticsSettings",
@@ -909,10 +1084,11 @@
       "code_locations": [
         "src/aikey/aiport_candidate.py:103"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `ChangeAnalyticsSettings` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "Public camera-control command/event name: ChangeAnalyticsSettings.",
+      "limits": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants. Only the name and public dispatch/event context are attributed, not the complete local implementation."
     },
     {
       "inventory_key": "wire_atom:ChangeAudioEventsSettings",
@@ -923,10 +1099,16 @@
         "src/aikey/aiport_candidate.py:1384",
         "src/aikey/aiport_candidate.py:2990"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Locate the exact interface token `ChangeAudioEventsSettings` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Controller-origin function name received by unchanged adopted emulator: ChangeAudioEventsSettings",
+      "source_limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
     },
     {
       "inventory_key": "wire_atom:ChangeAvclientEventSettings",
@@ -946,10 +1128,16 @@
         "src/aikey/aiport_candidate.py:101",
         "src/aikey/aiport_candidate.py:2969"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Locate the exact interface token `ChangeDeviceSettings` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Controller-origin function name received by unchanged adopted emulator: ChangeDeviceSettings",
+      "source_limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
     },
     {
       "inventory_key": "wire_atom:ChangeEventSettings",
@@ -969,10 +1157,11 @@
         "src/aikey/aiport_candidate.py:2891",
         "src/aikey/aiport_candidate.py:98"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `ChangeIspSettings` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "Public camera-control command/event name: ChangeIspSettings.",
+      "limits": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants. Only the name and public dispatch/event context are attributed, not the complete local implementation."
     },
     {
       "inventory_key": "wire_atom:ChangeNvrSettings",
@@ -1013,10 +1202,16 @@
         "src/aikey/aiport_candidate.py:1764",
         "src/aikey/aiport_candidate.py:3008"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Locate the exact interface token `ChangeSmartMotionSettings` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Controller-origin function name received by unchanged adopted emulator: ChangeSmartMotionSettings",
+      "source_limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
     },
     {
       "inventory_key": "wire_atom:ChangeSoundLedSettings",
@@ -1025,10 +1220,16 @@
         "src/aikey/aiport_candidate.py:100",
         "src/aikey/aiport_candidate.py:2948"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Locate the exact interface token `ChangeSoundLedSettings` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Controller-origin function name received by unchanged adopted emulator: ChangeSoundLedSettings",
+      "source_limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
     },
     {
       "inventory_key": "wire_atom:ChangeVideoSettings",
@@ -1038,10 +1239,11 @@
         "src/aikey/aiport_candidate.py:2901",
         "src/aikey/aiport_candidate.py:98"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `ChangeVideoSettings` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "Public camera-control command/event name: ChangeVideoSettings.",
+      "limits": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants. Only the name and public dispatch/event context are attributed, not the complete local implementation."
     },
     {
       "inventory_key": "wire_atom:EventAIPortStatus",
@@ -1095,10 +1297,11 @@
         "src/aikey/aiport_candidate.py:3425",
         "src/aikey/aiport_candidate.py:97"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `EventSmartDetect` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "Public camera-control command/event name: EventSmartDetect.",
+      "limits": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants. Only the name and public dispatch/event context are attributed, not the complete local implementation."
     },
     {
       "inventory_key": "wire_atom:EventSmartMotion",
@@ -1154,10 +1357,16 @@
         "src/aikey/aiport_candidate.py:3270",
         "src/aikey/aiport_candidate.py:3316"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Locate the exact interface token `GetRequest` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Controller-origin function name received by unchanged adopted emulator: GetRequest",
+      "source_limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
     },
     {
       "inventory_key": "wire_atom:GetStreamList",
@@ -1167,10 +1376,16 @@
         "src/aikey/aiport_candidate.py:3096",
         "src/aikey/aiport_candidate.py:93"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Locate the exact interface token `GetStreamList` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Controller-origin function name received by unchanged adopted emulator: GetStreamList",
+      "source_limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
     },
     {
       "inventory_key": "wire_atom:GetSystemStats",
@@ -1215,10 +1430,13 @@
         "src/aikey/search.py:708",
         "src/aikey/search.py:709"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `IMAGE_SEARCH` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-worker-receipts-20261111.md#attributed-facts",
+      "reference_sha256": "eebf3f209143c741e7856f212541c001b09448bc00a52e869108295e517f1579",
+      "source_scope": "The historical own-controller search-by-image trial records IMAGE_SEARCH, imgUri and imgEmbed with native positive and negative retrieval.",
+      "source_limitations": [
+        "No image query or image fetch was initiated today. The current process image_queries counter is zero, so this remains historical evidence, not a new Protect 7.4.96 image-search acceptance."
+      ]
     },
     {
       "inventory_key": "wire_atom:NL_PARSE",
@@ -1243,10 +1461,11 @@
       "code_locations": [
         "src/aikey/aiport_candidate.py:95"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `NetworkStatus` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "Public camera-control command/event name: NetworkStatus.",
+      "limits": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants. Only the name and public dispatch/event context are attributed, not the complete local implementation."
     },
     {
       "inventory_key": "wire_atom:OnvifStreamControl",
@@ -1271,10 +1490,16 @@
         "src/aikey/lab.py:223",
         "src/aikey/lab.py:246"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Locate the exact interface token `RequestAI` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Controller-origin function name received by unchanged adopted emulator: RequestAI",
+      "source_limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
     },
     {
       "inventory_key": "wire_atom:ResetAIPortStreams",
@@ -1308,10 +1533,16 @@
         "src/aikey/aiport_candidate.py:2918",
         "src/aikey/aiport_candidate.py:99"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Locate the exact interface token `StopService` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Controller-origin function name received by unchanged adopted emulator: StopService",
+      "source_limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
     },
     {
       "inventory_key": "wire_atom:UiStreamControl",
@@ -1331,10 +1562,16 @@
         "src/aikey/aiport_candidate.py:106",
         "src/aikey/aiport_candidate.py:2997"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Locate the exact interface token `UpdateFaceDBRequest` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Controller-origin function name received by unchanged adopted emulator: UpdateFaceDBRequest",
+      "source_limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
     },
     {
       "inventory_key": "wire_atom:UpdateFeatureFlags",
@@ -1354,10 +1591,16 @@
         "src/aikey/aiport_candidate.py:106",
         "src/aikey/aiport_candidate.py:3149"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Locate the exact interface token `UpdateFirmwareRequest` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Controller-origin function name received by unchanged adopted emulator: UpdateFirmwareRequest",
+      "source_limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
     },
     {
       "inventory_key": "wire_atom:UpdateUsernamePassword",
@@ -1366,10 +1609,16 @@
         "src/aikey/aiport_candidate.py:2927",
         "src/aikey/aiport_candidate.py:99"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Locate the exact interface token `UpdateUsernamePassword` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Controller-origin function name received by unchanged adopted emulator: UpdateUsernamePassword",
+      "source_limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
     },
     {
       "inventory_key": "wire_atom:changeAiInferAgentSettings",
@@ -1537,10 +1786,16 @@
       "code_locations": [
         "src/aikey/device.py:535"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Locate the exact interface token `networkStatus` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Controller-origin function name received by unchanged adopted emulator: networkStatus",
+      "source_limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
     },
     {
       "inventory_key": "wire_atom:nvr",
@@ -1721,10 +1976,16 @@
       "code_locations": [
         "src/aikey/device.py:535"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Locate the exact interface token `sshService` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Controller-origin function name received by unchanged adopted emulator: sshService",
+      "source_limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
     },
     {
       "inventory_key": "wire_atom:supportAiSummary",
@@ -1732,10 +1993,13 @@
       "code_locations": [
         "src/aikey/device.py:39"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `supportAiSummary` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "protect_own_installation",
+      "reference": "docs/evidence/interface-installed-ui-20261111.md#findings",
+      "reference_sha256": "5db4062822358e554536121f873b21a89f515954b72cf125aa789e7a07794797",
+      "source_scope": "The installed Protect UI recognizes the capability name supportAiSummary. AI-feature-kind to capability-name mapping, with an enabled-member consumer.",
+      "source_limitations": [
+        "This supports the property spellings and stated current UI consumer contexts. It does not establish backend wire-schema completeness, default values, task support, feature quality or every enabled/version field in the implementation. No proprietary source expression is reproduced."
+      ]
     },
     {
       "inventory_key": "wire_atom:supportFaceEnhancement",
@@ -1743,10 +2007,13 @@
       "code_locations": [
         "src/aikey/device.py:39"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `supportFaceEnhancement` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "protect_own_installation",
+      "reference": "docs/evidence/interface-installed-ui-20261111.md#findings",
+      "reference_sha256": "5db4062822358e554536121f873b21a89f515954b72cf125aa789e7a07794797",
+      "source_scope": "The installed Protect UI recognizes the capability name supportFaceEnhancement. Processor featureFlags property access, with an enabled-member consumer and feature-specific UI availability/settings.",
+      "source_limitations": [
+        "This supports the property spellings and stated current UI consumer contexts. It does not establish backend wire-schema completeness, default values, task support, feature quality or every enabled/version field in the implementation. No proprietary source expression is reproduced."
+      ]
     },
     {
       "inventory_key": "wire_atom:supportFaceRecognition",
@@ -1754,10 +2021,13 @@
       "code_locations": [
         "src/aikey/device.py:40"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `supportFaceRecognition` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "protect_own_installation",
+      "reference": "docs/evidence/interface-installed-ui-20261111.md#findings",
+      "reference_sha256": "5db4062822358e554536121f873b21a89f515954b72cf125aa789e7a07794797",
+      "source_scope": "The installed Protect UI recognizes the capability name supportFaceRecognition. AI-feature-kind to capability-name mapping, with an enabled-member consumer.",
+      "source_limitations": [
+        "This supports the property spellings and stated current UI consumer contexts. It does not establish backend wire-schema completeness, default values, task support, feature quality or every enabled/version field in the implementation. No proprietary source expression is reproduced."
+      ]
     },
     {
       "inventory_key": "wire_atom:supportLicensePlateRecognition",
@@ -1765,10 +2035,13 @@
       "code_locations": [
         "src/aikey/device.py:40"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `supportLicensePlateRecognition` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "protect_own_installation",
+      "reference": "docs/evidence/interface-installed-ui-20261111.md#findings",
+      "reference_sha256": "5db4062822358e554536121f873b21a89f515954b72cf125aa789e7a07794797",
+      "source_scope": "The installed Protect UI recognizes the capability name supportLicensePlateRecognition. AI-feature-kind to capability-name mapping, with an enabled-member consumer.",
+      "source_limitations": [
+        "This supports the property spellings and stated current UI consumer contexts. It does not establish backend wire-schema completeness, default values, task support, feature quality or every enabled/version field in the implementation. No proprietary source expression is reproduced."
+      ]
     },
     {
       "inventory_key": "wire_atom:supportRecognizeAnything",
@@ -1776,10 +2049,13 @@
       "code_locations": [
         "src/aikey/device.py:40"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `supportRecognizeAnything` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "protect_own_installation",
+      "reference": "docs/evidence/interface-installed-ui-20261111.md#findings",
+      "reference_sha256": "5db4062822358e554536121f873b21a89f515954b72cf125aa789e7a07794797",
+      "source_scope": "The installed Protect UI recognizes the capability name supportRecognizeAnything. AI-feature-kind to capability-name mapping, with an enabled-member consumer.",
+      "source_limitations": [
+        "This supports the property spellings and stated current UI consumer contexts. It does not establish backend wire-schema completeness, default values, task support, feature quality or every enabled/version field in the implementation. No proprietary source expression is reproduced."
+      ]
     },
     {
       "inventory_key": "wire_atom:supportRetroactiveProcessing",
@@ -1787,10 +2063,13 @@
       "code_locations": [
         "src/aikey/device.py:39"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `supportRetroactiveProcessing` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "protect_own_installation",
+      "reference": "docs/evidence/interface-installed-ui-20261111.md#findings",
+      "reference_sha256": "5db4062822358e554536121f873b21a89f515954b72cf125aa789e7a07794797",
+      "source_scope": "The installed Protect UI recognizes the capability name supportRetroactiveProcessing. Processor featureFlags property access, with an enabled-member consumer and feature-specific UI availability/settings.",
+      "source_limitations": [
+        "This supports the property spellings and stated current UI consumer contexts. It does not establish backend wire-schema completeness, default values, task support, feature quality or every enabled/version field in the implementation. No proprietary source expression is reproduced."
+      ]
     },
     {
       "inventory_key": "wire_atom:timeSync",
@@ -1800,10 +2079,13 @@
         "src/aikey/device.py:58",
         "src/aikey/lab.py:105"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `timeSync` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "The controller answered an emulator timeSync request with the valid correlated response.",
+      "source_limitations": [
+        "This demonstrates an answered request, not a controller-origin timeSync command or manufacturer clock-accuracy guarantee."
+      ]
     },
     {
       "inventory_key": "wire_atom:token",
@@ -1833,10 +2115,16 @@
       "code_locations": [
         "src/aikey/aiport_candidate.py:93"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Locate the exact interface token `ubnt_avclient_hello` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Controller-origin function name received by unchanged adopted emulator: ubnt_avclient_hello",
+      "source_limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
     },
     {
       "inventory_key": "wire_atom:ubnt_avclient_paramAgreement",
@@ -1844,10 +2132,16 @@
       "code_locations": [
         "src/aikey/aiport_candidate.py:93"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Locate the exact interface token `ubnt_avclient_paramAgreement` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Controller-origin function name received by unchanged adopted emulator: ubnt_avclient_paramAgreement",
+      "source_limitations": [
+        "Cumulative since process start; not necessarily a new request during this collection.",
+        "Name observation does not prove successful handling, necessity, or all command payload variants."
+      ]
     },
     {
       "inventory_key": "wire_atom:ubnt_avclient_time",
@@ -1855,10 +2149,11 @@
       "code_locations": [
         "src/aikey/aiport_candidate.py:94"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `ubnt_avclient_time` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "Public camera-control command/event name: ubnt_avclient_time.",
+      "limits": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants. Only the name and public dispatch/event context are attributed, not the complete local implementation."
     },
     {
       "inventory_key": "wire_atom:ubnt_avclient_timeSync",
@@ -1917,10 +2212,13 @@
         "src/aikey/device.py:1047",
         "src/aikey/device.py:976"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "Header name x-adopted belongs to the currently accepted stable AI Key connection combination.",
+      "source_limitations": [
+        "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+      ]
     },
     {
       "inventory_key": "wire_atom:x-ident",
@@ -1928,10 +2226,13 @@
       "code_locations": [
         "src/aikey/device.py:973"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "Header name x-ident belongs to the currently accepted stable AI Key connection combination.",
+      "source_limitations": [
+        "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+      ]
     },
     {
       "inventory_key": "wire_atom:x-ip",
@@ -1939,10 +2240,13 @@
       "code_locations": [
         "src/aikey/device.py:974"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "Header name x-ip belongs to the currently accepted stable AI Key connection combination.",
+      "source_limitations": [
+        "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+      ]
     },
     {
       "inventory_key": "wire_atom:x-mode",
@@ -1950,10 +2254,13 @@
       "code_locations": [
         "src/aikey/device.py:975"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "Header name x-mode belongs to the currently accepted stable AI Key connection combination.",
+      "source_limitations": [
+        "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+      ]
     },
     {
       "inventory_key": "wire_atom:x-sysid",
@@ -1961,10 +2268,13 @@
       "code_locations": [
         "src/aikey/device.py:974"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "Header name x-sysid belongs to the currently accepted stable AI Key connection combination.",
+      "source_limitations": [
+        "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+      ]
     },
     {
       "inventory_key": "wire_atom:x-token",
@@ -1985,10 +2295,13 @@
       "code_locations": [
         "src/aikey/device.py:973"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "Header name x-type belongs to the currently accepted stable AI Key connection combination.",
+      "source_limitations": [
+        "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+      ]
     },
     {
       "inventory_key": "wire_atom:x-version",
@@ -1996,10 +2309,13 @@
       "code_locations": [
         "src/aikey/device.py:975"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "Header name x-version belongs to the currently accepted stable AI Key connection combination.",
+      "source_limitations": [
+        "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+      ]
     },
     {
       "inventory_key": "wire_field:action",
@@ -2008,10 +2324,13 @@
         "src/aikey/device.py:1160",
         "src/aikey/protocol.py:201"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `action` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "Controller-origin UCP4 request envelope field action.",
+      "source_limitations": [
+        "Names/types are established for the request envelope. Other same-name fields at different local contexts are not a full schema/compatibility attestation."
+      ]
     },
     {
       "inventory_key": "wire_field:aiMode",
@@ -2034,10 +2353,13 @@
         "src/aikey/device.py:1454",
         "src/aikey/device.py:274"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `camera` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "The incoming recognizeKeyFrames command carries camera as a string.",
+      "source_limitations": [
+        "No camera identifier is retained. This proves that command context, not every callback schema."
+      ]
     },
     {
       "inventory_key": "wire_field:cameraId",
@@ -2046,10 +2368,13 @@
         "src/aikey/protocol.py:282",
         "src/aikey/protocol.py:295"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `cameraId` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-worker-receipts-20261111.md#attributed-facts",
+      "reference_sha256": "eebf3f209143c741e7856f212541c001b09448bc00a52e869108295e517f1579",
+      "source_scope": "The accepted RAM audio-image result includes the cameraId field.",
+      "source_limitations": [
+        "HTTP 2xx proves endpoint acceptance, not saved/searchable enrichment. The bounded current journal has 67 callback_uncertain records and one callback_sending record, which are not successes. No new media export, transcription, model job or callback was initiated. This is the legacy audio-image callback context, not every result schema that reuses the spelling."
+      ]
     },
     {
       "inventory_key": "wire_field:clockWall",
@@ -2057,10 +2382,11 @@
       "code_locations": [
         "src/aikey/aiport_candidate.py:2742"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `clockWall` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "Public smart-event wall-clock timestamp field.",
+      "limits": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants."
     },
     {
       "inventory_key": "wire_field:connectionSecurePort",
@@ -2068,10 +2394,11 @@
       "code_locations": [
         "src/aikey/aiport_candidate.py:2716"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `connectionSecurePort` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "Public camera hello/parameter-agreement field: connectionSecurePort.",
+      "limits": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants. This does not establish an AI Key management schema."
     },
     {
       "inventory_key": "wire_field:controller",
@@ -2079,10 +2406,16 @@
       "code_locations": [
         "src/aikey/device.py:1557"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Locate the exact interface token `controller` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "setConsoleInfo requires controller object and retained controller-origin state contains its allowed names/types.",
+      "source_limitations": [
+        "Only the stated incoming command context; not evidence for unrelated result or management schemas.",
+        "The deployed own implementation differs from WP2; the deployed receive-validator source was inspected separately."
+      ]
     },
     {
       "inventory_key": "wire_field:descEmbedding",
@@ -2152,10 +2485,13 @@
         "src/aikey/device.py:848",
         "src/aikey/device.py:857"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `enabled` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "protect_own_installation",
+      "reference": "docs/evidence/interface-installed-ui-20261111.md#findings",
+      "reference_sha256": "5db4062822358e554536121f873b21a89f515954b72cf125aa789e7a07794797",
+      "source_scope": "The installed UI consumes enabled as a boolean-like capability gate. Enabled-property consumers under the stated featureFlags capability properties.",
+      "source_limitations": [
+        "This supports the property spellings and stated current UI consumer contexts. It does not establish backend wire-schema completeness, default values, task support, feature quality or every enabled/version field in the implementation. No proprietary source expression is reproduced."
+      ]
     },
     {
       "inventory_key": "wire_field:end",
@@ -2164,10 +2500,16 @@
         "src/aikey/device.py:1238",
         "src/aikey/device.py:286"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Locate the exact interface token `end` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Positive valid-order/duration counters establish inbound start/end number fields.",
+      "source_limitations": [
+        "Only the stated incoming command context; not evidence for unrelated result or management schemas.",
+        "The deployed own implementation differs from WP2; the deployed receive-validator source was inspected separately."
+      ]
     },
     {
       "inventory_key": "wire_field:error",
@@ -2176,10 +2518,13 @@
         "src/aikey/device.py:1129",
         "src/aikey/protocol.py:267"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `error` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "Successful controller-origin time-sync response checks the error field.",
+      "source_limitations": [
+        "The observed value is a derived success boolean only. No response body, clock timestamp, identifier or credential is retained. This does not establish every failure variant."
+      ]
     },
     {
       "inventory_key": "wire_field:errorCode",
@@ -2188,10 +2533,13 @@
         "src/aikey/device.py:1128",
         "src/aikey/protocol.py:267"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `errorCode` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "Successful controller-origin time-sync response checks the errorCode field.",
+      "source_limitations": [
+        "The observed value is a derived success boolean only. No response body, clock timestamp, identifier or credential is retained. This does not establish every failure variant."
+      ]
     },
     {
       "inventory_key": "wire_field:event",
@@ -2199,10 +2547,13 @@
       "code_locations": [
         "src/aikey/device.py:276"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `event` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-worker-receipts-20261111.md#attributed-facts",
+      "reference_sha256": "eebf3f209143c741e7856f212541c001b09448bc00a52e869108295e517f1579",
+      "source_scope": "Controller-origin speech/audio-image tasks supply the event field.",
+      "source_limitations": [
+        "No event identifier or caption/transcript is retained. Same-name fields in other protocols are not fully validated here."
+      ]
     },
     {
       "inventory_key": "wire_field:eventId",
@@ -2211,10 +2562,13 @@
         "src/aikey/protocol.py:276",
         "src/aikey/protocol.py:296"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `eventId` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-worker-receipts-20261111.md#attributed-facts",
+      "reference_sha256": "eebf3f209143c741e7856f212541c001b09448bc00a52e869108295e517f1579",
+      "source_scope": "The accepted RAM audio-image result includes the eventId field.",
+      "source_limitations": [
+        "HTTP 2xx proves endpoint acceptance, not saved/searchable enrichment. The bounded current journal has 67 callback_uncertain records and one callback_sending record, which are not successes. No new media export, transcription, model job or callback was initiated. This is the legacy audio-image callback context, not every result schema that reuses the spelling."
+      ]
     },
     {
       "inventory_key": "wire_field:exact_match",
@@ -2222,10 +2576,13 @@
       "code_locations": [
         "src/aikey/protocol.py:240"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `exact_match` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-worker-receipts-20261111.md#attributed-facts",
+      "reference_sha256": "eebf3f209143c741e7856f212541c001b09448bc00a52e869108295e517f1579",
+      "source_scope": "The existing NL_PARSE query handler uses the exact_match field in its stated request/result context.",
+      "source_limitations": [
+        "Seven query failures remain recorded. An encoding counter alone is not native retrieval acceptance; the historical own-controller positive/negative retrieval is separate. Optional output fields are not claimed mandatory."
+      ]
     },
     {
       "inventory_key": "wire_field:failed",
@@ -2245,10 +2602,13 @@
       "code_locations": [
         "src/aikey/device.py:867"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `featureFlags` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "protect_own_installation",
+      "reference": "docs/evidence/interface-installed-ui-20261111.md#findings",
+      "reference_sha256": "5db4062822358e554536121f873b21a89f515954b72cf125aa789e7a07794797",
+      "source_scope": "The installed UI consumes featureFlags as the capability container. Processor feature gating for face enhancement and retroactive-processing controls.",
+      "source_limitations": [
+        "This supports the property spellings and stated current UI consumer contexts. It does not establish backend wire-schema completeness, default values, task support, feature quality or every enabled/version field in the implementation. No proprietary source expression is reproduced."
+      ]
     },
     {
       "inventory_key": "wire_field:features",
@@ -2256,10 +2616,11 @@
       "code_locations": [
         "src/aikey/aiport_candidate.py:2717"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `features` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "Public camera hello/parameter-agreement field: features.",
+      "limits": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants. This does not establish an AI Key management schema."
     },
     {
       "inventory_key": "wire_field:from",
@@ -2269,10 +2630,11 @@
         "src/aikey/aiport_candidate.py:2724",
         "src/aikey/aiport_candidate.py:2734"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `from` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "Common camera-control JSON envelope field: from.",
+      "limits": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants."
     },
     {
       "inventory_key": "wire_field:functionName",
@@ -2283,10 +2645,11 @@
         "src/aikey/aiport_candidate.py:2735",
         "src/aikey/aiport_candidate.py:2815"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `functionName` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "Common camera-control JSON envelope field: functionName.",
+      "limits": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants."
     },
     {
       "inventory_key": "wire_field:fwVersion",
@@ -2294,10 +2657,11 @@
       "code_locations": [
         "src/aikey/aiport_candidate.py:2712"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `fwVersion` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "Public camera hello/parameter-agreement field: fwVersion.",
+      "limits": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants. This does not establish an AI Key management schema."
     },
     {
       "inventory_key": "wire_field:hosts",
@@ -2320,10 +2684,13 @@
         "src/aikey/protocol.py:199",
         "src/aikey/protocol.py:266"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `id` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "Controller-origin UCP4 request envelope field id.",
+      "source_limitations": [
+        "Names/types are established for the request envelope. Other same-name fields at different local contexts are not a full schema/compatibility attestation."
+      ]
     },
     {
       "inventory_key": "wire_field:imgEmbed",
@@ -2331,10 +2698,13 @@
       "code_locations": [
         "src/aikey/protocol.py:219"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `imgEmbed` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-worker-receipts-20261111.md#attributed-facts",
+      "reference_sha256": "eebf3f209143c741e7856f212541c001b09448bc00a52e869108295e517f1579",
+      "source_scope": "The historical own-controller search-by-image trial records IMAGE_SEARCH, imgUri and imgEmbed with native positive and negative retrieval.",
+      "source_limitations": [
+        "No image query or image fetch was initiated today. The current process image_queries counter is zero, so this remains historical evidence, not a new Protect 7.4.96 image-search acceptance."
+      ]
     },
     {
       "inventory_key": "wire_field:imgUri",
@@ -2342,10 +2712,13 @@
       "code_locations": [
         "src/aikey/protocol.py:207"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `imgUri` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-worker-receipts-20261111.md#attributed-facts",
+      "reference_sha256": "eebf3f209143c741e7856f212541c001b09448bc00a52e869108295e517f1579",
+      "source_scope": "The historical own-controller search-by-image trial records IMAGE_SEARCH, imgUri and imgEmbed with native positive and negative retrieval.",
+      "source_limitations": [
+        "No image query or image fetch was initiated today. The current process image_queries counter is zero, so this remains historical evidence, not a new Protect 7.4.96 image-search acceptance."
+      ]
     },
     {
       "inventory_key": "wire_field:inResponseTo",
@@ -2357,10 +2730,11 @@
         "src/aikey/aiport_candidate.py:2821",
         "src/aikey/aiport_candidate.py:2838"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `inResponseTo` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "Common camera-control JSON envelope field: inResponseTo.",
+      "limits": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants."
     },
     {
       "inventory_key": "wire_field:ip",
@@ -2368,10 +2742,11 @@
       "code_locations": [
         "src/aikey/aiport_candidate.py:2715"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `ip` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "Public camera hello/parameter-agreement field: ip.",
+      "limits": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants. This does not establish an AI Key management schema."
     },
     {
       "inventory_key": "wire_field:isAudioEventReady",
@@ -2413,10 +2788,16 @@
         "src/aikey/device.py:1305",
         "src/aikey/device.py:290"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Locate the exact interface token `keyMoments` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Positive non-empty keyMoments counters establish the received list in recognizeKeyFrames.",
+      "source_limitations": [
+        "Only the stated incoming command context; not evidence for unrelated result or management schemas.",
+        "The deployed own implementation differs from WP2; the deployed receive-validator source was inspected separately."
+      ]
     },
     {
       "inventory_key": "wire_field:keyTags",
@@ -2425,10 +2806,13 @@
         "src/aikey/protocol.py:226",
         "src/aikey/protocol.py:228"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `keyTags` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-worker-receipts-20261111.md#attributed-facts",
+      "reference_sha256": "eebf3f209143c741e7856f212541c001b09448bc00a52e869108295e517f1579",
+      "source_scope": "The existing NL_PARSE query handler uses the keyTags field in its stated request/result context.",
+      "source_limitations": [
+        "Seven query failures remain recorded. An encoding counter alone is not native retrieval acceptance; the historical own-controller positive/negative retrieval is separate. Optional output fields are not claimed mandatory."
+      ]
     },
     {
       "inventory_key": "wire_field:labels",
@@ -2474,10 +2858,11 @@
         "src/aikey/aiport_candidate.py:3153",
         "src/aikey/aiport_candidate.py:3161"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `messageId` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "Common camera-control JSON envelope field: messageId.",
+      "limits": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants."
     },
     {
       "inventory_key": "wire_field:mgmt",
@@ -2509,10 +2894,11 @@
       "code_locations": [
         "src/aikey/protocol.py:188"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `model` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "protect_own_installation",
+      "reference": "docs/evidence/live-protect-7.3.70.md#static-findings-from-the-owner-copied-7370-servicejs-30-sep",
+      "reference_sha256": "815a50d0f5bfe4a235a21468cfe48ea5b4356f245b0acfa45d0734095503d484",
+      "scope": "Owner-copied Protect 7.3.70 explicitly documents NL_PARSE model: multilingual-e5-small, the context used by protocol.py.",
+      "limits": "Historical own-controller source finding; not a new read of the current backend or an independent model-quality attestation."
     },
     {
       "inventory_key": "wire_field:motionDetect",
@@ -2531,10 +2917,16 @@
       "code_locations": [
         "src/aikey/device.py:1539"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Locate the exact interface token `nightMode` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "updateLcmSettings received a nightMode object with numeric offMinute/onMinute fields.",
+      "source_limitations": [
+        "Only the stated incoming command context; not evidence for unrelated result or management schemas.",
+        "The deployed own implementation differs from WP2; the deployed receive-validator source was inspected separately."
+      ]
     },
     {
       "inventory_key": "wire_field:objectTypes",
@@ -2542,10 +2934,13 @@
       "code_locations": [
         "src/aikey/protocol.py:225"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `objectTypes` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-worker-receipts-20261111.md#attributed-facts",
+      "reference_sha256": "eebf3f209143c741e7856f212541c001b09448bc00a52e869108295e517f1579",
+      "source_scope": "The existing NL_PARSE query handler uses the objectTypes field in its stated request/result context.",
+      "source_limitations": [
+        "Seven query failures remain recorded. An encoding counter alone is not native retrieval acceptance; the historical own-controller positive/negative retrieval is separate. Optional output fields are not claimed mandatory."
+      ]
     },
     {
       "inventory_key": "wire_field:password",
@@ -2568,10 +2963,13 @@
       "code_locations": [
         "src/aikey/device.py:1580"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `passwordNew` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "A previously successful incoming changeUserPassword request required the passwordNew string field.",
+      "source_limitations": [
+        "Only field names and aggregate outcomes are retained. No current/old/new credential value, fresh rotation or management/adoption schema is established."
+      ]
     },
     {
       "inventory_key": "wire_field:passwordOld",
@@ -2580,10 +2978,13 @@
         "src/aikey/device.py:1579",
         "src/aikey/device.py:802"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `passwordOld` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "A previously successful incoming changeUserPassword request required the passwordOld string field.",
+      "source_limitations": [
+        "Only field names and aggregate outcomes are retained. No current/old/new credential value, fresh rotation or management/adoption schema is established."
+      ]
     },
     {
       "inventory_key": "wire_field:payload",
@@ -2611,10 +3012,11 @@
         "src/aikey/aiport_candidate.py:3212",
         "src/aikey/device.py:1367"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `payload` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "Common camera-control JSON envelope field: payload.",
+      "limits": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants."
     },
     {
       "inventory_key": "wire_field:poeType",
@@ -2656,10 +3058,11 @@
       "code_locations": [
         "src/aikey/aiport_candidate.py:2713"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `protocolVersion` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "Public camera hello/parameter-agreement field: protocolVersion.",
+      "limits": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants. This does not establish an AI Key management schema."
     },
     {
       "inventory_key": "wire_field:querySentence",
@@ -2667,10 +3070,13 @@
       "code_locations": [
         "src/aikey/protocol.py:203"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `querySentence` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-worker-receipts-20261111.md#attributed-facts",
+      "reference_sha256": "eebf3f209143c741e7856f212541c001b09448bc00a52e869108295e517f1579",
+      "source_scope": "The existing NL_PARSE query handler uses the querySentence field in its stated request/result context.",
+      "source_limitations": [
+        "Seven query failures remain recorded. An encoding counter alone is not native retrieval acceptance; the historical own-controller positive/negative retrieval is separate. Optional output fields are not claimed mandatory."
+      ]
     },
     {
       "inventory_key": "wire_field:ramType",
@@ -2679,10 +3085,16 @@
         "src/aikey/device.py:1231",
         "src/aikey/device.py:289"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Locate the exact interface token `ramType` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "3,104 inbound recognizeKeyFrames requests with recognized ramType labels.",
+      "source_limitations": [
+        "Only the stated incoming command context; not evidence for unrelated result or management schemas.",
+        "The deployed own implementation differs from WP2; the deployed receive-validator source was inspected separately."
+      ]
     },
     {
       "inventory_key": "wire_field:region",
@@ -2690,10 +3102,16 @@
       "code_locations": [
         "src/aikey/device.py:1526"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Locate the exact interface token `region` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Persisted controller-origin changeAiInferAgentSettings contains a string region.",
+      "source_limitations": [
+        "Only the stated incoming command context; not evidence for unrelated result or management schemas.",
+        "The deployed own implementation differs from WP2; the deployed receive-validator source was inspected separately."
+      ]
     },
     {
       "inventory_key": "wire_field:responseExpected",
@@ -2704,10 +3122,11 @@
         "src/aikey/aiport_candidate.py:2735",
         "src/aikey/aiport_candidate.py:2823"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `responseExpected` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "Common camera-control JSON envelope field: responseExpected.",
+      "limits": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants."
     },
     {
       "inventory_key": "wire_field:smartDetect",
@@ -2727,10 +3146,16 @@
         "src/aikey/device.py:1238",
         "src/aikey/device.py:286"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Locate the exact interface token `start` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "Positive valid-order/duration counters establish inbound start/end number fields.",
+      "source_limitations": [
+        "Only the stated incoming command context; not evidence for unrelated result or management schemas.",
+        "The deployed own implementation differs from WP2; the deployed receive-validator source was inspected separately."
+      ]
     },
     {
       "inventory_key": "wire_field:status",
@@ -2739,10 +3164,13 @@
         "src/aikey/protocol.py:276",
         "src/aikey/protocol.py:298"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `status` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-worker-receipts-20261111.md#attributed-facts",
+      "reference_sha256": "eebf3f209143c741e7856f212541c001b09448bc00a52e869108295e517f1579",
+      "source_scope": "The accepted RAM audio-image result includes the status field.",
+      "source_limitations": [
+        "HTTP 2xx proves endpoint acceptance, not saved/searchable enrichment. The bounded current journal has 67 callback_uncertain records and one callback_sending record, which are not successes. No new media export, transcription, model job or callback was initiated. This is the legacy audio-image callback context, not every result schema that reuses the spelling."
+      ]
     },
     {
       "inventory_key": "wire_field:statusCode",
@@ -2772,10 +3200,13 @@
       "code_locations": [
         "src/aikey/device.py:848"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `supportAiSummary` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "protect_own_installation",
+      "reference": "docs/evidence/interface-installed-ui-20261111.md#findings",
+      "reference_sha256": "5db4062822358e554536121f873b21a89f515954b72cf125aa789e7a07794797",
+      "source_scope": "The installed UI consumes the supportAiSummary capability property. AI summary feature mapping and the featureFlags.aiFeatureFlag summary availability selector.",
+      "source_limitations": [
+        "This supports the property spellings and stated current UI consumer contexts. It does not establish backend wire-schema completeness, default values, task support, feature quality or every enabled/version field in the implementation. No proprietary source expression is reproduced."
+      ]
     },
     {
       "inventory_key": "wire_field:supportDeepMode",
@@ -2829,10 +3260,13 @@
       "code_locations": [
         "src/aikey/device.py:1364"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `targetUri` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "Incoming RequestAI validates the required targetUri field.",
+      "source_limitations": [
+        "Cumulative since process start; not a newly induced job. Target values and task payloads are not retained. This does not establish every supported target URI."
+      ]
     },
     {
       "inventory_key": "wire_field:thumbnailMeta",
@@ -2840,10 +3274,16 @@
       "code_locations": [
         "src/aikey/device.py:1268"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
       "observation": "Locate the exact interface token `thumbnailMeta` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "removal_candidate_if_unobservable": true,
+      "reference_sha256": "7ea81ef63999328350dc5867785cf82d2888060c1c93e4dcd4f7818a2f3af6c7",
+      "source_scope": "775 inbound recognizeKeyFrames requests include thumbnailMeta.",
+      "source_limitations": [
+        "Only the stated incoming command context; not evidence for unrelated result or management schemas.",
+        "The deployed own implementation differs from WP2; the deployed receive-validator source was inspected separately."
+      ]
     },
     {
       "inventory_key": "wire_field:thumbnailMs",
@@ -2884,10 +3324,13 @@
       "code_locations": [
         "src/aikey/device.py:1369"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `timeoutMs` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "Incoming RequestAI validates the required timeoutMs field.",
+      "source_limitations": [
+        "Cumulative since process start; not a newly induced job. Target values and task payloads are not retained. This does not establish every supported target URI."
+      ]
     },
     {
       "inventory_key": "wire_field:timestamp",
@@ -2909,10 +3352,11 @@
         "src/aikey/aiport_candidate.py:2724",
         "src/aikey/aiport_candidate.py:2734"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `to` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "Common camera-control JSON envelope field: to.",
+      "limits": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants."
     },
     {
       "inventory_key": "wire_field:token",
@@ -2934,10 +3378,13 @@
         "src/aikey/protocol.py:186",
         "src/aikey/protocol.py:234"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `txtEmbed` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-worker-receipts-20261111.md#attributed-facts",
+      "reference_sha256": "eebf3f209143c741e7856f212541c001b09448bc00a52e869108295e517f1579",
+      "source_scope": "The existing NL_PARSE query handler uses the txtEmbed field in its stated request/result context.",
+      "source_limitations": [
+        "Seven query failures remain recorded. An encoding counter alone is not native retrieval acceptance; the historical own-controller positive/negative retrieval is separate. Optional output fields are not claimed mandatory."
+      ]
     },
     {
       "inventory_key": "wire_field:type",
@@ -2948,10 +3395,13 @@
         "src/aikey/protocol.py:197",
         "src/aikey/protocol.py:266"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `type` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "Controller-origin UCP4 request envelope field type.",
+      "source_limitations": [
+        "Names/types are established for the request envelope. Other same-name fields at different local contexts are not a full schema/compatibility attestation."
+      ]
     },
     {
       "inventory_key": "wire_field:uptime",
@@ -2960,10 +3410,11 @@
         "src/aikey/aiport_candidate.py:2714",
         "src/aikey/device.py:866"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `uptime` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "public_documentation",
+      "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
+      "reference_sha256": "b791d089e34f9097eecc7e4f76c8121b2cc1f8a8a5579ffdb037cbf322adc5b7",
+      "scope": "Public camera hello/parameter-agreement field: uptime.",
+      "limits": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants. This does not establish an AI Key management schema."
     },
     {
       "inventory_key": "wire_field:username",
@@ -2977,10 +3428,13 @@
         "src/aikey/device.py:888",
         "src/aikey/device.py:947"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Locate the exact interface token `username` and its use in your own Protect installation, or report it from a bounded owner-run interoperability trial as a name/type/count only. Do not copy vendor source, identifiers or payloads. Historical public-package notes and synthetic tests are leads, not new observations. If not observable, mark for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "A previously successful incoming changeUserPassword request required the username string field.",
+      "source_limitations": [
+        "Only field names and aggregate outcomes are retained. No current/old/new credential value, fresh rotation or management/adoption schema is established."
+      ]
     },
     {
       "inventory_key": "wire_field:version",
@@ -3001,10 +3455,13 @@
       "code_locations": [
         "src/aikey/device.py:976"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "Header name x-adopted belongs to the currently accepted stable AI Key connection combination.",
+      "source_limitations": [
+        "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+      ]
     },
     {
       "inventory_key": "wire_field:x-ident",
@@ -3012,10 +3469,13 @@
       "code_locations": [
         "src/aikey/device.py:973"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "Header name x-ident belongs to the currently accepted stable AI Key connection combination.",
+      "source_limitations": [
+        "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+      ]
     },
     {
       "inventory_key": "wire_field:x-ip",
@@ -3023,10 +3483,13 @@
       "code_locations": [
         "src/aikey/device.py:974"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "Header name x-ip belongs to the currently accepted stable AI Key connection combination.",
+      "source_limitations": [
+        "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+      ]
     },
     {
       "inventory_key": "wire_field:x-mode",
@@ -3034,10 +3497,13 @@
       "code_locations": [
         "src/aikey/device.py:975"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "Header name x-mode belongs to the currently accepted stable AI Key connection combination.",
+      "source_limitations": [
+        "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+      ]
     },
     {
       "inventory_key": "wire_field:x-sysid",
@@ -3045,10 +3511,13 @@
       "code_locations": [
         "src/aikey/device.py:974"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "Header name x-sysid belongs to the currently accepted stable AI Key connection combination.",
+      "source_limitations": [
+        "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+      ]
     },
     {
       "inventory_key": "wire_field:x-type",
@@ -3056,10 +3525,13 @@
       "code_locations": [
         "src/aikey/device.py:973"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "Header name x-type belongs to the currently accepted stable AI Key connection combination.",
+      "source_limitations": [
+        "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+      ]
     },
     {
       "inventory_key": "wire_field:x-version",
@@ -3067,10 +3539,13 @@
       "code_locations": [
         "src/aikey/device.py:975"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "In your own Protect installation, identify the verifier's exact header/subprotocol name; or have the emulator count received header NAMES only during an owner-run bounded trial. Never print values. Emulator-generated headers alone do not prove what Protect requires. Otherwise mark for removal/restriction.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
+      "reference_sha256": "b323e2919afeab055a1bd179566b0ea1f9065ed53ce029a18ee919c22b151148",
+      "source_scope": "Header name x-version belongs to the currently accepted stable AI Key connection combination.",
+      "source_limitations": [
+        "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+      ]
     }
   ]
 }
