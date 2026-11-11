@@ -4,7 +4,7 @@
 
 The client uses exactly two GET routes, `/v1/meta/info` and `/v1/cameras`, under
 the local `/proxy/protect/integration` prefix. The [actual reader](../src/aikey/camera_inventory.py)
-currently accepts the exact metadata versions **7.3.60, 7.3.68, 7.3.70 and 7.3.74**.
+currently accepts the exact metadata versions **7.3.60, 7.3.68, 7.3.70, 7.3.74 and 7.4.96**.
 Other values, including unreviewed patch releases and prerelease suffixes, remain
 blocked. This is inventory-schema support, not blanket feature/native parity or
 permission to process cameras. Authentication failure, redirect, invalid JSON,
@@ -19,6 +19,12 @@ as a **historical address**, not a working schema-download link. The
 is a documentation entry point, not a replacement proof of the original 7.3.60
 schema. The [version acceptance/refusal tests](../tests/test_camera_inventory.py)
 exercise the reader's current fixed version boundary with synthetic responses.
+A pinned native read on 11 November 2026 validated the 7.4.96 metadata and
+all eleven camera rows with the existing strict parser. A sanitized shape
+fixture preserves model families, smart/audio flags and the one offline camera;
+all names, MACs and IDs in that fixture are invented. The complete reader also
+completed its normal two-GET path on 7.4.96 with processing disabled. This does
+not qualify device adoption, pairing, recordings or other 7.4.96 features.
 
 Protect's web certificate may be a self-signed leaf that is not a CA certificate. The command requires both a private trust record with the approved SHA-256 leaf fingerprint and a private copy of that leaf certificate. It checks that they match and checks the certificate's validity dates. For each TLS connection it verifies the peer leaf against the pin before aiohttp can send the `X-API-Key` header. The host must be an explicit private IPv4 address; redirects and environment proxies are disabled. The key and trust files must be regular files readable only by the owner.
 

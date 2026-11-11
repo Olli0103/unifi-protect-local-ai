@@ -54,7 +54,7 @@ retained in the private authority directory. This mechanism is not proof of
 native adoption, camera pairing, recording continuity or host recovery.
 
 The reconciler and inventory reader share one exact supported-version check
-(currently Protect 7.3.60, 7.3.68, 7.3.70 and 7.3.74). Other versions, including
+(currently Protect 7.3.60, 7.3.68, 7.3.70, 7.3.74 and 7.4.96). Other versions, including
 unknown patch releases and prerelease suffixes, remain blocked. This is inventory
 schema support, not blanket AI Port feature-parity qualification. Version support
 does not bypass inventory freshness, slot/camera assignment or manifest checks.

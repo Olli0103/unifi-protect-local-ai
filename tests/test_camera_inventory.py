@@ -118,7 +118,7 @@ def test_invalid_inventory_fails_as_a_whole(rows):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("version", ["7.3.60", "7.3.68", "7.3.70", "7.3.74"])
+@pytest.mark.parametrize("version", ["7.3.60", "7.3.68", "7.3.70", "7.3.74", "7.4.96"])
 async def test_pinned_read_only_inventory_has_no_processing_scope(tmp_path, monkeypatch,
                                                                    version):
     async with synthetic_protect(tmp_path, monkeypatch, meta_version=version,
@@ -200,7 +200,7 @@ async def test_controller_must_be_an_explicit_private_ipv4(tmp_path):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("version", ["7.3.73", "7.3.75", "7.4.0", "7.3.74-preview", None])
+@pytest.mark.parametrize("version", ["7.3.73", "7.3.75", "7.4.0", "7.3.74-preview", "7.4.95", "7.4.97", "7.4.96-preview", None])
 async def test_unvalidated_neighbouring_versions_stop_before_camera_read(tmp_path, monkeypatch, version):
     async with synthetic_protect(tmp_path, monkeypatch, meta_version=version) as env:
         with pytest.raises(InventoryError, match="no validated camera inventory contract"):
@@ -228,3 +228,21 @@ async def test_7374_inventory_preserves_all_observed_model_families_and_offline_
         assert len({c["model"] for c in report["cameras"]}) == 8
         assert {c["id"] for c in report["cameras"]} == {r["id"] for r in rows}
         assert report["processing_enabled"] is False
+
+
+@pytest.mark.asyncio
+async def test_7496_observed_schema_preserves_models_flags_and_offline_state(tmp_path, monkeypatch):
+    rows = json.loads((Path(__file__).parent / "fixtures/protect-7.4.96-inventory.json").read_text())
+    async with synthetic_protect(tmp_path, monkeypatch, meta_version="7.4.96", rows=rows) as env:
+        report = await fetch_inventory("127.0.0.1", api_key_file=env["key"],
+                                       trust_file=env["trust"], cert_file=env["ca"])
+    assert report["protect_version"] == "7.4.96"
+    assert report["summary"] == {"total": 11, "smart_event_candidates": 10,
+                                  "legacy_ingress_needed": 0, "offline": 1}
+    assert report["processing_enabled"] is False
+    assert {item["id"] for item in report["cameras"]} == {row["id"] for row in rows}
+    for item, row in zip(report["cameras"], rows):
+        assert item["model"] == row["type"]
+        assert item["state"] == row["state"]
+        assert item["smart_detect_types"] == row["featureFlags"]["smartDetectTypes"]
+        assert item["audio_detect_types"] == row["featureFlags"]["smartDetectAudioTypes"]
