@@ -35,7 +35,11 @@ def workflow_policy(value, *, publisher=False):
     triggers = value["on"]
     assert set(triggers) == {"workflow_dispatch"}
     inputs = triggers["workflow_dispatch"]["inputs"]
-    assert set(inputs) == {"tag", "publish"}
+    assert set(inputs) == {"tag", "publish", "profile"}
+    assert inputs["profile"] == {
+        "description": "Artifact scope; package publishes wheel and sdist only",
+        "type": "choice", "options": ["package", "image"], "default": "package", "required": True,
+    }
     assert inputs["publish"]["type"] == "boolean" and inputs["publish"]["default"] is False
     assert inputs["tag"]["type"] == "string" and inputs["tag"]["required"] is True
     assert value["concurrency"] == {"group": "owner-gated-release", "cancel-in-progress": False}
@@ -83,7 +87,15 @@ def workflow_policy(value, *, publisher=False):
         assert job["permissions"] == permissions
         assert job.get("needs") == needs and job.get("environment") == environment
         assert "uses" not in job and "concurrency" not in job
-        if name not in ("qualify", "reserve"):
+        if name == "images":
+            assert job["if"] == "inputs.profile == 'image'"
+        elif name == "assemble":
+            assert " ".join(job["if"].split()) == (
+                "always() && needs.reserve.result == 'success' && needs.packages.result == 'success' "
+                "&& ((inputs.profile == 'package' && needs.images.result == 'skipped') "
+                "|| (inputs.profile == 'image' && needs.images.result == 'success'))"
+            )
+        elif name not in ("qualify", "reserve"):
             assert job.get("if") is None
         if name == "images":
             assert job["runs-on"] == "${{ matrix.runner }}"
@@ -97,6 +109,7 @@ def workflow_policy(value, *, publisher=False):
             assert job["runs-on"] == "ubuntu-24.04"
         assert job["env"]["GH_TOKEN"] == "${{ github.token }}"
         assert job["env"]["RELEASE_TAG"] == "${{ inputs.tag }}"
+        assert job["env"]["RELEASE_PROFILE"] == "${{ inputs.profile }}"
         steps = job["steps"]
         assert steps[0]["uses"].startswith("actions/checkout@")
         assert steps[0]["with"] == {
@@ -120,7 +133,15 @@ def workflow_policy(value, *, publisher=False):
             if "run" in step:
                 assert step["run"].startswith("set -euo pipefail\numask 077\n")
                 assert "${{ inputs." not in step["run"]
-            if "if" in step:
+            image_only = step.get("name") in {
+                "Maintained native Docker Buildx", "Short-lived workflow registry login",
+                "aikey multiarch provenance", "aiport multiarch provenance",
+                "Retain standard bundle ${{ runner.temp }}/release-candidate/aikey-index-provenance.sigstore.json",
+                "Retain standard bundle ${{ runner.temp }}/release-candidate/aiport-index-provenance.sigstore.json",
+            }
+            if image_only:
+                assert step.get("if") == "inputs.profile == 'image'"
+            elif "if" in step:
                 assert name == "images" and step["if"] == "always()"
                 assert step.get("run") == (
                     "set -euo pipefail\numask 077\nbash tools/container_install_run.sh cleanup\n"
@@ -166,13 +187,25 @@ def test_security_workflow_pins_actions_and_uses_read_only_permissions(path):
         "direct_input_shell",
         "untrusted_runner",
         "unconditional_upload",
-        "cancel_previous",
+        "cancel_previous", "unknown_profile", "implicit_image", "image_profile_bypass",
+        "assembly_failure_bypass", "registry_profile_bypass",
     ],
 )
 def test_publisher_exception_refuses_authorization_graph_and_privilege_regressions(fault):
     value = deepcopy(yaml.safe_load(PUBLISHER.read_text()))
     jobs = value["jobs"]
-    if fault == "pr_trigger":
+    if fault == "unknown_profile":
+        value["on"]["workflow_dispatch"]["inputs"]["profile"]["options"].append("unsafe")
+    elif fault == "implicit_image":
+        value["on"]["workflow_dispatch"]["inputs"]["profile"]["default"] = "image"
+    elif fault == "image_profile_bypass":
+        jobs["images"].pop("if")
+    elif fault == "assembly_failure_bypass":
+        jobs["assemble"]["if"] = "always()"
+    elif fault == "registry_profile_bypass":
+        next(step for step in jobs["publish"]["steps"]
+             if step["name"] == "Short-lived workflow registry login").pop("if")
+    elif fault == "pr_trigger":
         value["on"]["pull_request"] = None
     elif fault == "implicit_publish":
         value["on"]["workflow_dispatch"]["inputs"]["publish"]["default"] = True
