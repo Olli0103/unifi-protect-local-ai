@@ -17,7 +17,7 @@ from community_release_check import (  # noqa: E402
 
 
 def evidence(status='needs_evidence'):
-    return {'schema': 'community-release-evidence/1',
+    return {'schema': 'community-release-evidence/2',
             'checks': {key: {'status': status} for key in REQUIRED}}
 
 
@@ -25,7 +25,7 @@ def test_audit_cannot_grant_release_or_hide_missing_rights():
     record = evidence()
     assert evidence_issues(record, 'digest', audit_only=True) == set()
     issues = evidence_issues(record, 'digest', audit_only=False)
-    assert 'needs_evidence:firmware_authorization' in issues
+    assert 'needs_evidence:owner_risk_decision' in issues
     assert 'needs_evidence:development_statement' in issues
     assert 'unreviewed_source_snapshot' in issues
 
@@ -38,7 +38,7 @@ def test_verified_claim_needs_reviewer_reference_and_matching_source():
     record['reviewed_snapshot_sha256'] = 'digest'
     assert not evidence_issues(record, 'digest', audit_only=False)
     assert evidence_issues(record, 'changed', audit_only=False) == {'unreviewed_source_snapshot'}
-    del record['checks']['legal_review']
+    del record['checks']['owner_risk_decision']
     assert evidence_issues(record, 'digest', audit_only=True) == {'invalid_evidence_checks'}
 
 

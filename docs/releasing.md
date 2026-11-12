@@ -41,7 +41,9 @@ actual inventories, original failures and refreshed legal/quality evidence.
 The [community release gate](legal/release-readiness.md) applies before **any**
 package/image upload or signing, including candidate packages in CI artifacts.
 Its non-audit check, the reviewed source fingerprint and every required evidence
-entry must pass. Existing employer/license-selection statements do not establish
+entry for the selected artifact profile must pass. Package mode does not require
+image or model-rights approval for dependencies/weights that it does not ship.
+Existing employer/license-selection statements do not establish
 the remaining origin, redistribution, controller, dependency, model or legal facts.
 
 The `publication` object in [release-evidence.json](legal/release-evidence.json)
@@ -50,9 +52,10 @@ is deliberately pending. Only the maintainer may record a substantiated decision
 - Exact existing public tag, matching `pyproject.toml` and the dispatched main
   commit. Supported spelling is `vN.N.N`, `vN.N.NaN` or `vN.N.NrcN` (for example,
   `v0.1.0a1` requires project version `0.1.0a1`). No helper creates or moves tags.
-- Explicit package destination `github-release` and two distinct image package
-  names `ghcr.io/olli0103/<approved-name>`, one for each profile. This source path
-  does not implement PyPI publication or choose registry names for the owner.
+- Explicit package destination `github-release`. With workflow `profile: package`,
+  wheel and sdist are published without images. `profile: image` additionally
+  requires two approved image destinations and the image-specific evidence gate.
+  This source path does not implement PyPI publication.
 - Signing method `github_oidc_sigstore`, reviewer `Olli0103`, and a content-free
   reference to the actual retained decision. Automation cannot establish its truth.
 - Existing protected GitHub environments `release-stage` and `release`, each
@@ -77,7 +80,8 @@ manual `workflow_dispatch` trigger, restricted again in the gate to the owner,
 GitHub-hosted Linux, main, this repository and run attempt 1. It has no push/tag
 publication trigger, static registry key, model download or controller action.
 
-1. Select the exact tag with `publish: false` (default) for a read-only readiness
+1. Select the artifact `profile` (`package` by default; `image` additionally needs
+   image-license clearance) and exact tag with `publish: false` for a read-only readiness
    check. Missing evidence is a failure, not an approval flag that can be bypassed.
 2. For an approved request, `publish: true` first waits at `release-stage`.
    Approving this deployment authorizes the dispatch's staging operations:

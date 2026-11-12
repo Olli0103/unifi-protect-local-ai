@@ -16,12 +16,40 @@ import subprocess
 import tarfile
 import zipfile
 
-REQUIRED = frozenset({
+SCHEMA = "community-release-evidence/2"
+PACKAGE_REQUIRED = frozenset({
+    "license_selection", "development_statement", "contributor_rights",
+    "code_origin", "interoperability_scope", "owner_risk_decision",
+})
+REQUIRED = PACKAGE_REQUIRED | {"image_licenses"}
+PROFILES = {"package": PACKAGE_REQUIRED, "image": REQUIRED}
+LEGACY_REQUIRED = frozenset({
     "code_origin", "firmware_authorization", "interoperability_scope",
     "contributor_rights", "development_statement", "license_selection",
     "aiport_fresh_adoption", "dependency_licenses", "image_licenses",
     "model_licenses", "history_review", "legal_review",
 })
+
+
+def migrate_evidence(record: dict) -> dict:
+    """Retain history, never carry an approval across changed gate semantics."""
+    if (not isinstance(record, dict)
+            or record.get("schema") != "community-release-evidence/1"
+            or not isinstance(record.get("checks"), dict)
+            or set(record["checks"]) != LEGACY_REQUIRED):
+        raise ValueError("invalid_legacy_evidence")
+    def pending():
+        return {"status": "needs_evidence", "reviewer": None, "evidence_ref": None}
+    return {
+        "schema": SCHEMA,
+        "reviewed_snapshot_sha256": None,
+        "publication": {**record.get("publication", {}), **pending()},
+        "checks": {name: pending() for name in sorted(REQUIRED)},
+        "research_record": pending(),
+        "legacy_evidence": record,
+    }
+
+
 PRIVATE_DIRS = {"state", "secrets", "private", "research", ".git", ".venv"}
 FORBIDDEN_SUFFIXES = {".deb", ".bin", ".elf", ".key", ".pem", ".p12", ".pfx",
                       ".pth", ".pt", ".onnx", ".safetensors", ".gguf",
@@ -92,9 +120,11 @@ def source_snapshot(root: Path, paths: list[str]) -> str:
     return digest.hexdigest()
 
 
-def evidence_issues(record: dict, snapshot: str, *, audit_only: bool) -> set[str]:
-    if not isinstance(record, dict) or record.get("schema") != "community-release-evidence/1":
+def evidence_issues(record: dict, snapshot: str, *, audit_only: bool, profile: str = "image") -> set[str]:
+    if not isinstance(record, dict) or record.get("schema") != SCHEMA:
         return {"invalid_evidence_schema"}
+    if profile not in PROFILES:
+        return {"invalid_release_profile"}
     checks = record.get("checks")
     if not isinstance(checks, dict) or set(checks) != REQUIRED:
         return {"invalid_evidence_checks"}
@@ -107,7 +137,7 @@ def evidence_issues(record: dict, snapshot: str, *, audit_only: bool) -> set[str
             if not all(isinstance(item.get(field), str) and item[field].strip()
                        for field in ("reviewer", "evidence_ref")):
                 found.add("unsubstantiated_verification")
-        elif not audit_only:
+        elif not audit_only and key in PROFILES[profile]:
             found.add("needs_evidence:" + key)
     if not audit_only and record.get("reviewed_snapshot_sha256") != snapshot:
         found.add("unreviewed_source_snapshot")
@@ -119,6 +149,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument("--dist", type=Path)
     parser.add_argument("--audit-only", action="store_true")
+    parser.add_argument("--profile", choices=sorted(PROFILES), default="image")
     args = parser.parse_args(argv)
     try:
         root = args.root.resolve()
@@ -130,7 +161,7 @@ def main(argv: list[str] | None = None) -> int:
             found |= member_issues(name, b"" if path.is_symlink() else path.read_bytes(),
                                    regular=not path.is_symlink())
         record = json.loads((root / "docs/legal/release-evidence.json").read_text())
-        found |= evidence_issues(record, snapshot, audit_only=args.audit_only)
+        found |= evidence_issues(record, snapshot, audit_only=args.audit_only, profile=args.profile)
         if not args.audit_only:
             license_path = root / "LICENSE"
             if not license_path.is_file():
@@ -147,7 +178,8 @@ def main(argv: list[str] | None = None) -> int:
                 found.add("no_artifacts")
             for artifact in artifacts:
                 found |= artifact_issues(artifact)
-        print(json.dumps({"mode": "audit-only" if args.audit_only else "release-readiness",
+        print(json.dumps({"profile": args.profile, "required_checks": sorted(PROFILES[args.profile]),
+                          "mode": "audit-only" if args.audit_only else "release-readiness",
                           "source_snapshot_sha256": snapshot, "issues": sorted(found),
                           "release_approved": False if args.audit_only else not found}))
         return 2 if found else 0

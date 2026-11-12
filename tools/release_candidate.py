@@ -157,7 +157,7 @@ def image_intent(root, plan, results, architecture, destination, *, qualified=No
     )
     expected = inventory.expected_python(root)
     profiles = {}
-    for profile in ("aikey", "aiport"):
+    for profile in plan["images"]:
         receipt = gate.load(gate.read(Path(results) / (profile + "-inventory.json")))
         raw = gate.read(Path(results) / (profile + "-sbom.cdx.json"), 32 * 1024 * 1024)
         qualified_raw = gate.read(Path(qualified) / (profile + "-sbom.cdx.json"), 16 * 1024 * 1024)
@@ -371,7 +371,7 @@ def stage_assets(root, plan, results, staged, architecture, destination):
     )
     target = Path(destination)
     target.mkdir(mode=0o700)
-    for profile in ("aikey", "aiport"):
+    for profile in plan["images"]:
         raw = gate.read(Path(results) / (profile + "-sbom.cdx.json"), 32 * 1024 * 1024)
         require(
             digest(raw) == saved["profiles"][profile]["sbom_sha256"], "release_staged_sbom_changed"
@@ -388,7 +388,7 @@ def indexes(root, plan, inputs, destination, *, run=docker):
     target = Path(destination)
     target.mkdir(mode=0o700)
     architectures = {}
-    for architecture in ("amd64", "arm64"):
+    for architecture in (("amd64", "arm64") if plan["images"] else ()):
         folder = Path(inputs) / ("release-images-" + architecture)
         saved = gate.load(gate.read(folder / ("staged-" + architecture + ".json"), 128 * 1024))
         proof = gate.load(gate.read(folder / ("install-" + architecture + ".json")))
@@ -414,7 +414,7 @@ def indexes(root, plan, inputs, destination, *, run=docker):
             "release_native_final_handoff_refused",
         )
         architectures[architecture] = saved
-        for profile in ("aikey", "aiport"):
+        for profile in plan["images"]:
             for suffix in (".cdx.json", "-provenance.sigstore.json", "-sbom.sigstore.json"):
                 name = profile + "-" + architecture + suffix
                 raw = gate.read(folder / name, 32 * 1024 * 1024)
@@ -446,7 +446,7 @@ def indexes(root, plan, inputs, destination, *, run=docker):
     intent = {
         "schema": "aikey-release-index-intent/1",
         **identity(plan),
-        "references": {profile: tagged(plan, profile) for profile in ("aikey", "aiport")},
+        "references": {profile: tagged(plan, profile) for profile in plan["images"]},
         "architectures": architectures,
     }
     emit(target.parent / "index-intent.json", intent)
@@ -485,8 +485,8 @@ def verify_staged(
                 predicate_path=Path(target) / "package.cdx.json" if sbom else None,
                 run=run,
             )
-    for architecture in ("amd64", "arm64"):
-        for profile in ("aikey", "aiport"):
+    for architecture in (("amd64", "arm64") if plan["images"] else ()):
+        for profile in plan["images"]:
             item = architectures[architecture]["profiles"][profile]
             require(
                 item["reference"] == tagged(plan, profile, architecture)
@@ -541,7 +541,7 @@ def push_indexes(root, plan, destination, *, run=docker):
         and all(intent.get(key) == item for key, item in identity(plan).items())
         and intent.get("architectures") == value.get("architectures")
         and intent.get("references")
-        == {profile: tagged(plan, profile) for profile in ("aikey", "aiport")},
+        == {profile: tagged(plan, profile) for profile in plan["images"]},
         "release_index_intent_changed",
     )
     require(not (target.parent / "indexes.json").exists(), "release_index_attempt_already_recorded")
@@ -553,9 +553,9 @@ def push_indexes(root, plan, destination, *, run=docker):
         {"schema": "aikey-release-index-started/1", **identity(plan)},
     )
     images = {}
-    for profile in ("aikey", "aiport"):
+    for profile in plan["images"]:
         members = {}
-        for architecture in ("amd64", "arm64"):
+        for architecture in (("amd64", "arm64") if plan["images"] else ()):
             item = value["architectures"][architecture]["profiles"][profile]
             require(
                 item["reference"] == tagged(plan, profile, architecture)
@@ -752,7 +752,7 @@ def main(argv=None):
                 root, plan, args.intent, args.architecture, args.results, args.destination
             )
             output(
-                {profile + "_name": plan["images"][profile] for profile in ("aikey", "aiport")}
+                {profile + "_name": plan["images"][profile] for profile in plan["images"]}
                 | {
                     profile + "_digest": item["digest"]
                     for profile, item in value["profiles"].items()
@@ -765,7 +765,7 @@ def main(argv=None):
         elif args.command == "push-indexes":
             images = push_indexes(root, plan, args.destination)
             output(
-                {profile + "_name": plan["images"][profile] for profile in ("aikey", "aiport")}
+                {profile + "_name": plan["images"][profile] for profile in plan["images"]}
                 | {profile + "_digest": item["digest"] for profile, item in images.items()}
             )
         elif args.command == "check":

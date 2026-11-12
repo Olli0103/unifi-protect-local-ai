@@ -234,7 +234,7 @@ def tagged_source(tmp_path, request):
     community = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(community)
     record = {
-        "schema": "community-release-evidence/1",
+        "schema": "community-release-evidence/2",
         "reviewed_snapshot_sha256": None,
         "checks": {
             name: {
@@ -367,7 +367,7 @@ def test_real_source_refusals_precede_any_remote_metadata_or_publisher(tagged_so
         path = root / "docs/legal/release-evidence.json"
         value = json.loads(path.read_text())
         if fault == "unreviewed":
-            value["checks"]["legal_review"]["status"] = "needs_evidence"
+            value["checks"]["owner_risk_decision"]["status"] = "needs_evidence"
         elif fault == "missing_fingerprint":
             value["reviewed_snapshot_sha256"] = None
         else:
