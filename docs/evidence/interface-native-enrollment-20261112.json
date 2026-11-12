@@ -6,10 +6,6 @@
   "method": "Owner-directed isolated native enrollment after seven exact-head CI workflow jobs passed; separate generated identities and private state, existing local base images with 183 frozen own Python source modules mounted read-only. This is an exact-module experiment, not release-image qualification.",
   "source_head": "e4d8209fabc8af875132e34443adcbf06ec5c95a",
   "own_module_manifest_sha256": "ede9254274418f17ff4b87d600968ac74f4184ac15c9b0c61158fb6e41eaf285",
-  "observer_sha256": {
-    "port-observer.py": "1b51545b3a1f705cc39a3a5afa28e2148e7109b7c718a3e52dfafe18ff0fd833",
-    "key-observer.py": "0565120431b210c273ed9090c4ea1a9ca813040ffafb7bfde447b27dac7cdb34"
-  },
   "key_adoption": {
     "request": {
       "controller_peer": true,
@@ -79,5 +75,15 @@
     "Eleven before/after recording-state/configuration snapshots do not establish uninterrupted video at every timestamp.",
     "The first private rotation projection read a nonexistent management_password_hash field; the corrected source-grounded presence check uses credential.hash and never exports its value.",
     "No rights approval, owner/reviewer attestation, merge, release, tag or registry publication."
+  ],
+  "observers": [
+    {
+      "file": "port-observer.py",
+      "source_sha256": "1b51545b3a1f705cc39a3a5afa28e2148e7109b7c718a3e52dfafe18ff0fd833"
+    },
+    {
+      "file": "key-observer.py",
+      "source_sha256": "0565120431b210c273ed9090c4ea1a9ca813040ffafb7bfde447b27dac7cdb34"
+    }
   ]
 }
