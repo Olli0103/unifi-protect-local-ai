@@ -150,7 +150,8 @@ def publication(record, tag, *, profile="image"):
         isinstance(images, dict)
         and set(images) == {"aikey", "aiport"}
         and all(isinstance(image, str) and IMAGE.fullmatch(image) for image in images.values())
-        and len(set(images.values())) == 2,
+        and images == {"aikey": "ghcr.io/olli0103/local-aikey",
+                       "aiport": "ghcr.io/olli0103/local-aiport"},
         "release_image_destinations_refused",
     )
     return value
@@ -373,6 +374,17 @@ def prepare(root, tag, *, publish=False, profile="image", env=None, run=command)
         "release_non_audit_evidence_gate_blocked",
     )
     decision = publication(record, tag, profile=profile)
+    delivery = None
+    if profile == "image":
+        delivery = record.get("source_delivery")
+        require(isinstance(delivery, dict)
+                and set(delivery) == {"artifact_run_id", "artifact_name", "manifest_sha256"}
+                and type(delivery["artifact_run_id"]) is int and delivery["artifact_run_id"] > 0
+                and isinstance(delivery["artifact_name"], str)
+                and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,99}", delivery["artifact_name"])
+                and isinstance(delivery["manifest_sha256"], str)
+                and HASH.fullmatch(delivery["manifest_sha256"]),
+                "release_source_delivery_input_required")
     require(
         not run(["git", "status", "--porcelain", "--untracked-files=all"], cwd=root).strip(),
         "release_source_changed_during_preparation",
@@ -407,6 +419,7 @@ def prepare(root, tag, *, publish=False, profile="image", env=None, run=command)
     return {
         "schema": SCHEMA,
         "release_profile": profile,
+        "source_delivery": delivery,
         "source_revision": revision,
         "source_snapshot_sha256": snapshot,
         "tag": tag,

@@ -25,6 +25,11 @@ RUN case "$ONNX_RUNTIME" in \
       openvino) pip install --no-cache-dir 'onnxruntime-openvino==1.24.1' ;; \
       *) echo 'Unsupported ONNX_RUNTIME' >&2; exit 1 ;; \
     esac
+ARG SOURCE_BUNDLE_URL
+COPY docs/legal/image-sources-template.md /tmp/image-sources-template.md
+COPY tools/render_image_sources.py /tmp/render_image_sources.py
+RUN python /tmp/render_image_sources.py /tmp/image-sources-template.md /usr/share/local-aikey/SOURCES.md \
+    && rm /tmp/render_image_sources.py /tmp/image-sources-template.md
 USER 10001:10001
 ENTRYPOINT ["local-aiport-candidate"]
 CMD ["--config", "/state/config.json"]

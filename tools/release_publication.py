@@ -38,6 +38,14 @@ class PublicationError(ValueError):
     pass
 
 
+def source_assets(directory, plan):
+    if not plan["images"] or not plan.get("source_delivery"):
+        return set()
+    import release_sources
+    value = release_sources.metadata(directory, plan)
+    return {"source-bundle.json"} | {part["name"] for part in value["parts"]}
+
+
 def allowed_assets(plan):
     required = {
         "local_aikey-" + plan["version"] + "-py3-none-any.whl",
@@ -67,7 +75,7 @@ def snapshot_assets(directory, root, plan):
     directory = Path(directory).absolute()
     require(directory.resolve() == directory and directory.is_dir(), "release_assets_root_refused")
     paths = list(directory.iterdir())
-    required = allowed_assets(plan) | {"release.json", "release-provenance.sigstore.json"}
+    required = allowed_assets(plan) | source_assets(directory, plan) | {"release.json", "release-provenance.sigstore.json"}
     names = {path.name for path in paths}
     require(
         required <= names <= required | {"THIRD_PARTY_NOTICES.txt", "CORRESPONDING_SOURCE.json"}
@@ -78,6 +86,10 @@ def snapshot_assets(directory, root, plan):
         stage = Path(target)
         total = 0
         for path in paths:
+            if path.name.startswith("corresponding-source.tar.part") and path.name in source_assets(directory, plan):
+                import release_sources
+                release_sources.copy_file(path, stage / path.name, release_sources.PART_LIMIT)
+                continue
             raw = gate.read(path, 64 * 1024 * 1024)
             total += len(raw)
             require(total <= 256 * 1024 * 1024, "release_assets_total_limit")
@@ -97,8 +109,14 @@ def rows(raw):
 
 
 def fresh(root, tag):
-    return gate.prepare(root, tag, publish=True,
+    plan = gate.prepare(root, tag, publish=True,
                         profile=os.environ.get("RELEASE_PROFILE", "image"))
+    if plan["images"]:
+        import release_sources
+        directory = os.environ.get("SOURCE_DELIVERY_DIR")
+        require(directory is not None, "release_source_bundle_required")
+        release_sources.validate(root, directory, plan)
+    return plan
 
 
 def marker(plan):
@@ -241,7 +259,7 @@ def reserve(root, plan, *, run=gate.command, write=mutate):
     }
 
 
-def checked_assets(directory, plan):
+def checked_assets(directory, plan, *, root=None):
     """Only the final flat, signed release set; never archives of VM state."""
     directory = Path(directory).absolute()
     require(directory.resolve() == directory and directory.is_dir(), "release_assets_root_refused")
@@ -282,7 +300,9 @@ def checked_assets(directory, plan):
             and isinstance(info["sha256"], str)
             and gate.HASH.fullmatch(info["sha256"])
             and type(info["bytes"]) is int
-            and 0 < info["bytes"] <= 64 * 1024 * 1024
+            and 0 < info["bytes"] <= (2 * 1024**3 - 1024**2
+                    if name in source_assets(directory, plan) and name != "source-bundle.json"
+                    else 64 * 1024 * 1024)
             for name, info in files.items()
         ),
         "release_asset_manifest_refused",
@@ -312,6 +332,7 @@ def checked_assets(directory, plan):
                     base + "-sbom.sigstore.json",
                 }
             )
+    required |= source_assets(directory, plan)
     require(
         required
         <= set(files)
@@ -320,6 +341,11 @@ def checked_assets(directory, plan):
     )
     gate.read(directory / "release-provenance.sigstore.json", 16 * 1024 * 1024)
     for name, info in files.items():
+        if name in source_assets(directory, plan) and name != "source-bundle.json":
+            import release_sources
+            require(release_sources.file_info(directory / name, release_sources.PART_LIMIT) == info,
+                    "release_source_part_bytes_mismatch")
+            continue
         raw = gate.read(directory / name, 64 * 1024 * 1024)
         require(
             len(raw) == info["bytes"] and hashlib.sha256(raw).hexdigest() == info["sha256"],
@@ -339,10 +365,18 @@ def checked_assets(directory, plan):
         isinstance(images, dict) and set(images) == set(plan["images"]),
         "release_image_manifest_refused",
     )
+    bundle = None
+    if images and plan.get("source_delivery"):
+        import release_sources
+        value, _ = release_sources.validate(
+            Path(root) if root is not None else Path(__file__).resolve().parents[1], directory, plan)
+        bundle = release_sources.bundle_record(value, plan)
     for profile, image in images.items():
         require(
             isinstance(image, dict)
-            and set(image) == {"digest", "provenance", "architectures"}
+            and set(image) == ({"digest", "provenance", "architectures", "source_bundle"}
+                               if bundle else {"digest", "provenance", "architectures"})
+            and (bundle is None or image["source_bundle"] == bundle)
             and image["provenance"] == profile + "-index-provenance.sigstore.json"
             and image["provenance"] in files
             and isinstance(image["digest"], str)
@@ -864,7 +898,7 @@ def upload(root, plan, directory, *, run=gate.command, write=mutate):
 
 
 def _upload_snapshot(root, plan, directory, *, run=gate.command, write=mutate):
-    manifest = checked_assets(directory, plan)
+    manifest = checked_assets(directory, plan, root=root)
     original(root, plan, run=run)
     public_images(root, plan, run=run)
     verify_signatures(root, plan, directory, manifest, run=run)
@@ -913,7 +947,7 @@ def complete(root, plan, directory, *, run=gate.command, write=mutate):
 
 
 def _complete_snapshot(root, plan, directory, *, run=gate.command, write=mutate):
-    manifest = checked_assets(directory, plan)
+    manifest = checked_assets(directory, plan, root=root)
     public_images(root, plan, run=run)
     uploaded_assets(root, plan, manifest, directory, run=run)
     verify_signatures(root, plan, directory, manifest, run=run)
@@ -986,7 +1020,11 @@ def main(argv=None):
     args = parser.parse_args(argv)
     root = Path(__file__).resolve().parents[1]
     try:
-        plan = fresh(root, args.tag)
+        # Reserving an empty owner-approved draft precedes source preparation.
+        # Every upload/image/signature consumer still requires the validated bundle.
+        plan = (gate.prepare(root, args.tag, publish=True,
+                            profile=os.environ.get("RELEASE_PROFILE", "image"))
+                if args.command == "reserve" else fresh(root, args.tag))
         if args.command == "reserve":
             require(
                 args.assets is None and args.release_id is None, "release_assets_option_refused"
@@ -1001,7 +1039,8 @@ def main(argv=None):
             result = (upload if args.command == "upload" else complete)(root, plan, args.assets)
         print(json.dumps(result, sort_keys=True))
         return 0
-    except (OSError, ValueError, KeyError, TypeError, RuntimeError) as error:
+    except (OSError, ValueError, KeyError, TypeError, RuntimeError,
+            subprocess.SubprocessError, tarfile.TarError) as error:
         code = (
             error.args[0]
             if isinstance(error, (PublicationError, gate.PreparationError)) and error.args

@@ -15,6 +15,9 @@ SPEC.loader.exec_module(gate)
 
 def decision():
     return {
+        "source_delivery": {"artifact_run_id": 456,
+                            "artifact_name": "FICTIONAL-upstream-sources",
+                            "manifest_sha256": "f" * 64},
         "publication": {
             "status": "verified",
             "reviewer": gate.OWNER,
@@ -22,8 +25,8 @@ def decision():
             "tag": "v0.1.0rc1",
             "package_destination": "github-release",
             "images": {
-                "aikey": "ghcr.io/olli0103/fictional-key",
-                "aiport": "ghcr.io/olli0103/fictional-port",
+                "aikey": "ghcr.io/olli0103/local-aikey",
+                "aiport": "ghcr.io/olli0103/local-aiport",
             },
             "signing_method": "github_oidc_sigstore",
             "github_environment": "release",

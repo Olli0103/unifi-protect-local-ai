@@ -22,8 +22,8 @@ def plan():
         "source_revision": "a" * 40,
         "source_snapshot_sha256": "b" * 64,
         "images": {
-            "aikey": "ghcr.io/olli0103/fictional-key",
-            "aiport": "ghcr.io/olli0103/fictional-port",
+            "aikey": "ghcr.io/olli0103/local-aikey",
+            "aiport": "ghcr.io/olli0103/local-aiport",
         },
     }
 

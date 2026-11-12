@@ -375,7 +375,7 @@ def test_actual_workflow_all_shells_parse_and_writers_follow_reviewed_stages(tmp
     assert (
         jobs["reserve"]["environment"] == "release-stage" and jobs["reserve"]["needs"] == "qualify"
     )
-    assert jobs["packages"]["needs"] == jobs["images"]["needs"] == "reserve"
+    assert jobs["packages"]["needs"] == jobs["images"]["needs"] == ["reserve", "sources"]
     assert jobs["publish"]["environment"] == "release"
     assert jobs["publish"]["needs"] == ["reserve", "assemble"]
     assert jobs["qualify"]["permissions"] == {"contents": "read", "actions": "read"}

@@ -17,7 +17,7 @@ for number in 1 2; do
     --manifest-out "${RUNNER_TEMP}/package-build-${number}.json"
 done
 python tools/release_check.py compare "${RUNNER_TEMP}/package-build-1.json" "${RUNNER_TEMP}/package-build-2.json"
-python tools/community_release_check.py --dist "${RUNNER_TEMP}/release-build-1/dist"
+python tools/community_release_check.py --profile package --dist "${RUNNER_TEMP}/release-build-1/dist"
 mkdir "${RUNNER_TEMP}/release-packages"
 cp "${RUNNER_TEMP}/release-build-1/dist/"* "${RUNNER_TEMP}/release-packages/"
 python -m venv "${RUNNER_TEMP}/release-runtime"

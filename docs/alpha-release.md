@@ -17,8 +17,8 @@ and the signed `release.json` for availability and exact immutable references.
   Linux ARM64** image, not an unrelated macOS image or Apple VM state archive.
 
 Proposed registry packages are
-`ghcr.io/olli0103/unifi-protect-local-ai-aikey` and
-`ghcr.io/olli0103/unifi-protect-local-ai-aiport`. These names are not existing
+`ghcr.io/olli0103/local-aikey` and
+`ghcr.io/olli0103/local-aiport`. These names are not existing
 image/digest promises. The publisher creates attempt-specific tags such as
 `0.1.0a1-arm64-runRUN_ID` and `0.1.0a1-index-runRUN_ID`, never a mutable `latest`.
 Installation must use the verified profile/index digest from `release.json`.

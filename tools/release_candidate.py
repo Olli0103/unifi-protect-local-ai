@@ -15,6 +15,7 @@ from pathlib import Path
 import re
 import subprocess
 import tempfile
+import tarfile
 
 import container_install_check as installation
 import image_sbom_check as inventory
@@ -439,6 +440,13 @@ def indexes(root, plan, inputs, destination, *, run=docker):
     for name in ("THIRD_PARTY_NOTICES.txt", "CORRESPONDING_SOURCE.json"):
         if name in tracked:
             (target / name).write_bytes(gate.read(Path(root) / name, 16 * 1024 * 1024))
+    if plan["images"] and plan.get("source_delivery"):
+        import release_sources
+        source_directory = os.environ.get("SOURCE_DELIVERY_DIR")
+        require(source_directory is not None, "release_source_bundle_required")
+        release_sources.validate(root, source_directory, plan)
+        for name in publication.source_assets(source_directory, plan):
+            release_sources.copy_file(Path(source_directory) / name, target / name)
     # Validate actual package content BEFORE the first registry index write.
     publication.verify_packages(root, plan, target)
     package_bom(root, plan, target / "package.cdx.json")
@@ -642,17 +650,21 @@ def finalize(root, plan, destination):
             "provenance": profile + "-index-provenance.sigstore.json",
         }
     require(
-        publication.allowed_assets(plan) - {"SHA256SUMS"}
+        (publication.allowed_assets(plan) | publication.source_assets(target, plan)) - {"SHA256SUMS"}
         <= {p.name for p in target.iterdir()}
-        <= (publication.allowed_assets(plan) - {"SHA256SUMS"})
+        <= ((publication.allowed_assets(plan) | publication.source_assets(target, plan)) - {"SHA256SUMS"})
         | {"THIRD_PARTY_NOTICES.txt", "CORRESPONDING_SOURCE.json"},
         "release_candidate_file_set_refused",
     )
-    files = {
-        p.name: {"bytes": len(raw), "sha256": digest(raw)}
-        for p in target.iterdir()
-        if (raw := gate.read(p, 64 * 1024 * 1024))
-    }
+    import release_sources
+    files = {p.name: release_sources.file_info(
+        p, release_sources.PART_LIMIT if p.name in publication.source_assets(target, plan)
+        else 64 * 1024 * 1024) for p in target.iterdir()}
+    if images and plan.get("source_delivery"):
+        value, _ = release_sources.validate(root, target, plan)
+        for image in images.values():
+            image["source_bundle"] = release_sources.bundle_record(value, plan)
+
     sums = "".join(
         item["sha256"] + "  " + name + "\n" for name, item in sorted(files.items())
     ).encode()
@@ -769,14 +781,15 @@ def main(argv=None):
                 | {profile + "_digest": item["digest"] for profile, item in images.items()}
             )
         elif args.command == "check":
-            manifest = publication.checked_assets(args.destination, plan)
+            manifest = publication.checked_assets(args.destination, plan, root=root)
             publication.verify_signatures(root, plan, args.destination, manifest)
             publication.verify_packages(root, plan, args.destination)
             package_bom(root, plan, args.destination / "package.cdx.json")
         else:
             finalize(root, plan, args.destination)
         return 0
-    except (OSError, ValueError, KeyError, TypeError, RuntimeError):
+    except (OSError, ValueError, KeyError, TypeError, RuntimeError,
+            subprocess.SubprocessError, tarfile.TarError):
         print(
             json.dumps(
                 {

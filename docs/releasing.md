@@ -73,6 +73,16 @@ container-install jobs. A bot status is not an eighth workflow job or independen
 review. The current main commit and tag must agree: building an older tag while
 attesting a newer workflow commit is refused.
 
+## Image source delivery
+
+Image mode additionally requires the owner-pinned upstream source artifact and
+[the same-release source delivery chain](source-bundle-delivery.md). Both image
+names are fixed to `ghcr.io/olli0103/local-aikey` and
+`ghcr.io/olli0103/local-aiport`; the protocol identities do not change. A missing
+bundle or nonzero exact-revision source-inventory result blocks upload. The
+source index and ordered archive parts ship alongside the other assets in the
+same GitHub release and are hash-bound by the signed release manifest.
+
 ## Concrete workflow
 
 [Owner-gated signed release](../.github/workflows/publish-release.yml) has only a

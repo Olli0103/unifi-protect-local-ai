@@ -540,10 +540,24 @@ def test_nonpackage_components_match_their_real_native_producer(fault):
         "converted_changed",
         "license_content_disabled",
         "license_text_missing",
+        "source_notice_missing",
     ],
 )
 def test_actual_collect_entrypoint_with_owned_fake_daemon_and_scanner(tmp_path, fault):
     image, _, native, cdx, _, _ = inventory()
+    if fault != "source_notice_missing":
+        import base64
+        raw = (b"GPL LGPL source_bundle SHA-256 /app/THIRD_PARTY_NOTICES.txt "
+               b"/usr/share/doc/ FICTIONAL source notice")
+        native.setdefault("files", []).append({
+            "id": "source-notice", "location": {"path": check.SOURCE_NOTICE},
+            "metadata": {"type": "RegularFile", "size": len(raw)},
+            "digests": [{"algorithm": "sha256", "value": check.digest(raw)}],
+            "contents": base64.b64encode(raw).decode(),
+        })
+        cdx["components"].append({"bom-ref": "source-notice", "type": "file",
+            "name": check.SOURCE_NOTICE,
+            "hashes": [{"alg": "SHA-256", "content": check.digest(raw)}]})
     canary = "synthetic-private-native-report-canary"
     native["private_fixture_canary"] = canary
     if fault == 'license_content_disabled':
