@@ -92,8 +92,7 @@ _ALLOWED_MGMT = frozenset(("token", "hosts", "protocol", "mode", "nvr",
 _OBSERVABLE_FUNCTIONS = frozenset({
     "ubnt_avclient_hello", "ubnt_avclient_paramAgreement", "GetStreamList",
     "ubnt_avclient_timeSync", "ubnt_avclient_time", "ubnt_avclient_features",
-    "GetSystemStats", "NetworkStatus", "GetFeatures", "GetVideoSettings",
-    "GetIspSettings", "GetUiStreamPoints", "GetAvclientState",
+    "GetSystemStats", "NetworkStatus",
     "ResetAIPortStreams", "EventSmartDetect",
     "ChangeVideoSettings", "ChangeIspSettings",
     "StartService", "StopService", "UpdateUsernamePassword",
@@ -101,8 +100,7 @@ _OBSERVABLE_FUNCTIONS = frozenset({
     "UiStreamControl", "OnvifStreamControl", "ChangeDeviceSettings", "GetRequest",
     "ChangeSmartDetectSettings", "ChangeSmartMotionSettings",
     "ChangeAnalyticsSettings", "ChangeAudioEventsSettings",
-    "ChangeEventSettings", "ChangeAvclientEventSettings",
-    "UpdateFeatureFlags", "EventFeatureFlagsUpdated", "EventAIPortStatus",
+    "EventFeatureFlagsUpdated", "EventAIPortStatus",
     "UpdateFaceDBRequest", "UpdateFirmwareRequest",
 })
 

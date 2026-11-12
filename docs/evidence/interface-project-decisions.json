@@ -1,29 +1,9 @@
 {
   "schema": "project-interface-design-decisions/1",
-  "reviewed_date": "2026-11-11",
+  "reviewed_date": "2026-11-12",
   "rights_approval": false,
-  "source_scope": "Original public project specification of local design/fictional lab identifiers; not an independent source for any manufacturer requirement and not a clean-room or native-compatibility attestation.",
+  "source_scope": "Eleven explicitly project-defined/non-vendor entries use the project's own public specification. Six are optional local management metadata/input-policy extensions, not newly observed manufacturer fields. Their classification does not erase historical research or establish a manufacturer schema.",
   "decisions": [
-    {
-      "inventory_key": "aiport_status:501",
-      "fact_kind": "project_defined_non_vendor",
-      "native_observation": false,
-      "manufacturer_requirement": false,
-      "description": "A locally selected unsupported-operation refusal code in the project's JSON control replies. It is not an HTTP response status here and is not claimed to have a manufacturer-defined meaning.",
-      "code_locations": [
-        "src/aikey/aiport_candidate.py:1370",
-        "src/aikey/aiport_candidate.py:1781",
-        "src/aikey/aiport_candidate.py:1789",
-        "src/aikey/aiport_candidate.py:1808",
-        "src/aikey/aiport_candidate.py:1887",
-        "src/aikey/aiport_candidate.py:2923",
-        "src/aikey/aiport_candidate.py:3004",
-        "src/aikey/aiport_candidate.py:3023",
-        "src/aikey/aiport_candidate.py:3087",
-        "src/aikey/aiport_candidate.py:3145",
-        "src/aikey/aiport_candidate.py:3155"
-      ]
-    },
     {
       "inventory_key": "aiport_status:5",
       "fact_kind": "project_defined_non_vendor",
@@ -31,23 +11,43 @@
       "manufacturer_requirement": false,
       "description": "A locally selected fail-closed refusal code for invalid/unavailable control operations. The project does not claim that this number is the manufacturer's required error code, or that all controller versions interpret it identically.",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:1751",
-        "src/aikey/aiport_candidate.py:2869",
-        "src/aikey/aiport_candidate.py:2898",
-        "src/aikey/aiport_candidate.py:2916",
-        "src/aikey/aiport_candidate.py:2933",
-        "src/aikey/aiport_candidate.py:2940",
-        "src/aikey/aiport_candidate.py:2955",
-        "src/aikey/aiport_candidate.py:2962",
-        "src/aikey/aiport_candidate.py:2976",
-        "src/aikey/aiport_candidate.py:2983",
-        "src/aikey/aiport_candidate.py:3030",
-        "src/aikey/aiport_candidate.py:3109",
-        "src/aikey/aiport_candidate.py:3165",
-        "src/aikey/aiport_candidate.py:3187",
-        "src/aikey/aiport_candidate.py:3215",
-        "src/aikey/aiport_candidate.py:3250",
-        "src/aikey/aiport_candidate.py:3270"
+        "src/aikey/aiport_candidate.py:1749",
+        "src/aikey/aiport_candidate.py:2867",
+        "src/aikey/aiport_candidate.py:2896",
+        "src/aikey/aiport_candidate.py:2914",
+        "src/aikey/aiport_candidate.py:2931",
+        "src/aikey/aiport_candidate.py:2938",
+        "src/aikey/aiport_candidate.py:2953",
+        "src/aikey/aiport_candidate.py:2960",
+        "src/aikey/aiport_candidate.py:2974",
+        "src/aikey/aiport_candidate.py:2981",
+        "src/aikey/aiport_candidate.py:3028",
+        "src/aikey/aiport_candidate.py:3107",
+        "src/aikey/aiport_candidate.py:3163",
+        "src/aikey/aiport_candidate.py:3185",
+        "src/aikey/aiport_candidate.py:3213",
+        "src/aikey/aiport_candidate.py:3248",
+        "src/aikey/aiport_candidate.py:3268"
+      ]
+    },
+    {
+      "inventory_key": "aiport_status:501",
+      "fact_kind": "project_defined_non_vendor",
+      "native_observation": false,
+      "manufacturer_requirement": false,
+      "description": "A locally selected unsupported-operation refusal code in the project's JSON control replies. It is not an HTTP response status here and is not claimed to have a manufacturer-defined meaning.",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:1368",
+        "src/aikey/aiport_candidate.py:1779",
+        "src/aikey/aiport_candidate.py:1787",
+        "src/aikey/aiport_candidate.py:1806",
+        "src/aikey/aiport_candidate.py:1885",
+        "src/aikey/aiport_candidate.py:2921",
+        "src/aikey/aiport_candidate.py:3002",
+        "src/aikey/aiport_candidate.py:3021",
+        "src/aikey/aiport_candidate.py:3085",
+        "src/aikey/aiport_candidate.py:3143",
+        "src/aikey/aiport_candidate.py:3153"
       ]
     },
     {
@@ -80,6 +80,68 @@
       "code_locations": [
         "src/aikey/lab.py:173",
         "src/aikey/lab.py:222"
+      ]
+    },
+    {
+      "inventory_key": "wire_atom:consoleId",
+      "fact_kind": "project_defined_non_vendor",
+      "native_observation": false,
+      "manufacturer_requirement": false,
+      "description": "A locally permitted optional management-metadata label for content-free diagnostic field counting and bounded string pass-through. It is not required to establish controller identity, TLS trust, adoption confirmation or credentials, and is not emitted as a required manufacturer control field. No claim is made that Protect sends or requires this optional alias.",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:90"
+      ]
+    },
+    {
+      "inventory_key": "wire_atom:consoleName",
+      "fact_kind": "project_defined_non_vendor",
+      "native_observation": false,
+      "manufacturer_requirement": false,
+      "description": "A locally permitted optional management-metadata label for content-free diagnostic field counting and bounded string pass-through. It is not required to establish controller identity, TLS trust, adoption confirmation or credentials, and is not emitted as a required manufacturer control field. No claim is made that Protect sends or requires this optional alias.",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:91"
+      ]
+    },
+    {
+      "inventory_key": "wire_atom:controller",
+      "fact_kind": "project_defined_non_vendor",
+      "native_observation": false,
+      "manufacturer_requirement": false,
+      "description": "A locally permitted optional management-metadata label for content-free diagnostic field counting and bounded string pass-through. It is not required to establish controller identity, TLS trust, adoption confirmation or credentials, and is not emitted as a required manufacturer control field. No claim is made that Protect sends or requires this optional alias.",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:90"
+      ]
+    },
+    {
+      "inventory_key": "wire_atom:mode",
+      "fact_kind": "project_defined_non_vendor",
+      "native_observation": false,
+      "manufacturer_requirement": false,
+      "description": "A local optional zero-mode policy in this project's adoption API and state: an omitted mode is treated as zero; only numeric zero or string zero is accepted. The outbound x-mode header has its own separate source record and is not derived from an arbitrary supplied mode. This is a conservative local input restriction, not a claim that a manufacturer management payload must contain mode.",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:88",
+        "src/aikey/aiport_candidate.py:89"
+      ]
+    },
+    {
+      "inventory_key": "wire_atom:nvr",
+      "fact_kind": "project_defined_non_vendor",
+      "native_observation": false,
+      "manufacturer_requirement": false,
+      "description": "A locally permitted optional management-metadata label for content-free diagnostic field counting and bounded string pass-through. It is not required to establish controller identity, TLS trust, adoption confirmation or credentials, and is not emitted as a required manufacturer control field. No claim is made that Protect sends or requires this optional alias.",
+      "code_locations": [
+        "src/aikey/aiport_candidate.py:89"
+      ]
+    },
+    {
+      "inventory_key": "wire_field:mode",
+      "fact_kind": "project_defined_non_vendor",
+      "native_observation": false,
+      "manufacturer_requirement": false,
+      "description": "A local optional zero-mode policy in this project's adoption API and state: an omitted mode is treated as zero; only numeric zero or string zero is accepted. The outbound x-mode header has its own separate source record and is not derived from an arbitrary supplied mode. This is a conservative local input restriction, not a claim that a manufacturer management payload must contain mode.",
+      "code_locations": [
+        "src/aikey/device.py:893",
+        "src/aikey/device.py:915"
       ]
     }
   ]

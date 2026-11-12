@@ -1,0 +1,491 @@
+{
+  "schema": "installed-protect-backend-interface-use/1",
+  "reviewed_date": "2026-11-12",
+  "protect_version": "7.4.96",
+  "backend_path": "/usr/share/unifi-protect/app/service.js",
+  "backend_bytes": 11893109,
+  "backend_sha256": "74407353b3106ff2174f3c460ba3b2ca2a98774da372e791ec7400824dc2a397",
+  "parser": "Node 24 built-in Acorn 8.18.0",
+  "method": "Read and parse on the owner's console using the supported Debug terminal after explicit delegated ToS/EULA acceptance. Execute only original observation code, never the parsed vendor program. Export allowlisted protocol names, types and structural booleans only.",
+  "rights_approval": false,
+  "limitations": [
+    "The input was the currently installed Protect 7.4.96 backend, not an AI Key/AI Port firmware package, old research tree or downloaded vendor bundle.",
+    "Static AST use proves only the stated interface spelling, schema or construction. It is not a native execution, rights approval, or proof that every emulator default/optional field is required.",
+    "Manufacturer expressions, functions and source snippets are not included. Offsets identify the independently projected source context and are not copied algorithm descriptions.",
+    "No adoption, pairing, inference, media request, restart, credential rotation or device-setting write was performed."
+  ],
+  "public_sources": [
+    {
+      "url": "https://github.com/wireshark/wireshark/blob/fe168fe75ceda882ef00271041ee8e53d7ab5dad/epan/dissectors/packet-ubdp.c",
+      "license": "GPL-2.0-or-later",
+      "use": "Read protocol constants and decoding semantics only; no source copied, linked or executed."
+    },
+    {
+      "url": "https://jrjparks.github.io/unofficial-unifi-guide/protocols/discovery.html",
+      "use": "Read published protocol description only."
+    },
+    {
+      "url": "https://github.com/keshavdv/unifi-cam-proxy/blob/cc6d3fc7cdae9f1dfce575627089632aec696403/unifi/cams/base.py#L106-L112",
+      "sha256": "ae9e482f8012bf54637d22d44de58a963979771c6d3b33f9a2ffe92be5a193bc",
+      "license": "MIT",
+      "use": "Read the feature-list declaration and its transmission at lines 254 and 273 only. No implementation copied or executed."
+    }
+  ],
+  "findings": [
+    {
+      "inventory_key": "wire_atom:ResetAIPortStreams",
+      "statement": "The installed controller uses ResetAIPortStreams as an explicit control-dispatch case or control-call argument. This establishes the protocol name, not support for every possible payload or a new native execution.",
+      "offsets": [
+        7972429
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "inventory:ResetAIPortStreams",
+      "statement": "Same reviewed installed controller protocol-name use as the wire_atom entry.",
+      "offsets": [
+        7972429
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_atom:EventAIPortStatus",
+      "statement": "The installed controller uses EventAIPortStatus as an explicit control-dispatch case or control-call argument. This establishes the protocol name, not support for every possible payload or a new native execution.",
+      "offsets": [
+        6842778
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "inventory:EventAIPortStatus",
+      "statement": "Same reviewed installed controller protocol-name use as the wire_atom entry.",
+      "offsets": [
+        6842778
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_atom:EventFeatureFlagsUpdated",
+      "statement": "The installed controller uses EventFeatureFlagsUpdated as an explicit control-dispatch case or control-call argument. This establishes the protocol name, not support for every possible payload or a new native execution.",
+      "offsets": [
+        6836617,
+        8968530
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_atom:EventSmartAudio",
+      "statement": "The installed controller uses EventSmartAudio as an explicit control-dispatch case or control-call argument. This establishes the protocol name, not support for every possible payload or a new native execution.",
+      "offsets": [
+        6830857,
+        6832807,
+        6835121,
+        8969755
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_atom:EventSmartMotion",
+      "statement": "The installed controller uses EventSmartMotion as an explicit control-dispatch case or control-call argument. This establishes the protocol name, not support for every possible payload or a new native execution.",
+      "offsets": [
+        6830879,
+        6835436
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_atom:GetSystemStats",
+      "statement": "The installed controller uses GetSystemStats as an explicit control-dispatch case or control-call argument. This establishes the protocol name, not support for every possible payload or a new native execution.",
+      "offsets": [
+        6830942
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_atom:StartService",
+      "statement": "The installed controller uses StartService as an explicit control-dispatch case or control-call argument. This establishes the protocol name, not support for every possible payload or a new native execution.",
+      "offsets": [
+        7277568,
+        8003498,
+        8967632,
+        9295138
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_atom:ubnt_avclient_features",
+      "statement": "The installed controller uses ubnt_avclient_features as an explicit control-dispatch case or control-call argument. This establishes the protocol name, not support for every possible payload or a new native execution.",
+      "offsets": [
+        7328363
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_atom:ubnt_avclient_timeSync",
+      "statement": "The installed controller uses ubnt_avclient_timeSync as an explicit control-dispatch case or control-call argument. This establishes the protocol name, not support for every possible payload or a new native execution.",
+      "offsets": [
+        6830807,
+        6834581,
+        8968463,
+        9314631
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_atom:setInfo",
+      "statement": "The installed controller passes setInfo as the command argument to its control-call path. No settings command was sent during this review.",
+      "offsets": [
+        7385349,
+        9656493
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "inventory:/api/1.2/manage",
+      "statement": "The installed controller constructs an HTTPS management URI with this exact path.",
+      "offsets": [
+        6934567
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_atom:/api/1.2/manage",
+      "statement": "The installed controller constructs an HTTPS management URI with this exact path.",
+      "offsets": [
+        6934567
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "inventory:/api/info",
+      "statement": "The installed controller constructs an HTTPS information URI with this exact path. This is a static route observation, not a new successful information request.",
+      "offsets": [
+        3160175
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_atom:/internal/aiprocessors/image/",
+      "statement": "The installed AI-processor task builder constructs this image-input route prefix with a task-specific suffix.",
+      "offsets": [
+        8534575,
+        8535406,
+        8536912,
+        8539129,
+        8539943
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_atom:/internal/aiprocessors/image/enhanced",
+      "statement": "The installed AI-processor task builder records this exact enhanced-image callback path.",
+      "offsets": [
+        8534655
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_atom::7968/on_demand_inference",
+      "statement": "The installed controller task builder records this target URI. Its presence does not establish inference quality or permission for a new task.",
+      "offsets": [
+        8834041
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_field:thumbnailMs",
+      "statement": "The installed task schema accepts thumbnailMs as an optional array of numbers and the AI-processor task builder emits that field.",
+      "offsets": [
+        5784275,
+        8541520,
+        8545817
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_field:timeTag",
+      "statement": "The installed query-result schema accepts an optional string timeTag, and its query handling consumes that result property.",
+      "offsets": [
+        5788499,
+        5789725
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_field:isStreaming",
+      "statement": "The installed EventAIPortStatus case checks for this payload field and consumes it as a boolean-like readiness value.",
+      "offsets": [
+        6842774,
+        6842908,
+        6843006
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_field:isSmartDetectReady",
+      "statement": "The installed EventAIPortStatus case checks for this payload field and consumes it as a boolean-like readiness value.",
+      "offsets": [
+        6842774,
+        6843124,
+        6843235
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_field:isAudioEventReady",
+      "statement": "The installed EventAIPortStatus case checks for this payload field and consumes it as a boolean-like readiness value.",
+      "offsets": [
+        6842774,
+        6843357,
+        6843467
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_field:timeStamp",
+      "statement": "The installed camera-control event handling consumes the timeStamp envelope property. This does not prove every accepted timestamp encoding or the synthetic event's downstream persistence.",
+      "offsets": [
+        6832031,
+        6834930
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_field:mac",
+      "statement": "Installed getInfo/adopt consumers read the mac information field. No identifier value was collected.",
+      "offsets": [
+        8934836,
+        9618701
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_field:poeType",
+      "statement": "Installed getInfo consumers read the poeType information field. This does not establish a particular emulated value.",
+      "offsets": [
+        8756664,
+        9634534
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_field:version",
+      "statement": "The installed getInfo consumers read the outer version field. Separately, the installed AI-processor capability schema defines enabled as boolean and version as string, and its per-capability defaults use version v1. This covers both the outer and nested capability contexts; it does not certify a particular emulated firmware version or native feature support.",
+      "offsets": [
+        9634534,
+        8756432,
+        8757517,
+        8757765,
+        8757858,
+        8757967
+      ],
+      "source_class": "protect_own_installation",
+      "status": "scoped"
+    },
+    {
+      "inventory_key": "wire_atom:username",
+      "statement": "The installed controller constructs username in the management payload: top-level username/password and nested mgmt containing token, hosts and protocol=wss. Only names and shapes were inspected; no credential or host values were read.",
+      "offsets": [
+        6935846,
+        9309111
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_atom:password",
+      "statement": "The installed controller constructs password in the management payload: top-level username/password and nested mgmt containing token, hosts and protocol=wss. Only names and shapes were inspected; no credential or host values were read.",
+      "offsets": [
+        6935866,
+        9309111
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_field:password",
+      "statement": "The installed controller constructs password in the management payload: top-level username/password and nested mgmt containing token, hosts and protocol=wss. Only names and shapes were inspected; no credential or host values were read.",
+      "offsets": [
+        6935866,
+        9309111
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_atom:mgmt",
+      "statement": "The installed controller constructs mgmt in the management payload: top-level username/password and nested mgmt containing token, hosts and protocol=wss. Only names and shapes were inspected; no credential or host values were read.",
+      "offsets": [
+        6935886,
+        9309111
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_field:mgmt",
+      "statement": "The installed controller constructs mgmt in the management payload: top-level username/password and nested mgmt containing token, hosts and protocol=wss. Only names and shapes were inspected; no credential or host values were read.",
+      "offsets": [
+        6935886,
+        9309111
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_atom:hosts",
+      "statement": "The installed controller constructs hosts in the management payload: top-level username/password and nested mgmt containing token, hosts and protocol=wss. Only names and shapes were inspected; no credential or host values were read.",
+      "offsets": [
+        6935900,
+        4835814
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_field:hosts",
+      "statement": "The installed controller constructs hosts in the management payload: top-level username/password and nested mgmt containing token, hosts and protocol=wss. Only names and shapes were inspected; no credential or host values were read.",
+      "offsets": [
+        6935900,
+        4835814
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_atom:protocol",
+      "statement": "The installed controller constructs protocol in the management payload: top-level username/password and nested mgmt containing token, hosts and protocol=wss. Only names and shapes were inspected; no credential or host values were read.",
+      "offsets": [
+        6935908,
+        4835799
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_field:protocol",
+      "statement": "The installed controller constructs protocol in the management payload: top-level username/password and nested mgmt containing token, hosts and protocol=wss. Only names and shapes were inspected; no credential or host values were read.",
+      "offsets": [
+        6935908,
+        4835799
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_atom:token",
+      "statement": "The installed controller constructs token in the management payload: top-level username/password and nested mgmt containing token, hosts and protocol=wss. Only names and shapes were inspected; no credential or host values were read.",
+      "offsets": [
+        6935892,
+        4835822
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_field:token",
+      "statement": "The installed controller constructs token in the management payload: top-level username/password and nested mgmt containing token, hosts and protocol=wss. Only names and shapes were inspected; no credential or host values were read.",
+      "offsets": [
+        6935892,
+        4835822
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "discovery_tlv:0x17",
+      "statement": "Wireshark's public UBDP specification identifies type 23 (0x17) as Default and decodes one-byte or four-byte big-endian values. The public discovery guide describes IsDefault as a boolean. This supports the default-state field, not an AI-specific device identity.",
+      "offsets": [],
+      "source_class": "public_documentation"
+    },
+    {
+      "inventory_key": "discovery_tlv:0x10",
+      "statement": "The installed discovery parser's SYSTEM_ID case reads a little-endian unsigned 16-bit value and assigns the resulting system identifier to sysid. Public UBDP documentation assigns System ID to type 16 (0x10). This profile follows the actual installed parser, not Wireshark's generic big-endian interpretation.",
+      "offsets": [
+        25490,
+        25523
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_field:sysid",
+      "statement": "The installed discovery parser produces a sysid metadata field from the SYSTEM_ID value. This supports the field name and system-identifier context, not a particular emulated ID or a claim that every getInfo response requires it.",
+      "offsets": [
+        25490,
+        25523
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "aiport_status:0",
+      "statement": "The installed control-response handler explicitly distinguishes statusCode zero from nonzero. Zero is the comparison sentinel used by this project's normal replies. This does not establish success semantics for every command, or prove a new native response was accepted.",
+      "offsets": [
+        6818565,
+        6818742
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_field:statusCode",
+      "statement": "The installed control-response handler consumes the statusCode property and explicitly compares it with numeric zero. The field is a control-envelope discriminator, not an HTTP response status in this context.",
+      "offsets": [
+        6818565,
+        6818742
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_atom:x-token",
+      "statement": "The installed control-connection header parser reads x-token in the same handler as x-ident, x-mode and x-adopted, with ucp4 handling. This is a static header-consumer observation, not a claim that x-token is always required or that a token-bearing reconnect was newly tested.",
+      "offsets": [
+        9846467,
+        9846607
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_field:enableSmartDetect",
+      "statement": "The installed AI-Port-aware control-settings payload constructor includes enableSmartDetect alongside isPayloadForAiPort and region/zone settings. This establishes the setting field and context, not every boolean value or a newly accepted setting change.",
+      "offsets": [
+        7416480,
+        7416588
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_field:smartDetect",
+      "statement": "The installed feature normalizer reads smartDetect and tests supported feature names with array-membership operations. This supports the feature-list field and context, not every locally advertised detection type or AI Port event acceptance.",
+      "offsets": [
+        1651541,
+        1653180,
+        1653278,
+        1653380
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_field:motionDetect",
+      "statement": "Public unifi-cam-proxy camera-control feature declarations advertise motionDetect as a list containing enhanced, and send that feature container in hello/parameter-agreement messages. The installed feature normalizer also consumes motionDetect. This supports the shared feature-list spelling and enhanced-motion value; it is not a fresh AI Port EventFeatureFlagsUpdated acceptance test.",
+      "offsets": [
+        1654576,
+        1654651,
+        1654668
+      ],
+      "source_class": "public_documentation"
+    },
+    {
+      "inventory_key": "wire_atom:ChangeNvrSettings",
+      "statement": "The installed controller defines ChangeNvrSettings under its CHANGE_NVR_SETTINGS command-name constant. This establishes a named controller control operation, not a claim that the local diagnostic label implements it or that it was sent during this review.",
+      "offsets": [
+        2889518
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_atom:OnvifStreamControl",
+      "statement": "The installed AI Port controller defines OnvifStreamControl under its ONVIF control-operation constant. This establishes the control-operation name, not complete command semantics or a fresh native stream-control trial.",
+      "offsets": [
+        7986174
+      ],
+      "source_class": "protect_own_installation"
+    },
+    {
+      "inventory_key": "wire_field:timestamp",
+      "statement": "The installed controller transport send path constructs timestamp beside id and type in the message envelope; the same transport class exposes request/response send methods. A separate case-history timestamp object was explicitly excluded. This establishes the transport-envelope field context, not new native execution or proof that every unrelated timestamp field has the same meaning.",
+      "offsets": [
+        33336,
+        33438
+      ],
+      "source_class": "protect_own_installation"
+    }
+  ]
+}

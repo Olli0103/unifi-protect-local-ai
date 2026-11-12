@@ -55,10 +55,9 @@ _RAM_TYPES = ("video", "videoWithRecognition", "image", "multipleImages")
 # documented evidence but are not handled. A match is reported by name; it
 # says only that the controller sent a documented identifier (#1).
 DOCUMENTED_COMMAND_CANDIDATES = frozenset({
-    "timeSync", "requestAi", "setDbCredential", "getDbCredential", "setClientCertificate"})
+    "timeSync", "requestAi"})
 DOCUMENTED_TARGET_CANDIDATES = {
     ":7968/describe": "describe", ":7968/on_demand_inference": "on_demand_inference",
-    ":7968/vlm_inference": "vlm_inference", ":7968/anything": "anything",
     ":7788/v1/models/second_verifier_mlabel/inference": "second_verifier"}
 _FINGERPRINT_LIMIT = 8
 _FINGERPRINT_NAME = re.compile(r"[A-Za-z][A-Za-z0-9_.-]{0,63}\Z")

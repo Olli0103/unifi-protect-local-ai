@@ -201,8 +201,6 @@ def validate_request(message):
     action = header.get("action")
     if action == "NL_PARSE":
         _text(body.get("querySentence"), "querySentence")
-        if "tagHierarchy" in body and type(body["tagHierarchy"]) is not bool:
-            raise ContractError("tagHierarchy must be a boolean")
     elif action == "IMAGE_SEARCH":
         _text(body.get("imgUri"), "imgUri")
     else:
@@ -321,7 +319,7 @@ def task_description_json(task_id, result):
         raise ContractError("Invalid local task id")
     _json_bytes(result)
     strings = {"camera", "event", "pass", "description", "model", "version"}
-    allowed = strings | {"labels", "descEmbedding", "failed"}
+    allowed = strings | {"labels", "descEmbedding"}
     if "description" not in result or not set(result) <= allowed:
         raise ContractError("Unsupported task description result fields")
     for name in strings & set(result):
@@ -331,12 +329,4 @@ def task_description_json(task_id, result):
         _strings(result["labels"], "labels")
     if "descEmbedding" in result and result["descEmbedding"] is not None:
         _embedding(result["descEmbedding"], "descEmbedding")
-    if "failed" in result:
-        if not isinstance(result["failed"], list):
-            raise ContractError("failed must be a list")
-        for failure in result["failed"]:
-            if not isinstance(failure, dict) or not set(failure) <= {"objectId", "reason"}:
-                raise ContractError("Unsupported failed entry")
-            if any(not isinstance(value, str) for value in failure.values()):
-                raise ContractError("Failure values must be strings")
     return f"/internal/aiprocessors/descriptions/{task_id}", _json_bytes(result)

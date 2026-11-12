@@ -39,7 +39,7 @@ def test_the_comparison_key_is_stable_and_documented():
     assert command_fingerprint("fixtureUnknownCommand") == hashlib.sha256(
         b"fixtureUnknownCommand").hexdigest()[:16]
     assert "getInfo" not in DOCUMENTED_COMMAND_CANDIDATES              # handled names are counted by name already
-    assert DOCUMENTED_TARGET_CANDIDATES[":7968/vlm_inference"] == "vlm_inference"
+    assert DOCUMENTED_TARGET_CANDIDATES[":7968/on_demand_inference"] == "on_demand_inference"
 
 
 async def test_without_an_open_window_nothing_is_fingerprinted(tmp_path):
@@ -52,8 +52,8 @@ async def test_without_an_open_window_nothing_is_fingerprinted(tmp_path):
 
 async def test_a_documented_candidate_is_counted_by_name_even_without_a_window(tmp_path):
     service = device(tmp_path)
-    assert await send(service, "setDbCredential", {"password": SECRET}, "a") == 95
-    assert unlisted(service)["command"]["candidates"] == {"setDbCredential": 1}
+    assert await send(service, "requestAi", {"password": SECRET}, "a") == 95
+    assert unlisted(service)["command"]["candidates"] == {"requestAi": 1}
     assert SECRET not in json.dumps(service.status)
 
 
@@ -91,10 +91,10 @@ def _request_ai(target):
 
 async def test_unsupported_request_ai_targets_are_named_or_fingerprinted_without_payload(tmp_path):
     service = device(tmp_path, until=int(time.time()) + 3600)
-    assert await send(service, "RequestAI", _request_ai(":7968/vlm_inference"), "a") == 95
+    assert await send(service, "RequestAI", _request_ai(":7968/on_demand_inference"), "a") == 95
     assert await send(service, "RequestAI", _request_ai(":7968/some_new_route"), "b") == 95
     bucket = unlisted(service)["request_ai_target"]
-    assert bucket["candidates"] == {"vlm_inference": 1}
+    assert bucket["candidates"] == {"on_demand_inference": 1}
     assert bucket["fingerprints"] == {command_fingerprint(":7968/some_new_route"): 1}
     text = json.dumps(service.status)
     for private in (SECRET, "private.invalid", "some_new_route"):
@@ -195,3 +195,24 @@ async def test_close_pass_export_refusals_have_their_own_reasons(tmp_path):
     status = service.status
     assert {k: v for k, v in status["request_ai_rejection_counts"].items() if v} == {"export_interval": 1}
     assert {k: v for k, v in status["request_ai_rejection_targets"].items() if v} == {"describe": 1}
+
+@pytest.mark.parametrize("name", ["setDbCredential", "getDbCredential", "setClientCertificate"])
+async def test_retired_unobserved_diagnostic_names_are_not_disclosed(tmp_path, name):
+    service = device(tmp_path)
+    assert await send(service, name, {"password": SECRET}, "a") == 95
+    bucket = unlisted(service)["command"]
+    assert bucket["candidates"] == {}
+    assert bucket["not_recorded"] == 1
+    assert name not in json.dumps(service.status)
+    assert SECRET not in json.dumps(service.status)
+
+
+@pytest.mark.parametrize("target", [":7968/vlm_inference", ":7968/anything"])
+async def test_retired_unobserved_target_names_keep_bounded_private_fingerprints(tmp_path, target):
+    service = device(tmp_path, until=int(time.time()) + 3600)
+    assert await send(service, "RequestAI", _request_ai(target), "a") == 95
+    bucket = unlisted(service)["request_ai_target"]
+    assert bucket["candidates"] == {}
+    assert bucket["fingerprints"] == {command_fingerprint(target): 1}
+    assert target not in json.dumps(service.status)
+    assert SECRET not in json.dumps(service.status)
