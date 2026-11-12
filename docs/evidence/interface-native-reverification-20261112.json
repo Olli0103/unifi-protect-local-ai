@@ -1,0 +1,104 @@
+{
+  "schema": "interface-native-reverification/1",
+  "reviewed_date": "2026-11-12",
+  "native_observed_date": "2026-11-03",
+  "protect_version": "7.3.74",
+  "evidence_kind": "Historical owner-installation interoperability receipts, attributed through recovered immutable deployed project image; derived exact-path attribution, not a retained raw request capture.",
+  "facts": [
+    {
+      "inventory_key": "wire_atom::7788/v1/models/second_verifier_mlabel/inference",
+      "route_template": ":7788/v1/models/second_verifier_mlabel/inference",
+      "direction": "controller RequestAI to adopted project worker",
+      "attribution": "Only the exact target-equality branch calls the reverification normalizer. The successful native jobs carry that normalizer's reverify operation and camera/event identity constructor."
+    },
+    {
+      "inventory_key": "wire_atom:/internal/aiprocessors/reverification",
+      "route_template": "/internal/aiprocessors/reverification",
+      "direction": "project worker HTTPS callback to pinned controller",
+      "attribution": "The same normalizer rejects any other callback path. The callback sender posts to the admitted callback with redirects disabled and records the actual response status."
+    }
+  ],
+  "deployed_source_binding": {
+    "image_id": "sha256:0e1322484d5c082cbeebe64fee54d3f0dc3d50e095924683775bbe3311a980be",
+    "image_created_utc": "2026-10-31T17:20:12.622828508Z",
+    "project_source_revision": "278e11342bf59907d8dcaf8e486cad860dd72a36",
+    "source_repository": "https://github.com/Olli0103/unifi-ai-key-emulator",
+    "historical_container_started_utc": "2026-11-02T04:47:55.078133366Z",
+    "november_3_participant_and_process_receipts_agree": true,
+    "modules": {
+      "worker": {
+        "path": "src/aikey/worker.py",
+        "sha256": "e17a8ecbe3254810077e789ac85f235cf9f9977b2d7c82eb112d40853b9f8624",
+        "identical_to_project_source_revision": true
+      },
+      "device": {
+        "path": "src/aikey/device.py",
+        "sha256": "ef1f033a86ad7792df1be75fd0e0847844aadb8557b3a1ae88d7b1717f3a4f6c",
+        "identical_to_project_source_revision": true
+      }
+    },
+    "method_hash_algorithm": "SHA-256 of UTF-8 ast.get_source_segment text: def through end_lineno, no trailing newline; no decorators on these methods.",
+    "method_sha256": {
+      "_normalize": "3bca77edb3c6ac203f52474422c23139cfcc8c5d08503d696826c232ee217fb3",
+      "_normalize_reverification": "bc1c5b6d9f990a796f2ec495fd266a7dcb30e4a100cafeeb572296d16ccc7902",
+      "_execute_reverification": "c862c555734252b36d7a8f2d33d3d408bb34fd51837662dc76b6d39862963856",
+      "_post_callback": "fdbcb91a504f2c99ce07924cbeaca7fdefea565dc9f97a8a4104ab0e1912b2aa"
+    },
+    "original_installed_normalizer_digest_matches_recovered_image": true,
+    "recovery_started_container": false,
+    "recovery_probe_removed": true
+  },
+  "native_acceptance": {
+    "prior_public_record": "docs/evidence/native-object-routing-acceptance-20261103.json",
+    "prior_public_record_sha256": "ded41732dbf7bc170369731b6e7e89ad72e79d8c179e0cc6e1c124ae2e2b7d52",
+    "completed_jobs": 3,
+    "exact_camera_event_joins": 3,
+    "callback_http_200": 3,
+    "confirmed": 1,
+    "retyped": 2,
+    "unchanged": 0,
+    "identity_constructor": "SHA256(reverification:camera:event)",
+    "separate_native_detail_reads": 2,
+    "persistence_read_interval_seconds": 73.914,
+    "all_thumbnail_clocks_within_matched_event": true,
+    "collector_setting_writes": 0,
+    "collector_model_requests": 0
+  },
+  "retained_private_receipt_digests": {
+    "closure14-79-installed-constructor-binding.json": "d57da6d35550c499fc484051520f190636d25c6ef07f61b958913539e885842b",
+    "continue-reverification-journal.json": "51bab8cd1acc5279f331bf03ca2a154d7caccfb7ace5eff4841f6793293aacb3",
+    "continue-reverification-match.json": "3b924d74f1bb5a8fbcbdd5e97de70ff6f02b133a58cc3efaffefd1716f5cc86b",
+    "continue-reverification-persistence.json": "2860f5ff53f636292e6cecf402eea7c253d3ad01068e6706b9dc5dee4c0fec79",
+    "authorized-restart-20261103T133930Z-v2/restart-readback.json": "8d3fade226d4e90db508598bed4df1de32caaa428dbca6de4e05abf6cb5a4948"
+  },
+  "november_12_trial": {
+    "protect_version": "7.4.96",
+    "synthetic_native_events": 1,
+    "verifier_jobs_observed": 0,
+    "not_used_as_verifier_path_proof": true,
+    "discovery_restored_off": true,
+    "temporary_reservations_removed": 2,
+    "synthetic_camera_and_port_removed": true,
+    "temporary_running_containers_removed": 2,
+    "original_containers_unchanged": 80,
+    "original_native_devices": {
+      "cameras": 11,
+      "aiprocessors": 1,
+      "aiports": 5
+    },
+    "original_selected_identity_pairing_and_settings_differences": 0,
+    "automatic_unreserved_network_client_history_may_remain": true,
+    "synthetic_event_replays": 0,
+    "synthetic_event_deletion_not_requested": true
+  },
+  "limits": [
+    "This establishes the two exact interface spellings for the historical Protect 7.3.74 owner installation, not a new successful verifier run on 7.4.96.",
+    "No raw traffic or historical payload is reconstructed from an own-source constant. Exact-path attribution combines the actual native receipts, their original installed normalizer hash and the recovered deployed source guards.",
+    "Private source receipts are owner-retained attestations, identified by hashes; public readers cannot independently reproduce the historical installation from this summary.",
+    "No AI Key or AI Port vendor firmware, vendor binary, disassembly, private extracted function, image, credential, private camera/event/job identity or query value is included.",
+    "The inspected immutable image and source modules belong to this independently authored project, not an AI Key or AI Port vendor image.",
+    "No claim of classifier accuracy, complete semantic inventory, hardware parity, clean-room origin, rights approval, image compliance or public release approval."
+  ],
+  "rights_approval": false,
+  "public_release_clearance": false
+}
