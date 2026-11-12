@@ -1,0 +1,28 @@
+{
+  "retired_inventory_keys": [
+    "wire_atom::7968/anything",
+    "wire_atom::7968/vlm_inference",
+    "wire_atom:ChangeAvclientEventSettings",
+    "wire_atom:ChangeEventSettings",
+    "wire_atom:GetAvclientState",
+    "wire_atom:GetFeatures",
+    "wire_atom:GetIspSettings",
+    "wire_atom:GetUiStreamPoints",
+    "wire_atom:GetVideoSettings",
+    "wire_atom:UpdateFeatureFlags",
+    "wire_atom:getDbCredential",
+    "wire_atom:setClientCertificate",
+    "wire_atom:setDbCredential"
+  ],
+  "scope": "Only fixed-name diagnostic allowlists for commands/targets absent from the current installed backend. Functional handlers, rejection codes, worker targets, callback paths, optional fingerprint privacy boundary and deployed state are unchanged.",
+  "retired_optional_fields": [
+    "wire_field:failed",
+    "wire_field:tagHierarchy"
+  ],
+  "optional_field_scope": "Removed special tagHierarchy query-flag validation and the unused failed description-result extension. Required query fields, model metadata and other opaque query metadata retain existing behavior. Standard description result producers remain unchanged; the unobserved failed result extension is rejected.",
+  "schema": "interface-retirements/1",
+  "reviewed_date": "2026-11-12",
+  "rights_approval": false,
+  "device_changes": false,
+  "pending_after_first_retirement_stage": 25
+}

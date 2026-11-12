@@ -1,0 +1,78 @@
+# Interface observations — 11 November 2026
+
+This is bounded provenance evidence, not rights approval or complete compatibility acceptance. Protect reports **7.4.96**; the UI asset filename swai-7.4.26.js is not the controller version.
+
+## Collection boundary
+
+Authenticated Protect API reads, one short native update-WebSocket subscription and existing AI Key/four NAS AI Port health endpoints were used. Existing certificate trust remained enabled. No firmware, disassembly, private firmware-research artifact, media, transcript, credential value or identifier was collected. No adoption, re-pairing, restart, inference or configuration change was initiated.
+
+Receive counts are cumulative since process start, not newly induced commands. Failed outcomes remain in the [structured record](interface-observations-20261111.json). A received name does not prove successful handling, necessity, or every payload variant. The deployed own receive implementation differs from WP2; its relevant receive-validator source was inspected separately. AST equality with WP2 is explicitly not claimed.
+
+## New scoped evidence
+
+The original registry had 30 mapped entries and 210 gaps. This collection adds **37 scoped mappings**: **67 mapped, 173 unresolved**, still 655 source locations. Remaining: 163 need further observation, six have supporting context only, and four are local/synthetic review cases. This is not a count of established legal violations.
+
+| Inventory key | Observation | Limits |
+| --- | --- | --- |
+| `discovery_layout:>BBH` | Nmap ubiquiti-discovery.nse documents UDP 10001, v1 header, big-endian lengths and the named TLV. | Generic discovery protocol, not a genuine AI Key/AI Port observation. No Nmap probe or scanner was run. Camera unicast timed out. Does not establish AI-specific values, sysid byte order, multicast, or optional TLVs. |
+| `discovery_layout:>BH` | Nmap ubiquiti-discovery.nse documents UDP 10001, v1 header, big-endian lengths and the named TLV. | Generic discovery protocol, not a genuine AI Key/AI Port observation. No Nmap probe or scanner was run. Camera unicast timed out. Does not establish AI-specific values, sysid byte order, multicast, or optional TLVs. |
+| `discovery_tlv:0x01` | Nmap ubiquiti-discovery.nse documents UDP 10001, v1 header, big-endian lengths and the named TLV. | Generic discovery protocol, not a genuine AI Key/AI Port observation. No Nmap probe or scanner was run. Camera unicast timed out. Does not establish AI-specific values, sysid byte order, multicast, or optional TLVs. |
+| `discovery_tlv:0x02` | Nmap ubiquiti-discovery.nse documents UDP 10001, v1 header, big-endian lengths and the named TLV. | Generic discovery protocol, not a genuine AI Key/AI Port observation. No Nmap probe or scanner was run. Camera unicast timed out. Does not establish AI-specific values, sysid byte order, multicast, or optional TLVs. |
+| `discovery_tlv:0x03` | Nmap ubiquiti-discovery.nse documents UDP 10001, v1 header, big-endian lengths and the named TLV. | Generic discovery protocol, not a genuine AI Key/AI Port observation. No Nmap probe or scanner was run. Camera unicast timed out. Does not establish AI-specific values, sysid byte order, multicast, or optional TLVs. |
+| `discovery_tlv:0x0a` | Nmap ubiquiti-discovery.nse documents UDP 10001, v1 header, big-endian lengths and the named TLV. | Generic discovery protocol, not a genuine AI Key/AI Port observation. No Nmap probe or scanner was run. Camera unicast timed out. Does not establish AI-specific values, sysid byte order, multicast, or optional TLVs. |
+| `discovery_tlv:0x0b` | Nmap ubiquiti-discovery.nse documents UDP 10001, v1 header, big-endian lengths and the named TLV. | Generic discovery protocol, not a genuine AI Key/AI Port observation. No Nmap probe or scanner was run. Camera unicast timed out. Does not establish AI-specific values, sysid byte order, multicast, or optional TLVs. |
+| `discovery_tlv:0x0c` | Nmap ubiquiti-discovery.nse documents UDP 10001, v1 header, big-endian lengths and the named TLV. | Generic discovery protocol, not a genuine AI Key/AI Port observation. No Nmap probe or scanner was run. Camera unicast timed out. Does not establish AI-specific values, sysid byte order, multicast, or optional TLVs. |
+| `inventory:10001` | Nmap ubiquiti-discovery.nse documents UDP 10001, v1 header, big-endian lengths and the named TLV. | Generic discovery protocol, not a genuine AI Key/AI Port observation. No Nmap probe or scanner was run. Camera unicast timed out. Does not establish AI-specific values, sysid byte order, multicast, or optional TLVs. |
+| `inventory:7442` | Existing adopted emulator has a live connected control_port channel on 7442. | Observed accepted configured endpoint, not proof that every controller version must use this port. |
+| `inventory:7443` | Existing adopted emulator has a live connected search_port channel on 7443. | Observed accepted configured endpoint, not proof that every controller version must use this port. |
+| `inventory:GetStreamList` | Controller-origin function name received by unchanged adopted emulator: GetStreamList | Cumulative since process start; not necessarily a new request during this collection. Name observation does not prove successful handling, necessity, or all command payload variants. |
+| `inventory:UpdateUsernamePassword` | Controller-origin function name received by unchanged adopted emulator: UpdateUsernamePassword | Cumulative since process start; not necessarily a new request during this collection. Name observation does not prove successful handling, necessity, or all command payload variants. |
+| `ucp_record:two_records_types_1_2_format_1_empty_body_2` | Current native UI socket: records 1/2, JSON format 1, uncompressed/reserved zero. Historical own-controller trial explicitly records the AI Key empty-string error body. | Current UI update socket is not the AI Key control socket. Format-2 empty-body behavior is historical evidence, not newly observed today. |
+| `wire_atom:ChangeAudioEventsSettings` | Controller-origin function name received by unchanged adopted emulator: ChangeAudioEventsSettings | Cumulative since process start; not necessarily a new request during this collection. Name observation does not prove successful handling, necessity, or all command payload variants. |
+| `wire_atom:ChangeDeviceSettings` | Controller-origin function name received by unchanged adopted emulator: ChangeDeviceSettings | Cumulative since process start; not necessarily a new request during this collection. Name observation does not prove successful handling, necessity, or all command payload variants. |
+| `wire_atom:ChangeSmartMotionSettings` | Controller-origin function name received by unchanged adopted emulator: ChangeSmartMotionSettings | Cumulative since process start; not necessarily a new request during this collection. Name observation does not prove successful handling, necessity, or all command payload variants. |
+| `wire_atom:ChangeSoundLedSettings` | Controller-origin function name received by unchanged adopted emulator: ChangeSoundLedSettings | Cumulative since process start; not necessarily a new request during this collection. Name observation does not prove successful handling, necessity, or all command payload variants. |
+| `wire_atom:GetRequest` | Controller-origin function name received by unchanged adopted emulator: GetRequest | Cumulative since process start; not necessarily a new request during this collection. Name observation does not prove successful handling, necessity, or all command payload variants. |
+| `wire_atom:GetStreamList` | Controller-origin function name received by unchanged adopted emulator: GetStreamList | Cumulative since process start; not necessarily a new request during this collection. Name observation does not prove successful handling, necessity, or all command payload variants. |
+| `wire_atom:RequestAI` | Controller-origin function name received by unchanged adopted emulator: RequestAI | Cumulative since process start; not necessarily a new request during this collection. Name observation does not prove successful handling, necessity, or all command payload variants. |
+| `wire_atom:StopService` | Controller-origin function name received by unchanged adopted emulator: StopService | Cumulative since process start; not necessarily a new request during this collection. Name observation does not prove successful handling, necessity, or all command payload variants. |
+| `wire_atom:UpdateFaceDBRequest` | Controller-origin function name received by unchanged adopted emulator: UpdateFaceDBRequest | Cumulative since process start; not necessarily a new request during this collection. Name observation does not prove successful handling, necessity, or all command payload variants. |
+| `wire_atom:UpdateFirmwareRequest` | Controller-origin function name received by unchanged adopted emulator: UpdateFirmwareRequest | Cumulative since process start; not necessarily a new request during this collection. Name observation does not prove successful handling, necessity, or all command payload variants. |
+| `wire_atom:UpdateUsernamePassword` | Controller-origin function name received by unchanged adopted emulator: UpdateUsernamePassword | Cumulative since process start; not necessarily a new request during this collection. Name observation does not prove successful handling, necessity, or all command payload variants. |
+| `wire_atom:networkStatus` | Controller-origin function name received by unchanged adopted emulator: networkStatus | Cumulative since process start; not necessarily a new request during this collection. Name observation does not prove successful handling, necessity, or all command payload variants. |
+| `wire_atom:sshService` | Controller-origin function name received by unchanged adopted emulator: sshService | Cumulative since process start; not necessarily a new request during this collection. Name observation does not prove successful handling, necessity, or all command payload variants. |
+| `wire_atom:ubnt_avclient_hello` | Controller-origin function name received by unchanged adopted emulator: ubnt_avclient_hello | Cumulative since process start; not necessarily a new request during this collection. Name observation does not prove successful handling, necessity, or all command payload variants. |
+| `wire_atom:ubnt_avclient_paramAgreement` | Controller-origin function name received by unchanged adopted emulator: ubnt_avclient_paramAgreement | Cumulative since process start; not necessarily a new request during this collection. Name observation does not prove successful handling, necessity, or all command payload variants. |
+| `wire_field:controller` | setConsoleInfo requires controller object and retained controller-origin state contains its allowed names/types. | Only the stated incoming command context; not evidence for unrelated result or management schemas. The deployed own implementation differs from WP2; the deployed receive-validator source was inspected separately. |
+| `wire_field:end` | Positive valid-order/duration counters establish inbound start/end number fields. | Only the stated incoming command context; not evidence for unrelated result or management schemas. The deployed own implementation differs from WP2; the deployed receive-validator source was inspected separately. |
+| `wire_field:keyMoments` | Positive non-empty keyMoments counters establish the received list in recognizeKeyFrames. | Only the stated incoming command context; not evidence for unrelated result or management schemas. The deployed own implementation differs from WP2; the deployed receive-validator source was inspected separately. |
+| `wire_field:nightMode` | updateLcmSettings received a nightMode object with numeric offMinute/onMinute fields. | Only the stated incoming command context; not evidence for unrelated result or management schemas. The deployed own implementation differs from WP2; the deployed receive-validator source was inspected separately. |
+| `wire_field:ramType` | 3,104 inbound recognizeKeyFrames requests with recognized ramType labels. | Only the stated incoming command context; not evidence for unrelated result or management schemas. The deployed own implementation differs from WP2; the deployed receive-validator source was inspected separately. |
+| `wire_field:region` | Persisted controller-origin changeAiInferAgentSettings contains a string region. | Only the stated incoming command context; not evidence for unrelated result or management schemas. The deployed own implementation differs from WP2; the deployed receive-validator source was inspected separately. |
+| `wire_field:start` | Positive valid-order/duration counters establish inbound start/end number fields. | Only the stated incoming command context; not evidence for unrelated result or management schemas. The deployed own implementation differs from WP2; the deployed receive-validator source was inspected separately. |
+| `wire_field:thumbnailMeta` | 775 inbound recognizeKeyFrames requests include thumbnailMeta. | Only the stated incoming command context; not evidence for unrelated result or management schemas. The deployed own implementation differs from WP2; the deployed receive-validator source was inspected separately. |
+
+## Discovery limits
+
+The single owned G4 Dome camera (firmware 5.5.45) did not answer one NAS-origin empty-v1 unicast query within three seconds. The earlier Gateway-origin attempt returned a network error. No scan, broadcast, multicast, port sweep or fallback command was used. No TLV values or native identity were recorded. Nmap documents generic protocol structure only; AI-specific sysid values/byte order, multicast and the factory-default field byte order remain unsupported.
+
+## UCP limits
+
+The native browser update socket delivered one frame with records 1/2, JSON format 1, zero compression/reserved flags and exact length consumption. This is not the AI Key control socket. The empty-string error-body case is supported separately by the historical own-controller [Find Anything live record](find-anything-contract.md#live-verification-26-sep-2026), not newly observed today. Before/after camera settings, pairings and identity projections matched.
+
+## Supporting context is not completion
+
+The installed Protect bootstrap returns six capability-property names also present in its UI. They may reflect emulator-advertised data; no requirement/full wire-schema validation is inferred. The UI's 75 inventory literal matches were not promoted to 75 observations. Camera evidence cannot substitute for AI Key/AI Port-specific behavior.
+
+Status 501, the retained diagnostic label and two fixture paths are local/synthetic review cases, not newly observed vendor requirements.
+
+## Remaining access boundary
+
+The installed Protect backend service.js was not accessible through the verified SSH setup: strict host verification failed before authentication. Trust and SSH settings were not changed. Remaining verifier/header/route/message-context findings need own-installed application access, owner-supplied metadata-only observations, or a separately scoped safe trial. No firmware package or private extracted bundle was substituted.
+
+## Public documentation
+
+- https://raw.githubusercontent.com/nmap/nmap/4394ae5c1f5ca46725e13dcde5690258c1ab3d92/scripts/ubiquiti-discovery.nse
+- https://raw.githubusercontent.com/uilibs/uiprotect/1f82f25dc92f72786034d40a48b27cabdd9d2f40/src/uiprotect/data/websocket.py
+
+The Nmap script and uiprotect source were read, never installed or executed. No vendor source code is included. Unresolved instructions remain in the [registry](../legal/interface-sources.md).

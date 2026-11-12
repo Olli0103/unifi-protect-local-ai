@@ -15,3 +15,8 @@
 # English native-read limitation prose, not a credential. The current wording
 # is corrected; this exact historical fingerprint does not exempt future text.
 8cf6ddc5205202390b427577826d333ad0af841a:docs/evidence/startup-configuration-20261030.md:generic-api-key:64
+
+# Historical own-source observer SHA-256 digest, verified against the actual
+# observer program; not an API credential. Current JSON uses separate file/digest
+# fields. Exact commit/path/rule/line only; future records stay fully scanned.
+e89c4453ff8690599e34ec799eae5bd39e4aa867:docs/evidence/interface-native-enrollment-20261112.json:generic-api-key:11

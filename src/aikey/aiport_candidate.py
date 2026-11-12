@@ -16,7 +16,6 @@ import math
 import os
 from pathlib import Path
 import re
-import secrets
 import signal
 import ssl
 import stat
@@ -92,8 +91,7 @@ _ALLOWED_MGMT = frozenset(("token", "hosts", "protocol", "mode", "nvr",
 _OBSERVABLE_FUNCTIONS = frozenset({
     "ubnt_avclient_hello", "ubnt_avclient_paramAgreement", "GetStreamList",
     "ubnt_avclient_timeSync", "ubnt_avclient_time", "ubnt_avclient_features",
-    "GetSystemStats", "NetworkStatus", "GetFeatures", "GetVideoSettings",
-    "GetIspSettings", "GetUiStreamPoints", "GetAvclientState",
+    "GetSystemStats", "NetworkStatus",
     "ResetAIPortStreams", "EventSmartDetect",
     "ChangeVideoSettings", "ChangeIspSettings",
     "StartService", "StopService", "UpdateUsernamePassword",
@@ -101,8 +99,7 @@ _OBSERVABLE_FUNCTIONS = frozenset({
     "UiStreamControl", "OnvifStreamControl", "ChangeDeviceSettings", "GetRequest",
     "ChangeSmartDetectSettings", "ChangeSmartMotionSettings",
     "ChangeAnalyticsSettings", "ChangeAudioEventsSettings",
-    "ChangeEventSettings", "ChangeAvclientEventSettings",
-    "UpdateFeatureFlags", "EventFeatureFlagsUpdated", "EventAIPortStatus",
+    "EventFeatureFlagsUpdated", "EventAIPortStatus",
     "UpdateFaceDBRequest", "UpdateFirmwareRequest",
 })
 
@@ -1025,7 +1022,6 @@ class CandidateService:
         self.credentials = CredentialStore(self.state_dir)
         self.virtual_sound_led = VirtualSoundLedStore(self.state_dir)
         self.virtual_timezone = VirtualTimezoneStore(self.state_dir)
-        self.sessions: dict[str, float] = {}
         self._auth_failures: dict[str, list[float]] = {}
         self._auth_lock = asyncio.Lock()
         self._factory_until = config.get("factory_enrollment_until", 0)
@@ -2322,7 +2318,6 @@ class CandidateService:
     def app(self) -> web.Application:
         app = web.Application(client_max_size=_MAX_MANAGE)
         app.router.add_get("/healthz", self._health)
-        app.router.add_post("/api/1.2/login", self._login)
         app.router.add_post("/api/1.2/manage", self._manage)
         return app
 
@@ -2629,29 +2624,6 @@ class CandidateService:
             await self._current_ws.close()
         return web.json_response({})
 
-    async def _login(self, request: web.Request) -> web.Response:
-        if not request.secure:
-            return web.json_response({"error": "HTTPS required"}, status=400)
-        if request.content_type != "application/json":
-            return web.json_response({"error": "JSON required"}, status=415)
-        try:
-            body = await request.json()
-        except (ValueError, UnicodeError, web.HTTPRequestEntityTooLarge):
-            return web.json_response({"error": "Unauthorized"}, status=401)
-        if (not isinstance(body, dict) or not await self._verify_management(
-                request, body.get("username"), body.get("password"))):
-            return web.json_response({"error": "Unauthorized"}, status=401)
-        token = secrets.token_urlsafe(32)
-        self.sessions = {key: expiry for key, expiry in self.sessions.items()
-                         if expiry > time.monotonic()}
-        if len(self.sessions) >= 256:
-            self.sessions.pop(next(iter(self.sessions)))
-        self.sessions[token] = time.monotonic() + 600
-        response = web.json_response({})
-        response.set_cookie("AISESSION", token, secure=True, httponly=True,
-                            samesite="Strict", max_age=600)
-        return response
-
     async def _verify_management(self, request: web.Request,
                                  username: object, password: object, *,
                                  allow_factory: bool = False) -> bool:
@@ -2941,7 +2913,6 @@ class CandidateService:
                                           {"description": "credential_rotation_rejected"})
                 self.credential_rotations_rejected += 1
                 return
-            self.sessions.clear()
             await self._reply_control(ws, function, request_id, 0, {})
             self.credential_rotations += 1
             return

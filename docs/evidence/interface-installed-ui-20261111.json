@@ -1,0 +1,57 @@
+{
+  "schema": "installed-protect-ui-interface-use/1",
+  "reviewed_date": "2026-11-11",
+  "protect_version": "7.4.96",
+  "asset_path": "/app-assets/protect/swai-7.4.26.js",
+  "asset_sha256": "47e53c031316db7a17545fb753ac78fc43158de355b8a2630d6fd175c81c91c8",
+  "rights_approval": false,
+  "method": "Read the currently served static frontend asset through the existing authenticated browser session; inspect fixed capability-name consumers, not merely search hits or emulator-reflected bootstrap values.",
+  "limitations": "This supports the property spellings and stated current UI consumer contexts. It does not establish backend wire-schema completeness, default values, task support, feature quality or every enabled/version field in the implementation. No proprietary source expression is reproduced.",
+  "findings": [
+    {
+      "inventory_key": "wire_atom:supportAiSummary",
+      "claim": "The installed Protect UI recognizes the capability name supportAiSummary.",
+      "context": "AI-feature-kind to capability-name mapping, with an enabled-member consumer."
+    },
+    {
+      "inventory_key": "wire_atom:supportFaceEnhancement",
+      "claim": "The installed Protect UI recognizes the capability name supportFaceEnhancement.",
+      "context": "Processor featureFlags property access, with an enabled-member consumer and feature-specific UI availability/settings."
+    },
+    {
+      "inventory_key": "wire_atom:supportFaceRecognition",
+      "claim": "The installed Protect UI recognizes the capability name supportFaceRecognition.",
+      "context": "AI-feature-kind to capability-name mapping, with an enabled-member consumer."
+    },
+    {
+      "inventory_key": "wire_atom:supportLicensePlateRecognition",
+      "claim": "The installed Protect UI recognizes the capability name supportLicensePlateRecognition.",
+      "context": "AI-feature-kind to capability-name mapping, with an enabled-member consumer."
+    },
+    {
+      "inventory_key": "wire_atom:supportRecognizeAnything",
+      "claim": "The installed Protect UI recognizes the capability name supportRecognizeAnything.",
+      "context": "AI-feature-kind to capability-name mapping, with an enabled-member consumer."
+    },
+    {
+      "inventory_key": "wire_atom:supportRetroactiveProcessing",
+      "claim": "The installed Protect UI recognizes the capability name supportRetroactiveProcessing.",
+      "context": "Processor featureFlags property access, with an enabled-member consumer and feature-specific UI availability/settings."
+    },
+    {
+      "inventory_key": "wire_field:supportAiSummary",
+      "claim": "The installed UI consumes the supportAiSummary capability property.",
+      "context": "AI summary feature mapping and the featureFlags.aiFeatureFlag summary availability selector."
+    },
+    {
+      "inventory_key": "wire_field:featureFlags",
+      "claim": "The installed UI consumes featureFlags as the capability container.",
+      "context": "Processor feature gating for face enhancement and retroactive-processing controls."
+    },
+    {
+      "inventory_key": "wire_field:enabled",
+      "claim": "The installed UI consumes enabled as a boolean-like capability gate.",
+      "context": "Enabled-property consumers under the stated featureFlags capability properties."
+    }
+  ]
+}

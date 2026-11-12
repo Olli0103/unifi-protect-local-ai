@@ -123,7 +123,6 @@ class CorrelationTests(unittest.TestCase):
 
     def test_invalid_and_unsupported_requests(self):
         for action, body in (("NL_PARSE", {}), ("NL_PARSE", {"querySentence": 12}),
-                             ("NL_PARSE", {"querySentence": "x", "tagHierarchy": "yes"}),
                              ("IMAGE_SEARCH", {}), ("UNKNOWN", {})):
             with self.subTest(action=action, body=body), self.assertRaises(ContractError):
                 RequestLedger().accept(synthetic_request("i", action, body))
@@ -203,8 +202,7 @@ class TaskDescriptionTests(unittest.TestCase):
     def test_task_route_and_json_keep_all_identities(self):
         synthetic = {"camera": "fixture-camera", "event": "fixture-event", "pass": "fixture-pass",
                      "description": "Synthetic fixture. No image analyzed.", "labels": ["fixture"],
-                     "descEmbedding": [0.5, -0.5], "model": "synthetic", "version": "fixture",
-                     "failed": [{"objectId": "fixture-object", "reason": "synthetic"}]}
+                     "descEmbedding": [0.5, -0.5], "model": "synthetic", "version": "fixture"}
         path, raw = task_description_json("fixture-task", synthetic)
         self.assertEqual(path, "/internal/aiprocessors/descriptions/fixture-task")
         self.assertEqual(json.loads(raw), synthetic)
@@ -218,9 +216,17 @@ class TaskDescriptionTests(unittest.TestCase):
         for payload in (description_result("e", "synthetic"),
                         {"description": 3}, {"description": "x", "labels": "label"},
                         {"description": "x", "descEmbedding": [True]},
-                        {"description": "x", "failed": [{"reason": False}]}):
+                        {"description": "x", "failed": [{"reason": False}]},
+                        {"description": "x", "failed": []}):
             with self.subTest(payload=payload), self.assertRaises(ContractError):
                 task_description_json("t", payload)
+
+    def test_query_metadata_remains_opaque_without_an_unobserved_flag_contract(self):
+        for extra in ({"model": "clip-ViT-L-14"}, {"model": "multilingual-e5-small"},
+                      {"tagHierarchy": "ignored"}, {"tagHierarchy": True}, {"unknown": {"x": 1}}):
+            body = {"querySentence": "a bicycle", **extra}
+            message = RequestLedger().accept(synthetic_request("q", "NL_PARSE", body))
+            self.assertEqual(message.body, body)
 
     def test_task_route_rejects_path_injection(self):
         for task_id in ("../event", "a/b", "a?query=x", ""):

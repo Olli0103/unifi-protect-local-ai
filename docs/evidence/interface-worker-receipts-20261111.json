@@ -1,0 +1,334 @@
+{
+  "schema": "existing-worker-interface-evidence/1",
+  "observed_at": "2026-11-11T22:06:35.280354+00:00",
+  "rights_approval": false,
+  "search": {
+    "connected": true,
+    "queries": 8,
+    "query_failures": 7,
+    "image_queries": 0,
+    "object_filters": 2,
+    "time_filters": 0
+  },
+  "worker": {
+    "retroactive": {
+      "tasks": 0,
+      "crops_indexed": 0,
+      "completed": 0,
+      "failed": 0,
+      "refused_unindexed_camera": 0,
+      "refused_image": 0,
+      "archived": 5400,
+      "images": 2394,
+      "images_described": 1112
+    },
+    "speech": {
+      "refused_long": 0,
+      "clipped": 17
+    },
+    "deep": {
+      "embed_tasks": 0,
+      "crops_embedded": 0,
+      "crops_failed": 0,
+      "describe_tasks": 0,
+      "described": 0,
+      "labels": 0,
+      "export_windows": 0
+    },
+    "reverification": {
+      "narrowed": 0,
+      "confirmed": 0,
+      "retyped": 0,
+      "unchanged": 0
+    },
+    "enhance": {
+      "requests": 0,
+      "uploaded": 0,
+      "declined": 0,
+      "rejected_output": 0
+    },
+    "faces": {
+      "skipped_native_face_camera": 148,
+      "processed": 0,
+      "native_face_cameras": 1
+    },
+    "captions": {
+      "admitted": 0,
+      "exhausted": 0,
+      "deferred_fair_share": 0
+    }
+  },
+  "current_receipts": {
+    "files_considered": 198,
+    "scope": "current worker-jobs only, not archive; no task names, IDs or payload values emitted",
+    "operations": {
+      "speechToText": 90,
+      "describeImage": 76,
+      "recognizeFaces": 20,
+      "sessionDescribe": 9,
+      "recognizeKeyFrames": 2,
+      "enhanceImage": 1
+    },
+    "states": {
+      "completed": 129,
+      "callback_uncertain": 67,
+      "callback_sending": 1,
+      "failed": 1
+    },
+    "http_accepted_completed": {
+      "speechToText": 64,
+      "describeImage": 65
+    },
+    "http_accepted_completed_since_container_start": {
+      "speechToText": 64,
+      "describeImage": 65
+    },
+    "container_started_at": "2026-11-09T17:28:24.640761474Z",
+    "retained_known_field_names": {
+      "speechToText": [],
+      "describeImage": []
+    },
+    "unstable_or_unreadable": 0,
+    "rejected": 0
+  },
+  "constant_checks": {
+    "_LEGACY_CALLBACK": true,
+    "_SPEECH_CALLBACK": true
+  },
+  "own_source_comparison": {
+    "aikey.search": {
+      "_image_embedding": {
+        "same_parser_source_ast_equal": true,
+        "deployed_source_sha256": "94df93680bbf86fba1e46450ef809564c73d25107087e14be4d6ca80df6fef5c",
+        "decorators_compared": false
+      },
+      "handle_message": {
+        "same_parser_source_ast_equal": false,
+        "deployed_source_sha256": "c403240d6ad508e9505a2cdf05d45d7feb3c1f5dbb3f33fe6f05776b08db6190",
+        "decorators_compared": false
+      }
+    },
+    "aikey.worker": {
+      "_url": {
+        "same_parser_source_ast_equal": true,
+        "deployed_source_sha256": "b6f77e10286efa891e45103f6dbc6b0d455b4f987e5495fe7f80ce3c47e36299",
+        "decorators_compared": false
+      },
+      "_normalize": {
+        "same_parser_source_ast_equal": true,
+        "deployed_source_sha256": "3bca77edb3c6ac203f52474422c23139cfcc8c5d08503d696826c232ee217fb3",
+        "decorators_compared": false
+      },
+      "_validate_on_demand_export": {
+        "same_parser_source_ast_equal": true,
+        "deployed_source_sha256": "4ee0049de6f20631d2250b047a564ae0e7c7024c3d70479b4c35b26091c4bb41",
+        "decorators_compared": false
+      },
+      "_normalize_recognize_key_frames": {
+        "same_parser_source_ast_equal": true,
+        "deployed_source_sha256": "faab46a70f573c2dd62c8b5e6c3825a557d0466e0b0aa8269dd35f9652e0e4a7",
+        "decorators_compared": false
+      },
+      "_normalize_reverification": {
+        "same_parser_source_ast_equal": true,
+        "deployed_source_sha256": "bc1c5b6d9f990a796f2ec495fd266a7dcb30e4a100cafeeb572296d16ccc7902",
+        "decorators_compared": false
+      },
+      "_normalize_reid_embed": {
+        "same_parser_source_ast_equal": true,
+        "deployed_source_sha256": "77e1a9b63b198be48c52f365a3decf993bcdda685287bf8dd08d15b988d733ec",
+        "decorators_compared": false
+      },
+      "_normalize_session_describe": {
+        "same_parser_source_ast_equal": true,
+        "deployed_source_sha256": "61183026d9dbf7d433cdbba69180f5525bb61527d6ce81e1de326fe9a3356af4",
+        "decorators_compared": false
+      },
+      "_normalize_audio_image": {
+        "same_parser_source_ast_equal": true,
+        "deployed_source_sha256": "865e1544896f3f75d5fe7954e91f893a0573e3bcb23045b28092d95c90cc8ea7",
+        "decorators_compared": false
+      },
+      "_normalize_multiple_images": {
+        "same_parser_source_ast_equal": true,
+        "deployed_source_sha256": "365b525a48b98c4c0e04be275b712dcaf6667e2874b95c84fbcc5982b7c57dc6",
+        "decorators_compared": false
+      },
+      "_normalize_index": {
+        "same_parser_source_ast_equal": true,
+        "deployed_source_sha256": "cf4b7fbc492bf84c3826585e9084d4fe3294fba3c4f8f258d570ec48e3e268fb",
+        "decorators_compared": false
+      },
+      "_execute_enhance": {
+        "same_parser_source_ast_equal": true,
+        "deployed_source_sha256": "5488ae06f9f26b35cb4b93c599321759710c00b2422ccc1bb08e60b153b1fb08",
+        "decorators_compared": false
+      },
+      "_normalize_speech_to_text": {
+        "same_parser_source_ast_equal": true,
+        "deployed_source_sha256": "69e4dfcd78cd7f6df879484253f934ed904d57e4a3afb087785f733f4b072c6c",
+        "decorators_compared": false
+      },
+      "_mp4_export_url": {
+        "same_parser_source_ast_equal": true,
+        "deployed_source_sha256": "a36170273a3a9d8e3b09ad87826bb9d4ae80e82d01c8bd87aebc6bf81888422e",
+        "decorators_compared": false
+      },
+      "_execute_speech": {
+        "same_parser_source_ast_equal": true,
+        "deployed_source_sha256": "76a57675912455fc2ad05096b0df5ffffa6f2cdbee4f37739eb23f8f4ac8354a",
+        "decorators_compared": false
+      },
+      "_execute_reverification": {
+        "same_parser_source_ast_equal": true,
+        "deployed_source_sha256": "c862c555734252b36d7a8f2d33d3d408bb34fd51837662dc76b6d39862963856",
+        "decorators_compared": false
+      },
+      "_execute_index_images": {
+        "same_parser_source_ast_equal": true,
+        "deployed_source_sha256": "1b9c3528c38004ebf842a460bd06e27d744dab1089ea8af17b80d067ad358cf6",
+        "decorators_compared": false
+      },
+      "_execute_session_describe": {
+        "same_parser_source_ast_equal": true,
+        "deployed_source_sha256": "ec69cf2c5e2da09a3d6268e4891004bed0dabc0e691e822ff1137916f44d9821",
+        "decorators_compared": false
+      },
+      "_execute_describe_image": {
+        "same_parser_source_ast_equal": true,
+        "deployed_source_sha256": "d645a6865cf8a38af72dacbb6a1715c0803181352eaa08f94127367723892484",
+        "decorators_compared": false
+      },
+      "_execute_index": {
+        "same_parser_source_ast_equal": true,
+        "deployed_source_sha256": "dd69a687563a8f29c9f0da66e12b6198904565666a267972ad7c5cd2bfb1f694",
+        "decorators_compared": false
+      },
+      "_execute": {
+        "same_parser_source_ast_equal": true,
+        "deployed_source_sha256": "d2a8ccef92a9adb259e2b5081de392e0079615d8d9cfbc61248a46b6e709cd1c",
+        "decorators_compared": false
+      },
+      "_post_callback": {
+        "same_parser_source_ast_equal": true,
+        "deployed_source_sha256": "fdbcb91a504f2c99ce07924cbeaca7fdefea565dc9f97a8a4104ab0e1912b2aa",
+        "decorators_compared": false
+      }
+    }
+  },
+  "method": "Selected deployed own function source segments and checkout source segments parsed by the same interpreter, without comparing decorators. No proprietary source, task names, identifiers, media, descriptions, transcripts or vectors are retained.",
+  "historical_records": [
+    {
+      "path": "docs/evidence/find-anything-contract.md",
+      "sha256": "4cef8299c4b0cad06f9bd4f05be2dc97ce83f17f9cfd6f9b8282384fa5aee348"
+    },
+    {
+      "path": "docs/evidence/live-protect-7.3.70.md",
+      "sha256": "815a50d0f5bfe4a235a21468cfe48ea5b4356f245b0acfa45d0734095503d484"
+    }
+  ],
+  "findings": [
+    {
+      "inventory_key": "wire_atom:/internal/aiprocessors/speech-to-text",
+      "claim": "Existing speech results were HTTP-accepted at the fixed speech callback.",
+      "basis": "64 completed speechToText receipts since container start, reviewed matching _normalize_speech_to_text/_execute_speech/_post_callback bodies, and exact fixed-route constant check.",
+      "limitations": "HTTP 2xx proves endpoint acceptance, not saved/searchable enrichment. The bounded current journal has 67 callback_uncertain records and one callback_sending record, which are not successes. No new media export, transcription, model job or callback was initiated."
+    },
+    {
+      "inventory_key": "wire_atom:/internal/aiprocessors/recognize-anything",
+      "claim": "Existing audio-image tagging results were HTTP-accepted at the fixed RAM callback.",
+      "basis": "65 completed describeImage receipts since container start, reviewed matching _normalize_audio_image/_execute_describe_image/_post_callback bodies, and exact fixed-route constant check.",
+      "limitations": "HTTP 2xx proves endpoint acceptance, not saved/searchable enrichment. The bounded current journal has 67 callback_uncertain records and one callback_sending record, which are not successes. No new media export, transcription, model job or callback was initiated."
+    },
+    {
+      "inventory_key": "wire_atom:/internal/aiprocessors/video/export",
+      "claim": "Existing successful speech processing used the fixed AI processor video-export route.",
+      "basis": "The matching speech normalizer requires that exact path and query equality; 64 completed HTTP-accepted speech receipts require the preceding media fetch/processing to succeed.",
+      "limitations": "No new export or media read was performed. This establishes the historical successful path, not current recording availability or every video format."
+    },
+    {
+      "inventory_key": "inventory:/internal/aiprocessors",
+      "claim": "The internal AI processor route prefix occurs in the accepted fixed speech and RAM callback paths.",
+      "basis": "Exact fixed-route checks and positive callback receipts.",
+      "limitations": "Only the specifically documented child routes are established. The prefix is not a catch-all permission for arbitrary endpoints."
+    },
+    {
+      "inventory_key": "wire_field:cameraId",
+      "claim": "The accepted RAM audio-image result includes the cameraId field.",
+      "basis": "The reviewed matching _execute_describe_image constructs this fixed payload before the 65 completed HTTP-accepted callbacks.",
+      "limitations": "HTTP 2xx proves endpoint acceptance, not saved/searchable enrichment. The bounded current journal has 67 callback_uncertain records and one callback_sending record, which are not successes. No new media export, transcription, model job or callback was initiated. This is the legacy audio-image callback context, not every result schema that reuses the spelling."
+    },
+    {
+      "inventory_key": "wire_field:eventId",
+      "claim": "The accepted RAM audio-image result includes the eventId field.",
+      "basis": "The reviewed matching _execute_describe_image constructs this fixed payload before the 65 completed HTTP-accepted callbacks.",
+      "limitations": "HTTP 2xx proves endpoint acceptance, not saved/searchable enrichment. The bounded current journal has 67 callback_uncertain records and one callback_sending record, which are not successes. No new media export, transcription, model job or callback was initiated. This is the legacy audio-image callback context, not every result schema that reuses the spelling."
+    },
+    {
+      "inventory_key": "wire_field:status",
+      "claim": "The accepted RAM audio-image result includes the status field.",
+      "basis": "The reviewed matching _execute_describe_image constructs this fixed payload before the 65 completed HTTP-accepted callbacks.",
+      "limitations": "HTTP 2xx proves endpoint acceptance, not saved/searchable enrichment. The bounded current journal has 67 callback_uncertain records and one callback_sending record, which are not successes. No new media export, transcription, model job or callback was initiated. This is the legacy audio-image callback context, not every result schema that reuses the spelling."
+    },
+    {
+      "inventory_key": "wire_field:event",
+      "claim": "Controller-origin speech/audio-image tasks supply the event field.",
+      "basis": "The matching normalizers require the event string before the positive completed speech/audio-image callback receipts.",
+      "limitations": "No event identifier or caption/transcript is retained. Same-name fields in other protocols are not fully validated here."
+    },
+    {
+      "inventory_key": "wire_field:querySentence",
+      "claim": "The existing NL_PARSE query handler uses the querySentence field in its stated request/result context.",
+      "basis": "Eight successful encoding paths counted on the existing search connection. The deployed query dispatch/result construction was reviewed against search.py; differences are diagnostic record_query calls and reply instrumentation, not these field names. Historical native retrieval is recorded in find-anything-contract.md.",
+      "limitations": "Seven query failures remain recorded. An encoding counter alone is not native retrieval acceptance; the historical own-controller positive/negative retrieval is separate. Optional output fields are not claimed mandatory."
+    },
+    {
+      "inventory_key": "wire_field:txtEmbed",
+      "claim": "The existing NL_PARSE query handler uses the txtEmbed field in its stated request/result context.",
+      "basis": "Eight successful encoding paths counted on the existing search connection. The deployed query dispatch/result construction was reviewed against search.py; differences are diagnostic record_query calls and reply instrumentation, not these field names. Historical native retrieval is recorded in find-anything-contract.md.",
+      "limitations": "Seven query failures remain recorded. An encoding counter alone is not native retrieval acceptance; the historical own-controller positive/negative retrieval is separate. Optional output fields are not claimed mandatory."
+    },
+    {
+      "inventory_key": "wire_field:keyTags",
+      "claim": "The existing NL_PARSE query handler uses the keyTags field in its stated request/result context.",
+      "basis": "Eight successful encoding paths counted on the existing search connection. The deployed query dispatch/result construction was reviewed against search.py; differences are diagnostic record_query calls and reply instrumentation, not these field names. Historical native retrieval is recorded in find-anything-contract.md.",
+      "limitations": "Seven query failures remain recorded. An encoding counter alone is not native retrieval acceptance; the historical own-controller positive/negative retrieval is separate. Optional output fields are not claimed mandatory."
+    },
+    {
+      "inventory_key": "wire_field:objectTypes",
+      "claim": "The existing NL_PARSE query handler uses the objectTypes field in its stated request/result context.",
+      "basis": "Eight successful encoding paths counted on the existing search connection. The deployed query dispatch/result construction was reviewed against search.py; differences are diagnostic record_query calls and reply instrumentation, not these field names. Historical native retrieval is recorded in find-anything-contract.md.",
+      "limitations": "Seven query failures remain recorded. An encoding counter alone is not native retrieval acceptance; the historical own-controller positive/negative retrieval is separate. Optional output fields are not claimed mandatory."
+    },
+    {
+      "inventory_key": "wire_field:exact_match",
+      "claim": "The existing NL_PARSE query handler uses the exact_match field in its stated request/result context.",
+      "basis": "Eight successful encoding paths counted on the existing search connection. The deployed query dispatch/result construction was reviewed against search.py; differences are diagnostic record_query calls and reply instrumentation, not these field names. Historical native retrieval is recorded in find-anything-contract.md.",
+      "limitations": "Seven query failures remain recorded. An encoding counter alone is not native retrieval acceptance; the historical own-controller positive/negative retrieval is separate. Optional output fields are not claimed mandatory."
+    },
+    {
+      "inventory_key": "wire_atom:IMAGE_SEARCH",
+      "claim": "The historical own-controller search-by-image trial records IMAGE_SEARCH, imgUri and imgEmbed with native positive and negative retrieval.",
+      "basis": "docs/evidence/find-anything-contract.md#search-by-image-26-sep-2026-1633 records two image queries and native ranked results; the deployed current image-input implementation compares equal.",
+      "limitations": "No image query or image fetch was initiated today. The current process image_queries counter is zero, so this remains historical evidence, not a new Protect 7.4.96 image-search acceptance."
+    },
+    {
+      "inventory_key": "wire_field:imgUri",
+      "claim": "The historical own-controller search-by-image trial records IMAGE_SEARCH, imgUri and imgEmbed with native positive and negative retrieval.",
+      "basis": "docs/evidence/find-anything-contract.md#search-by-image-26-sep-2026-1633 records two image queries and native ranked results; the deployed current image-input implementation compares equal.",
+      "limitations": "No image query or image fetch was initiated today. The current process image_queries counter is zero, so this remains historical evidence, not a new Protect 7.4.96 image-search acceptance."
+    },
+    {
+      "inventory_key": "wire_field:imgEmbed",
+      "claim": "The historical own-controller search-by-image trial records IMAGE_SEARCH, imgUri and imgEmbed with native positive and negative retrieval.",
+      "basis": "docs/evidence/find-anything-contract.md#search-by-image-26-sep-2026-1633 records two image queries and native ranked results; the deployed current image-input implementation compares equal.",
+      "limitations": "No image query or image fetch was initiated today. The current process image_queries counter is zero, so this remains historical evidence, not a new Protect 7.4.96 image-search acceptance."
+    },
+    {
+      "inventory_key": "wire_atom:/internal/aiprocessors/descriptions/",
+      "claim": "The owner-copied Protect source and historical native session-description trial document the task-description callback route.",
+      "basis": "docs/evidence/live-protect-7.3.70.md#static-findings-from-the-owner-copied-7370-servicejs-30-sep and its owner-approved deep-understanding readbacks; independently documented route and saved native descriptions.",
+      "limitations": "No current receipt is claimed: the nine current-journal sessionDescribe records are not completed HTTP-accepted callbacks. Current native session-description functionality is not certified."
+    }
+  ]
+}

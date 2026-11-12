@@ -319,8 +319,11 @@ async def test_factory_manage_refusal_boundaries(tmp_path, refusal):
                              "hosts": [config["controller_ip"] + ":7442"]}}
             route = "/api/1.2/login" if refusal == "login" else "/api/1.2/manage"
             response = await client.post(str(server.make_url(route)), json=body)
-            assert response.status in (401, 503)
+            if refusal == "login":
+                assert response.status == 404
+                assert "Set-Cookie" not in response.headers
+            else:
+                assert response.status in (401, 503)
             assert service.adoption.state == before
-            assert not service.sessions
     finally:
         await server.close()

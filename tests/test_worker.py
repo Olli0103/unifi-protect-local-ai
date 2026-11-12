@@ -83,6 +83,9 @@ async def services():
     services = LocalServices()
     app = web.Application()
     app.router.add_get("/internal/aiprocessors/image/{image}", services.image)
+    app.router.add_get("/internal/aiprocessors/snapshot/generate", services.image)
+    # A reachable fake endpoint must not bypass the retired-route admission guard.
+    app.router.add_get("/internal/aiprocessors/snapshot/export-from-camera", services.image)
     app.router.add_get("/internal/aiprocessors/video/export", services.video_handler)
     app.router.add_post("/v1/chat/completions", services.model)
     app.router.add_post("/v1/embeddings", services.embeddings)
@@ -201,6 +204,39 @@ async def test_untrusted_origins_and_unsupported_paths_rejected_before_io(servic
         with pytest.raises(WorkerError):
             await processor.submit(request)
         assert services.requests == services.callbacks == services.media_requests == []
+    finally:
+        await processor.stop()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("absolute", [False, True])
+async def test_retired_snapshot_alias_rejected_before_media_model_or_callback(
+        services, tmp_path, absolute):
+    processor = JobProcessor(configuration(services), tmp_path)
+    try:
+        request = command()
+        path = "/internal/aiprocessors/snapshot/export-from-camera?camera=synthetic"
+        request["payload"]["images"][0]["reqUrl"] = (services.origin if absolute else "") + path
+        with pytest.raises(WorkerError, match="Unsupported controller media path"):
+            await processor.submit(request)
+        assert services.requests == services.callbacks == services.media_requests == []
+    finally:
+        await processor.stop()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("absolute", [False, True])
+async def test_supported_snapshot_generate_still_completes_local_pipeline(
+        services, tmp_path, absolute):
+    processor = JobProcessor(configuration(services), tmp_path)
+    try:
+        request = command()
+        path = "/internal/aiprocessors/snapshot/generate?camera=synthetic"
+        request["payload"]["images"][0]["reqUrl"] = (services.origin if absolute else "") + path
+        result = await processor.handle(request)
+        assert result["callback"] == "http_accepted"
+        assert len(services.media_requests) == len(services.requests) == len(services.callbacks) == 1
+        assert services.callbacks[0]["payload"]["description"] == DESCRIPTION
     finally:
         await processor.stop()
 

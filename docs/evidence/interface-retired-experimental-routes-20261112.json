@@ -1,0 +1,34 @@
+{
+  "schema": "interface-experimental-route-retirements/1",
+  "reviewed_date": "2026-11-12",
+  "comparison_commit": "4ef709dd81ca38ddd2de07864b7ed278306e8871",
+  "retired_inventory_keys": [
+    "wire_atom:/api/1.2/login",
+    "wire_atom:/internal/aiprocessors/snapshot/export-from-camera"
+  ],
+  "disposition": "retired_from_current_candidate_not_observed_or_reclassified",
+  "rights_approval": false,
+  "device_changes": false,
+  "deployment": false,
+  "routes": [
+    {
+      "route": "/api/1.2/login",
+      "reason": "Experimental server endpoint produced AISESSION cookies; repository production code had no cookie consumer. Credentialed manage authenticates request body directly. Current enrollment-only trial used manage, not login.",
+      "removed": "POST registration, login handler, unused cookie store and its credential-rotation clearing; secrets import used only by the removed handler",
+      "preserved": "Management verifier, factory enrollment bounds, credential persistence and rotation acknowledgement remain. Historical Protect 7.2.105 static login description remains explicitly historical.",
+      "compatibility_limit": "Older external controllers or clients requiring this login route now receive HTTP 404; lack of requests in the camera-free trial is not universal absence proof."
+    },
+    {
+      "route": "/internal/aiprocessors/snapshot/export-from-camera",
+      "reason": "Only a media allowlist constant in production source, with no producer or independently qualified current route declaration found.",
+      "removed": "Unsupported legacy alias from the worker media-path allowlist only",
+      "preserved": "Snapshot generate, image/video media paths, callback paths, worker normalization, reverification and target behavior remain.",
+      "compatibility_limit": "A job requesting the retired alias is rejected during normalization before worker admission, media, model or callback I/O. Installed route declaration separately supports /internal/aiprocessors/snapshot/generate, not this alias."
+    }
+  ],
+  "checks": {
+    "before_change": "Four intended retirement assertions failed; ten other targeted assertions passed, including supported snapshot execution and unchanged factory refusal cases.",
+    "after_change": "See the separately recorded branch qualification; tests are synthetic localhost integration tests, not native controller or release-image acceptance."
+  },
+  "source_note": "This is reviewed scope removal, not new manufacturer provenance. No native payload, secret, private image, vendor expression or firmware is included."
+}

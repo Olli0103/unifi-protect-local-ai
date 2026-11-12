@@ -1,0 +1,331 @@
+{
+  "schema": "interface-public-documentation/1",
+  "reviewed_date": "2026-11-11",
+  "rights_approval": false,
+  "sources": [
+    {
+      "id": "camera_base",
+      "url": "https://github.com/keshavdv/unifi-cam-proxy/blob/cc6d3fc7cdae9f1dfce575627089632aec696403/unifi/cams/base.py",
+      "sha256": "ae9e482f8012bf54637d22d44de58a963979771c6d3b33f9a2ffe92be5a193bc",
+      "license": "MIT",
+      "read_only": true,
+      "executed": false
+    },
+    {
+      "id": "camera_core",
+      "url": "https://github.com/keshavdv/unifi-cam-proxy/blob/cc6d3fc7cdae9f1dfce575627089632aec696403/unifi/core.py",
+      "sha256": "77431fd92735b3cffe056173f6977280aa5d405d226c5c7f312db5d76f1ac85d",
+      "license": "MIT",
+      "read_only": true,
+      "executed": false
+    },
+    {
+      "id": "discovery_docs",
+      "url": "https://github.com/fxkr/unifi-protocol-reverse-engineering/blob/0566e8e1ddc25717f51d5fba4ca03dbf53a585ad/README.md#discovery",
+      "sha256": "db4eb70693897c299c647a6bbdd2e2cfc3d1ab6d60882f17b53398c41a0cf1e0",
+      "read_only": true,
+      "executed": false
+    },
+    {
+      "id": "clip_docs",
+      "url": "https://github.com/openai/CLIP/blob/d05afc436d78f1c48dc0dbf8e5980a9d471f35f6/README.md#zero-shot-prediction",
+      "sha256": "f82c5c75e140532eb37a7d943921e1bdd57d740c6b40d0030985bc5b5d11d6f1",
+      "read_only": true,
+      "executed": false
+    }
+  ],
+  "findings": [
+    {
+      "inventory_key": "wire_field:from",
+      "source_id": "camera_base",
+      "source_lines": [
+        818
+      ],
+      "claim": "Common camera-control JSON envelope field: from.",
+      "limitations": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants."
+    },
+    {
+      "inventory_key": "wire_field:functionName",
+      "source_id": "camera_base",
+      "source_lines": [
+        819,
+        838
+      ],
+      "claim": "Common camera-control JSON envelope field: functionName.",
+      "limitations": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants."
+    },
+    {
+      "inventory_key": "wire_field:inResponseTo",
+      "source_id": "camera_base",
+      "source_lines": [
+        820
+      ],
+      "claim": "Common camera-control JSON envelope field: inResponseTo.",
+      "limitations": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants."
+    },
+    {
+      "inventory_key": "wire_field:messageId",
+      "source_id": "camera_base",
+      "source_lines": [
+        270,
+        340,
+        374,
+        618,
+        628,
+        669,
+        690,
+        762,
+        768,
+        799,
+        804,
+        821,
+        874,
+        885,
+        889
+      ],
+      "claim": "Common camera-control JSON envelope field: messageId.",
+      "limitations": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants."
+    },
+    {
+      "inventory_key": "wire_field:payload",
+      "source_id": "camera_base",
+      "source_lines": [
+        261,
+        278,
+        351,
+        352,
+        758,
+        759,
+        768,
+        774,
+        782,
+        783,
+        786,
+        822
+      ],
+      "claim": "Common camera-control JSON envelope field: payload.",
+      "limitations": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants."
+    },
+    {
+      "inventory_key": "wire_field:responseExpected",
+      "source_id": "camera_base",
+      "source_lines": [
+        798,
+        823,
+        843
+      ],
+      "claim": "Common camera-control JSON envelope field: responseExpected.",
+      "limitations": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants."
+    },
+    {
+      "inventory_key": "wire_field:to",
+      "source_id": "camera_base",
+      "source_lines": [
+        824
+      ],
+      "claim": "Common camera-control JSON envelope field: to.",
+      "limitations": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants."
+    },
+    {
+      "inventory_key": "wire_field:connectionSecurePort",
+      "source_id": "camera_base",
+      "source_lines": [
+        240
+      ],
+      "claim": "Public camera hello/parameter-agreement field: connectionSecurePort.",
+      "limitations": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants. This does not establish an AI Key management schema."
+    },
+    {
+      "inventory_key": "wire_field:features",
+      "source_id": "camera_base",
+      "source_lines": [
+        254,
+        273,
+        808
+      ],
+      "claim": "Public camera hello/parameter-agreement field: features.",
+      "limitations": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants. This does not establish an AI Key management schema."
+    },
+    {
+      "inventory_key": "wire_field:fwVersion",
+      "source_id": "camera_base",
+      "source_lines": [
+        241
+      ],
+      "claim": "Public camera hello/parameter-agreement field: fwVersion.",
+      "limitations": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants. This does not establish an AI Key management schema."
+    },
+    {
+      "inventory_key": "wire_field:ip",
+      "source_id": "camera_base",
+      "source_lines": [
+        244
+      ],
+      "claim": "Public camera hello/parameter-agreement field: ip.",
+      "limitations": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants. This does not establish an AI Key management schema."
+    },
+    {
+      "inventory_key": "wire_field:protocolVersion",
+      "source_id": "camera_base",
+      "source_lines": [
+        248
+      ],
+      "claim": "Public camera hello/parameter-agreement field: protocolVersion.",
+      "limitations": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants. This does not establish an AI Key management schema."
+    },
+    {
+      "inventory_key": "wire_field:uptime",
+      "source_id": "camera_base",
+      "source_lines": [
+        253
+      ],
+      "claim": "Public camera hello/parameter-agreement field: uptime.",
+      "limitations": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants. This does not establish an AI Key management schema."
+    },
+    {
+      "inventory_key": "inventory:ChangeVideoSettings",
+      "source_id": "camera_base",
+      "source_lines": [
+        373,
+        847,
+        865
+      ],
+      "claim": "Public camera-control command/event name: ChangeVideoSettings.",
+      "limitations": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants. Only the name and public dispatch/event context are attributed, not the complete local implementation."
+    },
+    {
+      "inventory_key": "wire_atom:ChangeVideoSettings",
+      "source_id": "camera_base",
+      "source_lines": [
+        373,
+        847,
+        865
+      ],
+      "claim": "Public camera-control command/event name: ChangeVideoSettings.",
+      "limitations": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants. Only the name and public dispatch/event context are attributed, not the complete local implementation."
+    },
+    {
+      "inventory_key": "wire_atom:ChangeAnalyticsSettings",
+      "source_id": "camera_base",
+      "source_lines": [
+        768,
+        879
+      ],
+      "claim": "Public camera-control command/event name: ChangeAnalyticsSettings.",
+      "limitations": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants. Only the name and public dispatch/event context are attributed, not the complete local implementation."
+    },
+    {
+      "inventory_key": "wire_atom:ChangeIspSettings",
+      "source_id": "camera_base",
+      "source_lines": [
+        762,
+        877
+      ],
+      "claim": "Public camera-control command/event name: ChangeIspSettings.",
+      "limitations": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants. Only the name and public dispatch/event context are attributed, not the complete local implementation."
+    },
+    {
+      "inventory_key": "wire_atom:NetworkStatus",
+      "source_id": "camera_base",
+      "source_lines": [
+        668,
+        871
+      ],
+      "claim": "Public camera-control command/event name: NetworkStatus.",
+      "limitations": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants. Only the name and public dispatch/event context are attributed, not the complete local implementation."
+    },
+    {
+      "inventory_key": "wire_atom:ubnt_avclient_time",
+      "source_id": "camera_base",
+      "source_lines": [
+        857
+      ],
+      "claim": "Public camera-control command/event name: ubnt_avclient_time.",
+      "limitations": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants. Only the name and public dispatch/event context are attributed, not the complete local implementation."
+    },
+    {
+      "inventory_key": "wire_atom:EventSmartDetect",
+      "source_id": "camera_base",
+      "source_lines": [
+        151,
+        202
+      ],
+      "claim": "Public camera-control command/event name: EventSmartDetect.",
+      "limitations": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants. Only the name and public dispatch/event context are attributed, not the complete local implementation."
+    },
+    {
+      "inventory_key": "inventory:ubnt_avclient",
+      "source_id": "camera_base",
+      "source_lines": [
+        818
+      ],
+      "claim": "Public sender label in the common camera-control envelope.",
+      "limitations": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants."
+    },
+    {
+      "inventory_key": "wire_field:clockWall",
+      "source_id": "camera_base",
+      "source_lines": [
+        125,
+        177
+      ],
+      "claim": "Public smart-event wall-clock timestamp field.",
+      "limitations": "An independent camera-protocol implementation documents this spelling and stated wire context. This is not an AI Port acceptance test, manufacturer conformance statement or evidence for unrelated payload variants."
+    },
+    {
+      "inventory_key": "inventory:/camera/1.0/ws",
+      "source_id": "camera_core",
+      "source_lines": [
+        27
+      ],
+      "claim": "Public camera WebSocket route template on the configured controller.",
+      "limitations": "No connection to this upstream or a camera was initiated. AI Port-specific authentication/identity headers are not established by this reference."
+    },
+    {
+      "inventory_key": "wire_atom:/camera/1.0/ws",
+      "source_id": "camera_core",
+      "source_lines": [
+        27
+      ],
+      "claim": "Public camera WebSocket route template on the configured controller.",
+      "limitations": "No connection to this upstream or a camera was initiated. AI Port-specific authentication/identity headers are not established by this reference."
+    },
+    {
+      "inventory_key": "inventory:secure_transfer",
+      "source_id": "camera_core",
+      "source_lines": [
+        47
+      ],
+      "claim": "Public camera WebSocket subprotocol name.",
+      "limitations": "Only the subprotocol is attributed. No TLS settings from the upstream were copied; this project's certificate verification remains unchanged."
+    },
+    {
+      "inventory_key": "wire_atom:Camera-MAC",
+      "source_id": "camera_core",
+      "source_lines": [
+        28
+      ],
+      "claim": "Public camera-mac HTTP header name; HTTP field names are case-insensitive.",
+      "limitations": "No header value is recorded. Other Camera-* headers and exact AI Port verifier requirements remain unproved."
+    },
+    {
+      "inventory_key": "inventory:233.89.188.1",
+      "source_id": "discovery_docs",
+      "source_lines": [
+        16
+      ],
+      "claim": "Publicly documented generic UniFi discovery multicast destination.",
+      "limitations": "No multicast was sent. This is not a claim that a genuine AI Key/AI Port uses discovery, or that the current LAN delivers it."
+    },
+    {
+      "inventory_key": "inventory:a photo of",
+      "source_id": "clip_docs",
+      "source_lines": [
+        107
+      ],
+      "claim": "The photo-prompt phrase is independently documented by the CLIP authors.",
+      "limitations": "The upstream does not document the local fewer-than-three-words policy, nor a Protect requirement. The retained native-short-photo identifier is a legacy local algorithm/profile ID, not a vendor attestation. Its short-query threshold is a project-selected policy; no claim of vendor preprocessing equivalence is made."
+    }
+  ],
+  "boundary": "Public open-source documentation was read at immutable revisions, never executed or installed. Only interface names and original summaries are included; no upstream implementation or vendor code is copied."
+}

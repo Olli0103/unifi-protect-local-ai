@@ -1,0 +1,447 @@
+{
+  "schema": "accepted-existing-interface-derivation/1",
+  "observed_at": "2026-11-11T21:54:12.195029+00:00",
+  "protect_version": "7.4.96",
+  "rights_approval": false,
+  "boundary": "Read-only existing health GET and selected own application source; no vendor backend source, firmware, media, payloads, identifiers, credentials, settings changes, model jobs or restarts.",
+  "ast_method": "Both deployed source and checkout parsed by the same local interpreter; cross-version AST dump hashes are not directly compared.",
+  "runtimes": [
+    {
+      "runtime": "key",
+      "metadata": {
+        "service": "local-aikey",
+        "adopted": true,
+        "connected": true,
+        "connections": 10,
+        "last_close_code": 1006,
+        "commands": {
+          "getInfo": {
+            "count": 4,
+            "last_result_code": 0,
+            "result_code_counts": {
+              "0": 4,
+              "5": 0,
+              "13": 0,
+              "22": 0,
+              "95": 0,
+              "110": 0,
+              "409": 0,
+              "other": 0
+            }
+          },
+          "getTaskQueueInfo": {
+            "count": 37706,
+            "last_result_code": 0,
+            "result_code_counts": {
+              "0": 37706,
+              "5": 0,
+              "13": 0,
+              "22": 0,
+              "95": 0,
+              "110": 0,
+              "409": 0,
+              "other": 0
+            }
+          },
+          "changeUserPassword": {
+            "count": 5,
+            "last_result_code": 0,
+            "result_code_counts": {
+              "0": 1,
+              "5": 2,
+              "13": 2,
+              "22": 0,
+              "95": 0,
+              "110": 0,
+              "409": 0,
+              "other": 0
+            }
+          },
+          "RequestAI": {
+            "count": 7,
+            "last_result_code": 0,
+            "result_code_counts": {
+              "0": 7,
+              "5": 0,
+              "13": 0,
+              "22": 0,
+              "95": 0,
+              "110": 0,
+              "409": 0,
+              "other": 0
+            }
+          },
+          "recognizeKeyFrames": {
+            "count": 3174,
+            "last_result_code": 0,
+            "result_code_counts": {
+              "0": 3008,
+              "5": 166,
+              "13": 0,
+              "22": 0,
+              "95": 0,
+              "110": 0,
+              "409": 0,
+              "other": 0
+            }
+          },
+          "setConsoleInfo": {
+            "count": 2,
+            "last_result_code": 0,
+            "result_code_counts": {
+              "0": 2,
+              "5": 0,
+              "13": 0,
+              "22": 0,
+              "95": 0,
+              "110": 0,
+              "409": 0,
+              "other": 0
+            }
+          },
+          "unknown": {
+            "count": 630,
+            "last_result_code": 95,
+            "result_code_counts": {
+              "0": 0,
+              "5": 0,
+              "13": 0,
+              "22": 0,
+              "95": 630,
+              "110": 0,
+              "409": 0,
+              "other": 0
+            }
+          }
+        },
+        "camera_shape_counts": {
+          "missing": 0,
+          "null": 0,
+          "string": 3174,
+          "boolean": 0,
+          "number": 0,
+          "array": 0,
+          "object": 0,
+          "other": 0
+        },
+        "unlisted": {
+          "command": {
+            "candidates": {},
+            "fingerprint_counts": [],
+            "not_recorded": 630,
+            "overflow": 0
+          },
+          "request_ai_target": {
+            "candidates": {},
+            "fingerprint_counts": [],
+            "not_recorded": 0,
+            "overflow": 0
+          }
+        },
+        "control_profile": "device-service",
+        "configured_identity_matches": {
+          "model_UP_AI_KEY": true,
+          "sysid_a5f0": true
+        },
+        "state_adopted": true,
+        "management_token_present": false,
+        "time_sync_confirmed": true
+      },
+      "deployed_own_module_sha256": "05727756bd9468bea54b866c12a4315d0980d88a021a8560a65eef9f13ba34be",
+      "deployed_own_functions": {
+        "_record_unlisted": {
+          "source_sha256": "21cfbe5f2e12fd35d6dc167378d855105c78b481edd6817de491ecc589e03c54",
+          "same_parser_ast_equal": true
+        },
+        "_headers": {
+          "source_sha256": "b74c0dd0b7d414927cd249d7211a12acf5b9b6fadb1773dbd15f1be35a156570",
+          "same_parser_ast_equal": true
+        },
+        "_connect_once": {
+          "source_sha256": "bf9d27686a6aae63dc0218208727fbd8fb775e4c333bfeb6b2a911e8847985e7",
+          "same_parser_ast_equal": true
+        },
+        "handle_message": {
+          "source_sha256": "bb1353b21d2db60d94988dd1164daabfa99759bdfe8b1b9aad2633e706279566",
+          "same_parser_ast_equal": true
+        },
+        "_record_recognize_shape": {
+          "source_sha256": "c3519e931431d19e1c972a44f3fe7ea8da90b257c28752feef2818d76bfc52ad",
+          "same_parser_ast_equal": true
+        },
+        "_command": {
+          "source_sha256": "9eb5a19aeee6ed60175c7f8a356f14ab7e00f28dd2d4d03708abf5be8a4bcf07",
+          "same_parser_ast_equal": true
+        }
+      }
+    },
+    {
+      "runtime": "port",
+      "metadata": {
+        "service": "aiport-candidate",
+        "adopted": true,
+        "control_connected": true,
+        "upgrades": null,
+        "last_result": "websocket_101",
+        "hello_replies": 2,
+        "param_agreements": 2,
+        "observed_function_counts": {
+          "ubnt_avclient_hello": 2,
+          "ubnt_avclient_paramAgreement": 2,
+          "GetStreamList": 2,
+          "StopService": 2,
+          "UpdateUsernamePassword": 2,
+          "ChangeSoundLedSettings": 2,
+          "ChangeDeviceSettings": 2,
+          "UiStreamControl": 10,
+          "UpdateFaceDBRequest": 2,
+          "ChangeSmartMotionSettings": 29,
+          "ChangeSmartDetectSettings": 43,
+          "ChangeAudioEventsSettings": 14,
+          "GetRequest": 3385,
+          "UpdateFirmwareRequest": 3
+        },
+        "stream_controls_started": 8,
+        "stream_lists_answered": 2,
+        "fixed_sysid_from_connect_source": true
+      },
+      "deployed_own_module_sha256": "b59c938c6ab592ad89f33bc85bd5e772113510e5768db21f22a81a660c135850",
+      "deployed_own_functions": {
+        "_send_diagnostic_hello": {
+          "source_sha256": "cd69f3990b8201b31eb09197e22e5fa7bd3ecda0663de05a106d1737bc1fdfa3",
+          "same_parser_ast_equal": true
+        },
+        "_reply_control": {
+          "source_sha256": "136e9b60d2ae857293253e323f3d5447f20cade2d01f412c05ab3125b37e7a7e",
+          "same_parser_ast_equal": true
+        },
+        "_handle_diagnostic_frame": {
+          "source_sha256": "daaaf8ebc23a0b41a2b9eeffefe00f6e098dbe5304145d6a3e399dd8f3a3d029",
+          "same_parser_ast_equal": true
+        },
+        "_connect_loop": {
+          "source_sha256": "5c594aedf87dbccd089d5abffa090f12813e17fefa6472e9737faa2cd405c835",
+          "same_parser_ast_equal": false
+        }
+      }
+    }
+  ],
+  "findings": [
+    {
+      "inventory_key": "inventory:x-ident",
+      "claim": "Header name x-ident belongs to the currently accepted stable AI Key connection combination.",
+      "basis": "Reviewed deployed _headers and _connect_once are AST-identical to the checkout; the existing adopted channel is connected and serves positive getTaskQueueInfo counts.",
+      "limitations": "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+    },
+    {
+      "inventory_key": "wire_atom:x-ident",
+      "claim": "Header name x-ident belongs to the currently accepted stable AI Key connection combination.",
+      "basis": "Reviewed deployed _headers and _connect_once are AST-identical to the checkout; the existing adopted channel is connected and serves positive getTaskQueueInfo counts.",
+      "limitations": "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+    },
+    {
+      "inventory_key": "wire_field:x-ident",
+      "claim": "Header name x-ident belongs to the currently accepted stable AI Key connection combination.",
+      "basis": "Reviewed deployed _headers and _connect_once are AST-identical to the checkout; the existing adopted channel is connected and serves positive getTaskQueueInfo counts.",
+      "limitations": "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+    },
+    {
+      "inventory_key": "wire_atom:x-ip",
+      "claim": "Header name x-ip belongs to the currently accepted stable AI Key connection combination.",
+      "basis": "Reviewed deployed _headers and _connect_once are AST-identical to the checkout; the existing adopted channel is connected and serves positive getTaskQueueInfo counts.",
+      "limitations": "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+    },
+    {
+      "inventory_key": "wire_field:x-ip",
+      "claim": "Header name x-ip belongs to the currently accepted stable AI Key connection combination.",
+      "basis": "Reviewed deployed _headers and _connect_once are AST-identical to the checkout; the existing adopted channel is connected and serves positive getTaskQueueInfo counts.",
+      "limitations": "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+    },
+    {
+      "inventory_key": "inventory:x-mode",
+      "claim": "Header name x-mode belongs to the currently accepted stable AI Key connection combination.",
+      "basis": "Reviewed deployed _headers and _connect_once are AST-identical to the checkout; the existing adopted channel is connected and serves positive getTaskQueueInfo counts.",
+      "limitations": "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+    },
+    {
+      "inventory_key": "wire_atom:x-mode",
+      "claim": "Header name x-mode belongs to the currently accepted stable AI Key connection combination.",
+      "basis": "Reviewed deployed _headers and _connect_once are AST-identical to the checkout; the existing adopted channel is connected and serves positive getTaskQueueInfo counts.",
+      "limitations": "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+    },
+    {
+      "inventory_key": "wire_field:x-mode",
+      "claim": "Header name x-mode belongs to the currently accepted stable AI Key connection combination.",
+      "basis": "Reviewed deployed _headers and _connect_once are AST-identical to the checkout; the existing adopted channel is connected and serves positive getTaskQueueInfo counts.",
+      "limitations": "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+    },
+    {
+      "inventory_key": "wire_atom:x-sysid",
+      "claim": "Header name x-sysid belongs to the currently accepted stable AI Key connection combination.",
+      "basis": "Reviewed deployed _headers and _connect_once are AST-identical to the checkout; the existing adopted channel is connected and serves positive getTaskQueueInfo counts.",
+      "limitations": "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+    },
+    {
+      "inventory_key": "wire_field:x-sysid",
+      "claim": "Header name x-sysid belongs to the currently accepted stable AI Key connection combination.",
+      "basis": "Reviewed deployed _headers and _connect_once are AST-identical to the checkout; the existing adopted channel is connected and serves positive getTaskQueueInfo counts.",
+      "limitations": "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+    },
+    {
+      "inventory_key": "wire_atom:x-type",
+      "claim": "Header name x-type belongs to the currently accepted stable AI Key connection combination.",
+      "basis": "Reviewed deployed _headers and _connect_once are AST-identical to the checkout; the existing adopted channel is connected and serves positive getTaskQueueInfo counts.",
+      "limitations": "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+    },
+    {
+      "inventory_key": "wire_field:x-type",
+      "claim": "Header name x-type belongs to the currently accepted stable AI Key connection combination.",
+      "basis": "Reviewed deployed _headers and _connect_once are AST-identical to the checkout; the existing adopted channel is connected and serves positive getTaskQueueInfo counts.",
+      "limitations": "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+    },
+    {
+      "inventory_key": "wire_atom:x-version",
+      "claim": "Header name x-version belongs to the currently accepted stable AI Key connection combination.",
+      "basis": "Reviewed deployed _headers and _connect_once are AST-identical to the checkout; the existing adopted channel is connected and serves positive getTaskQueueInfo counts.",
+      "limitations": "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+    },
+    {
+      "inventory_key": "wire_field:x-version",
+      "claim": "Header name x-version belongs to the currently accepted stable AI Key connection combination.",
+      "basis": "Reviewed deployed _headers and _connect_once are AST-identical to the checkout; the existing adopted channel is connected and serves positive getTaskQueueInfo counts.",
+      "limitations": "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+    },
+    {
+      "inventory_key": "inventory:x-adopted",
+      "claim": "Header name x-adopted belongs to the currently accepted stable AI Key connection combination.",
+      "basis": "Reviewed deployed _headers and _connect_once are AST-identical to the checkout; the existing adopted channel is connected and serves positive getTaskQueueInfo counts.",
+      "limitations": "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+    },
+    {
+      "inventory_key": "wire_atom:x-adopted",
+      "claim": "Header name x-adopted belongs to the currently accepted stable AI Key connection combination.",
+      "basis": "Reviewed deployed _headers and _connect_once are AST-identical to the checkout; the existing adopted channel is connected and serves positive getTaskQueueInfo counts.",
+      "limitations": "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+    },
+    {
+      "inventory_key": "wire_field:x-adopted",
+      "claim": "Header name x-adopted belongs to the currently accepted stable AI Key connection combination.",
+      "basis": "Reviewed deployed _headers and _connect_once are AST-identical to the checkout; the existing adopted channel is connected and serves positive getTaskQueueInfo counts.",
+      "limitations": "This establishes an accepted combination, not that each individual header is necessary. The no-token reconnect does not establish x-token. The device-service profile can accept an absent negotiated WebSocket subprotocol."
+    },
+    {
+      "inventory_key": "inventory:ucp4",
+      "claim": "The existing compatible connection offers ucp4 and decodes UCP4 controller requests.",
+      "basis": "AST-identical _connect_once plus adopted/connected state and positive receive counts.",
+      "limitations": "The configured device-service profile permits the controller to select no subprotocol. This is NOT evidence that ucp4 was negotiated or is mandatory."
+    },
+    {
+      "inventory_key": "inventory:0xa5f0",
+      "claim": "The existing AI Key configuration offers sysid 0xa5f0 with the UP-AI-KEY model on its accepted controller channel.",
+      "basis": "Configured equality booleans, reviewed _headers and connected adopted state.",
+      "limitations": "Acceptance may also involve model fallback. This is an independently observed accepted configuration, not proof of a genuine AI Key hardware identifier or a uniquely required value."
+    },
+    {
+      "inventory_key": "inventory:0xa5f1",
+      "claim": "The existing AI Port accepted connection uses the fixed 0xa5f1 interface atom.",
+      "basis": "Reviewed deployed _connect_loop header/route construction, websocket_101, connected/adopted state, positive hello and parameter-agreement counts.",
+      "limitations": "No new handshake was induced. This supports an accepted header combination, not that each field/value is necessary. The deployed connect loop enables control for an adopted device; its control-enable branch differs from the checkout, while the header/route construction was reviewed unchanged."
+    },
+    {
+      "inventory_key": "wire_atom:Camera-IP",
+      "claim": "The existing AI Port accepted connection uses the fixed Camera-IP interface atom.",
+      "basis": "Reviewed deployed _connect_loop header/route construction, websocket_101, connected/adopted state, positive hello and parameter-agreement counts.",
+      "limitations": "No new handshake was induced. This supports an accepted header combination, not that each field/value is necessary. The deployed connect loop enables control for an adopted device; its control-enable branch differs from the checkout, while the header/route construction was reviewed unchanged."
+    },
+    {
+      "inventory_key": "wire_atom:Camera-Model",
+      "claim": "The existing AI Port accepted connection uses the fixed Camera-Model interface atom.",
+      "basis": "Reviewed deployed _connect_loop header/route construction, websocket_101, connected/adopted state, positive hello and parameter-agreement counts.",
+      "limitations": "No new handshake was induced. This supports an accepted header combination, not that each field/value is necessary. The deployed connect loop enables control for an adopted device; its control-enable branch differs from the checkout, while the header/route construction was reviewed unchanged."
+    },
+    {
+      "inventory_key": "wire_atom:Camera-Firmware",
+      "claim": "The existing AI Port accepted connection uses the fixed Camera-Firmware interface atom.",
+      "basis": "Reviewed deployed _connect_loop header/route construction, websocket_101, connected/adopted state, positive hello and parameter-agreement counts.",
+      "limitations": "No new handshake was induced. This supports an accepted header combination, not that each field/value is necessary. The deployed connect loop enables control for an adopted device; its control-enable branch differs from the checkout, while the header/route construction was reviewed unchanged."
+    },
+    {
+      "inventory_key": "wire_atom:Adopted",
+      "claim": "The existing AI Port accepted connection uses the fixed Adopted interface atom.",
+      "basis": "Reviewed deployed _connect_loop header/route construction, websocket_101, connected/adopted state, positive hello and parameter-agreement counts.",
+      "limitations": "No new handshake was induced. This supports an accepted header combination, not that each field/value is necessary. The deployed connect loop enables control for an adopted device; its control-enable branch differs from the checkout, while the header/route construction was reviewed unchanged."
+    },
+    {
+      "inventory_key": "wire_field:action",
+      "claim": "Controller-origin UCP4 request envelope field action.",
+      "basis": "AST-identical handle_message rejects missing request type/id/action before incrementing the command counters; positive current counters exist.",
+      "limitations": "Names/types are established for the request envelope. Other same-name fields at different local contexts are not a full schema/compatibility attestation."
+    },
+    {
+      "inventory_key": "wire_field:id",
+      "claim": "Controller-origin UCP4 request envelope field id.",
+      "basis": "AST-identical handle_message rejects missing request type/id/action before incrementing the command counters; positive current counters exist.",
+      "limitations": "Names/types are established for the request envelope. Other same-name fields at different local contexts are not a full schema/compatibility attestation."
+    },
+    {
+      "inventory_key": "wire_field:type",
+      "claim": "Controller-origin UCP4 request envelope field type.",
+      "basis": "AST-identical handle_message rejects missing request type/id/action before incrementing the command counters; positive current counters exist.",
+      "limitations": "Names/types are established for the request envelope. Other same-name fields at different local contexts are not a full schema/compatibility attestation."
+    },
+    {
+      "inventory_key": "wire_field:error",
+      "claim": "Successful controller-origin time-sync response checks the error field.",
+      "basis": "AST-identical handle_message requires matching ID, integer errorCode 0, error null/empty and valid time fields before assigning clock offset; the observed clock offset is non-null.",
+      "limitations": "The observed value is a derived success boolean only. No response body, clock timestamp, identifier or credential is retained. This does not establish every failure variant."
+    },
+    {
+      "inventory_key": "wire_field:errorCode",
+      "claim": "Successful controller-origin time-sync response checks the errorCode field.",
+      "basis": "AST-identical handle_message requires matching ID, integer errorCode 0, error null/empty and valid time fields before assigning clock offset; the observed clock offset is non-null.",
+      "limitations": "The observed value is a derived success boolean only. No response body, clock timestamp, identifier or credential is retained. This does not establish every failure variant."
+    },
+    {
+      "inventory_key": "wire_atom:timeSync",
+      "claim": "The controller answered an emulator timeSync request with the valid correlated response.",
+      "basis": "AST-identical _connect_once/handle_message plus observed non-null clock-offset state.",
+      "limitations": "This demonstrates an answered request, not a controller-origin timeSync command or manufacturer clock-accuracy guarantee."
+    },
+    {
+      "inventory_key": "wire_field:camera",
+      "claim": "The incoming recognizeKeyFrames command carries camera as a string.",
+      "basis": "Positive camera_shape_counts.string, positive recognizeKeyFrames count and AST-identical _record_recognize_shape.",
+      "limitations": "No camera identifier is retained. This proves that command context, not every callback schema."
+    },
+    {
+      "inventory_key": "wire_field:targetUri",
+      "claim": "Incoming RequestAI validates the required targetUri field.",
+      "basis": "AST-identical _command requires targetUri string, payload object and bounded integer timeoutMs before a successful result; positive result-0 counter.",
+      "limitations": "Cumulative since process start; not a newly induced job. Target values and task payloads are not retained. This does not establish every supported target URI."
+    },
+    {
+      "inventory_key": "wire_field:timeoutMs",
+      "claim": "Incoming RequestAI validates the required timeoutMs field.",
+      "basis": "AST-identical _command requires targetUri string, payload object and bounded integer timeoutMs before a successful result; positive result-0 counter.",
+      "limitations": "Cumulative since process start; not a newly induced job. Target values and task payloads are not retained. This does not establish every supported target URI."
+    },
+    {
+      "inventory_key": "wire_field:username",
+      "claim": "A previously successful incoming changeUserPassword request required the username string field.",
+      "basis": "AST-identical _command calls required-text validation before the successful credential rotation; positive result-0 counter.",
+      "limitations": "Only field names and aggregate outcomes are retained. No current/old/new credential value, fresh rotation or management/adoption schema is established."
+    },
+    {
+      "inventory_key": "wire_field:passwordOld",
+      "claim": "A previously successful incoming changeUserPassword request required the passwordOld string field.",
+      "basis": "AST-identical _command calls required-text validation before the successful credential rotation; positive result-0 counter.",
+      "limitations": "Only field names and aggregate outcomes are retained. No current/old/new credential value, fresh rotation or management/adoption schema is established."
+    },
+    {
+      "inventory_key": "wire_field:passwordNew",
+      "claim": "A previously successful incoming changeUserPassword request required the passwordNew string field.",
+      "basis": "AST-identical _command calls required-text validation before the successful credential rotation; positive result-0 counter.",
+      "limitations": "Only field names and aggregate outcomes are retained. No current/old/new credential value, fresh rotation or management/adoption schema is established."
+    }
+  ]
+}

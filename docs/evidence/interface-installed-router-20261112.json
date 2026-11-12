@@ -1,0 +1,61 @@
+{
+  "schema": "installed-protect-router-interface-evidence/1",
+  "reviewed_date": "2026-11-12",
+  "protect_version": "7.4.96",
+  "backend_sha256": "74407353b3106ff2174f3c460ba3b2ca2a98774da372e791ec7400824dc2a397",
+  "backend_bytes": 11893109,
+  "method": "Original on-device Acorn AST observation; only structural interface facts exported, no vendor program evaluated or source expression copied. The final bounded named-export assertion passed; failed/default-export diagnostic attempts are retained separately, not accepted as proof.",
+  "rights_approval": false,
+  "finding": {
+    "inventory_key": "wire_atom:/internal/aiprocessors/snapshot/generate",
+    "route": "/internal/aiprocessors/snapshot/generate",
+    "method": "GET",
+    "scope": "Static installed route declaration and exact prefix/module composition, not a live snapshot/media request.",
+    "route_module": 761379,
+    "relative_get_registration_offset": 4570087,
+    "relative_route_literal_offset": 4570093,
+    "registered_router_singleton_offset": 4561322,
+    "named_export": "aiprocessorsInternalRouter",
+    "same_singleton_named_export_offset": 4576182,
+    "internal_router_module": 44039,
+    "internal_router_constructor_offset": 4556617,
+    "constructor_import_argument_offset": 4556637,
+    "internal_prefix_setter_call_offset": 4557219,
+    "prefix": "/internal",
+    "base_router_module": 815233,
+    "base_constructor_passes_rest_arguments_to_merge_offset": 3731857,
+    "merge_copies_child_route_table_offset": 3732295,
+    "prefix_expression_path_replacement_offset": 3733298,
+    "matching_uses_relative_path_method_offset": 3732347
+  },
+  "observers": [
+    {
+      "file": "backend_route_prefix_project.js",
+      "source_sha256": "bab4221e40d3512325a58751c8f7fd5e243160400f5a1efbdc3c214b3356ea43"
+    },
+    {
+      "file": "backend_route_binding_project.js",
+      "source_sha256": "b85e8ee79522f122d2bc61950a7804e183cd46ddbc911c0eca6f8488d1e3ae1e"
+    },
+    {
+      "file": "backend_router_relationship_project.js",
+      "source_sha256": "fccbf812378a43490063dfa1b76ada1c69a479586e94368b2bc14689ee4ca652"
+    },
+    {
+      "file": "backend_router_composition_bounded_project.js",
+      "source_sha256": "717b5254c87ece1129127b46249457dcef858867de23229cf279460691fb775c"
+    },
+    {
+      "file": "backend_router_named_binding_project.js",
+      "source_sha256": "176cb543b69ceb0ba04604d8324e2c997e8e949b6727e6b947e0df3638f6fd05"
+    }
+  ],
+  "limitations": [
+    "This identifies the full route from the same fixed installed backend; it is not inferred by joining unrelated text hits.",
+    "No request was made to this media endpoint; successful image generation, authentication details, parameter coverage and native worker delivery are not established.",
+    "The producer buildSnapshotGenerateUrl returns a relative suffix; the full internal prefix is established separately by the exact named-router composition, not assumed from that suffix.",
+    "The first default-export assumption failed; the actual named export and singleton binding were checked before accepting this record.",
+    "A broad original composition parser was interrupted; bounded subtree observations with a 45-second process timeout supplied the accepted facts. No diagnostic failure is reported as a pass.",
+    "No firmware/private disassembly, media, model request, device configuration change, rights approval, merge or release publication."
+  ]
+}

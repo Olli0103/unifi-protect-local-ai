@@ -1,0 +1,89 @@
+{
+  "schema": "isolated-native-enrollment-interface-evidence/1",
+  "reviewed_date": "2026-11-12",
+  "protect_version": "7.4.96",
+  "rights_approval": false,
+  "method": "Owner-directed isolated native enrollment after seven exact-head CI workflow jobs passed; separate generated identities and private state, existing local base images with 183 frozen own Python source modules mounted read-only. This is an exact-module experiment, not release-image qualification.",
+  "source_head": "e4d8209fabc8af875132e34443adcbf06ec5c95a",
+  "own_module_manifest_sha256": "ede9254274418f17ff4b87d600968ac74f4184ac15c9b0c61158fb6e41eaf285",
+  "key_adoption": {
+    "request": {
+      "controller_peer": true,
+      "fields": {
+        "consoleId": "string",
+        "consoleName": "string",
+        "controller": "string",
+        "hosts": "array",
+        "mode": "number",
+        "nvr": "string",
+        "password": "string",
+        "protocol": "string",
+        "token": "string",
+        "username": "string"
+      },
+      "hosts_type": "array",
+      "method": "POST",
+      "mode_zero": true,
+      "protocol_wss": true,
+      "route": "/api/adopt",
+      "secure": true,
+      "unknown_field_count": 0
+    },
+    "response_status": 200,
+    "request_count": 1,
+    "locally_adopted": true,
+    "control_connected": true,
+    "matching_time_sync_observed": true,
+    "password_rotation_successes": 1,
+    "rotated_credential_hash_present": true,
+    "pending_token": false,
+    "factory_marker_present": false,
+    "request_ai_count": 0,
+    "job_processing_enabled": false,
+    "inference_enabled": false
+  },
+  "port_enrollment": {
+    "locally_adopted": true,
+    "control_connected": true,
+    "credential_rotations": 1,
+    "native_adopted_connected": true,
+    "paired_cameras": 0,
+    "stream_controls_started": 0,
+    "active_streams": 0,
+    "management_route": "/api/1.2/manage",
+    "management_status": 200,
+    "login_route_requests_observed": 0,
+    "login_route_resolved": false
+  },
+  "preservation_and_cleanup": {
+    "original_nas_containers_compared": 80,
+    "container_ids_images_pids_restart_counts_statuses_unchanged": true,
+    "camera_configuration_projections_compared": 11,
+    "camera_configuration_and_pairings_unchanged": true,
+    "existing_processor_projections_unchanged": true,
+    "test_container_ids_removed": true,
+    "test_native_registrations_absent_on_fresh_read": true,
+    "test_network_binding_absent": true,
+    "private_test_state_retained": true
+  },
+  "limitations": [
+    "The native Key request establishes this route and input field types on Protect 7.4.96, not universal necessity or validity of every optional field on every processor profile.",
+    "Existing project-defined metadata policies remain separately classified; no broad shared-context reclassification is inferred from this one request.",
+    "The Port enrollment used /api/1.2/manage and did not emit /api/1.2/login; absence is not provenance proof for the login route.",
+    "No camera binding, media retrieval, inference, model download, provider change, existing-device restart, firmware fetch or private disassembly was introduced.",
+    "Snapshot and reverification target/callback paths were not exercised by these enrollment-only trials and remain unresolved.",
+    "Eleven before/after recording-state/configuration snapshots do not establish uninterrupted video at every timestamp.",
+    "The first private rotation projection read a nonexistent management_password_hash field; the corrected source-grounded presence check uses credential.hash and never exports its value.",
+    "No rights approval, owner/reviewer attestation, merge, release, tag or registry publication."
+  ],
+  "observers": [
+    {
+      "file": "port-observer.py",
+      "source_sha256": "1b51545b3a1f705cc39a3a5afa28e2148e7109b7c718a3e52dfafe18ff0fd833"
+    },
+    {
+      "file": "key-observer.py",
+      "source_sha256": "0565120431b210c273ed9090c4ea1a9ca813040ffafb7bfde447b27dac7cdb34"
+    }
+  ]
+}
