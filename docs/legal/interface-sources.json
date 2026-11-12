@@ -25,24 +25,24 @@
       "inventory_key": "aiport_status:0",
       "fact": "aiport_status: 0",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:1382",
-        "src/aikey/aiport_candidate.py:1762",
-        "src/aikey/aiport_candidate.py:1816",
-        "src/aikey/aiport_candidate.py:1832",
-        "src/aikey/aiport_candidate.py:1863",
-        "src/aikey/aiport_candidate.py:2844",
-        "src/aikey/aiport_candidate.py:2886",
-        "src/aikey/aiport_candidate.py:2905",
-        "src/aikey/aiport_candidate.py:2918",
-        "src/aikey/aiport_candidate.py:2943",
-        "src/aikey/aiport_candidate.py:2964",
-        "src/aikey/aiport_candidate.py:2985",
-        "src/aikey/aiport_candidate.py:3033",
-        "src/aikey/aiport_candidate.py:3074",
-        "src/aikey/aiport_candidate.py:3095",
-        "src/aikey/aiport_candidate.py:3125",
-        "src/aikey/aiport_candidate.py:3254",
-        "src/aikey/aiport_candidate.py:3314"
+        "src/aikey/aiport_candidate.py:1380",
+        "src/aikey/aiport_candidate.py:1760",
+        "src/aikey/aiport_candidate.py:1814",
+        "src/aikey/aiport_candidate.py:1830",
+        "src/aikey/aiport_candidate.py:1861",
+        "src/aikey/aiport_candidate.py:2818",
+        "src/aikey/aiport_candidate.py:2860",
+        "src/aikey/aiport_candidate.py:2879",
+        "src/aikey/aiport_candidate.py:2892",
+        "src/aikey/aiport_candidate.py:2916",
+        "src/aikey/aiport_candidate.py:2937",
+        "src/aikey/aiport_candidate.py:2958",
+        "src/aikey/aiport_candidate.py:3006",
+        "src/aikey/aiport_candidate.py:3047",
+        "src/aikey/aiport_candidate.py:3068",
+        "src/aikey/aiport_candidate.py:3098",
+        "src/aikey/aiport_candidate.py:3227",
+        "src/aikey/aiport_candidate.py:3287"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -58,23 +58,23 @@
       "inventory_key": "aiport_status:5",
       "fact": "aiport_status: 5",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:1749",
-        "src/aikey/aiport_candidate.py:2867",
-        "src/aikey/aiport_candidate.py:2896",
-        "src/aikey/aiport_candidate.py:2914",
-        "src/aikey/aiport_candidate.py:2931",
-        "src/aikey/aiport_candidate.py:2938",
-        "src/aikey/aiport_candidate.py:2953",
-        "src/aikey/aiport_candidate.py:2960",
-        "src/aikey/aiport_candidate.py:2974",
-        "src/aikey/aiport_candidate.py:2981",
-        "src/aikey/aiport_candidate.py:3028",
-        "src/aikey/aiport_candidate.py:3107",
-        "src/aikey/aiport_candidate.py:3163",
-        "src/aikey/aiport_candidate.py:3185",
-        "src/aikey/aiport_candidate.py:3213",
-        "src/aikey/aiport_candidate.py:3248",
-        "src/aikey/aiport_candidate.py:3268"
+        "src/aikey/aiport_candidate.py:1747",
+        "src/aikey/aiport_candidate.py:2841",
+        "src/aikey/aiport_candidate.py:2870",
+        "src/aikey/aiport_candidate.py:2888",
+        "src/aikey/aiport_candidate.py:2905",
+        "src/aikey/aiport_candidate.py:2912",
+        "src/aikey/aiport_candidate.py:2926",
+        "src/aikey/aiport_candidate.py:2933",
+        "src/aikey/aiport_candidate.py:2947",
+        "src/aikey/aiport_candidate.py:2954",
+        "src/aikey/aiport_candidate.py:3001",
+        "src/aikey/aiport_candidate.py:3080",
+        "src/aikey/aiport_candidate.py:3136",
+        "src/aikey/aiport_candidate.py:3158",
+        "src/aikey/aiport_candidate.py:3186",
+        "src/aikey/aiport_candidate.py:3221",
+        "src/aikey/aiport_candidate.py:3241"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-project-decisions.md#decisions",
@@ -91,17 +91,17 @@
       "inventory_key": "aiport_status:501",
       "fact": "aiport_status: 501",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:1368",
-        "src/aikey/aiport_candidate.py:1779",
-        "src/aikey/aiport_candidate.py:1787",
-        "src/aikey/aiport_candidate.py:1806",
-        "src/aikey/aiport_candidate.py:1885",
-        "src/aikey/aiport_candidate.py:2921",
-        "src/aikey/aiport_candidate.py:3002",
-        "src/aikey/aiport_candidate.py:3021",
-        "src/aikey/aiport_candidate.py:3085",
-        "src/aikey/aiport_candidate.py:3143",
-        "src/aikey/aiport_candidate.py:3153"
+        "src/aikey/aiport_candidate.py:1366",
+        "src/aikey/aiport_candidate.py:1777",
+        "src/aikey/aiport_candidate.py:1785",
+        "src/aikey/aiport_candidate.py:1804",
+        "src/aikey/aiport_candidate.py:1883",
+        "src/aikey/aiport_candidate.py:2895",
+        "src/aikey/aiport_candidate.py:2975",
+        "src/aikey/aiport_candidate.py:2994",
+        "src/aikey/aiport_candidate.py:3058",
+        "src/aikey/aiport_candidate.py:3116",
+        "src/aikey/aiport_candidate.py:3126"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-project-decisions.md#decisions",
@@ -294,7 +294,7 @@
       "inventory_key": "inventory:/api/1.2/manage",
       "fact": "inventory: /api/1.2/manage",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2324"
+        "src/aikey/aiport_candidate.py:2321"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -343,7 +343,7 @@
       "inventory_key": "inventory:/camera/1.0/ws",
       "fact": "inventory: /camera/1.0/ws",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:3484"
+        "src/aikey/aiport_candidate.py:3457"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
@@ -368,15 +368,15 @@
         "src/aikey/protocol.py:15",
         "src/aikey/protocol.py:332",
         "src/aikey/speech.py:6",
-        "src/aikey/worker.py:1146",
-        "src/aikey/worker.py:1439",
-        "src/aikey/worker.py:1497",
-        "src/aikey/worker.py:1505",
-        "src/aikey/worker.py:1582",
-        "src/aikey/worker.py:1597",
-        "src/aikey/worker.py:1694",
-        "src/aikey/worker.py:1718",
-        "src/aikey/worker.py:1877",
+        "src/aikey/worker.py:1145",
+        "src/aikey/worker.py:1438",
+        "src/aikey/worker.py:1496",
+        "src/aikey/worker.py:1504",
+        "src/aikey/worker.py:1581",
+        "src/aikey/worker.py:1596",
+        "src/aikey/worker.py:1693",
+        "src/aikey/worker.py:1717",
+        "src/aikey/worker.py:1876",
         "src/aikey/worker.py:220",
         "src/aikey/worker.py:222",
         "src/aikey/worker.py:224",
@@ -384,8 +384,7 @@
         "src/aikey/worker.py:226",
         "src/aikey/worker.py:338",
         "src/aikey/worker.py:339",
-        "src/aikey/worker.py:340",
-        "src/aikey/worker.py:341"
+        "src/aikey/worker.py:340"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/interface-worker-receipts-20261111.md#attributed-facts",
@@ -404,7 +403,7 @@
         "src/aikey/device.py:863",
         "src/aikey/device.py:973",
         "src/aikey/search.py:459",
-        "src/aikey/worker.py:685"
+        "src/aikey/worker.py:684"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
@@ -418,7 +417,7 @@
       "inventory_key": "inventory:0xa5f1",
       "fact": "inventory: 0xa5f1",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:3482"
+        "src/aikey/aiport_candidate.py:3455"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
@@ -466,7 +465,7 @@
       "inventory_key": "inventory:7442",
       "fact": "inventory: 7442",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:744",
+        "src/aikey/aiport_candidate.py:743",
         "src/aikey/aiport_deployment.py:27",
         "src/aikey/config.py:293",
         "src/aikey/config.py:77",
@@ -509,9 +508,9 @@
       "inventory_key": "inventory:ChangeVideoSettings",
       "fact": "inventory: ChangeVideoSettings",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2889",
-        "src/aikey/aiport_candidate.py:2899",
-        "src/aikey/aiport_candidate.py:97"
+        "src/aikey/aiport_candidate.py:2863",
+        "src/aikey/aiport_candidate.py:2873",
+        "src/aikey/aiport_candidate.py:96"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
@@ -523,9 +522,9 @@
       "inventory_key": "inventory:EventAIPortStatus",
       "fact": "inventory: EventAIPortStatus",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:103",
-        "src/aikey/aiport_candidate.py:1799",
-        "src/aikey/aiport_candidate.py:2791"
+        "src/aikey/aiport_candidate.py:102",
+        "src/aikey/aiport_candidate.py:1797",
+        "src/aikey/aiport_candidate.py:2765"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -541,9 +540,9 @@
       "inventory_key": "inventory:GetStreamList",
       "fact": "inventory: GetStreamList",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:3089",
-        "src/aikey/aiport_candidate.py:3094",
-        "src/aikey/aiport_candidate.py:93"
+        "src/aikey/aiport_candidate.py:3062",
+        "src/aikey/aiport_candidate.py:3067",
+        "src/aikey/aiport_candidate.py:92"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
@@ -560,8 +559,8 @@
       "inventory_key": "inventory:ResetAIPortStreams",
       "fact": "inventory: ResetAIPortStreams",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2861",
-        "src/aikey/aiport_candidate.py:96"
+        "src/aikey/aiport_candidate.py:2835",
+        "src/aikey/aiport_candidate.py:95"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -583,7 +582,7 @@
         "src/aikey/device.py:863",
         "src/aikey/device.py:972",
         "src/aikey/search.py:459",
-        "src/aikey/worker.py:685"
+        "src/aikey/worker.py:684"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/live-protect-7.3.68.md#L3",
@@ -594,9 +593,9 @@
       "inventory_key": "inventory:UiStreamControl",
       "fact": "inventory: UiStreamControl",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:100",
-        "src/aikey/aiport_candidate.py:3089",
-        "src/aikey/aiport_candidate.py:3098",
+        "src/aikey/aiport_candidate.py:3062",
+        "src/aikey/aiport_candidate.py:3071",
+        "src/aikey/aiport_candidate.py:99",
         "src/aikey/aiport_ingest.py:620"
       ],
       "source_class": "live_trial",
@@ -608,8 +607,8 @@
       "inventory_key": "inventory:UpdateUsernamePassword",
       "fact": "inventory: UpdateUsernamePassword",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2925",
-        "src/aikey/aiport_candidate.py:98"
+        "src/aikey/aiport_candidate.py:2899",
+        "src/aikey/aiport_candidate.py:97"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
@@ -643,8 +642,8 @@
       "inventory_key": "inventory:secure_transfer",
       "fact": "inventory: secure_transfer",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:3490",
-        "src/aikey/aiport_candidate.py:3493"
+        "src/aikey/aiport_candidate.py:3463",
+        "src/aikey/aiport_candidate.py:3466"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
@@ -656,14 +655,14 @@
       "inventory_key": "inventory:ubnt_avclient",
       "fact": "inventory: ubnt_avclient",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2707",
-        "src/aikey/aiport_candidate.py:2708",
-        "src/aikey/aiport_candidate.py:2722",
-        "src/aikey/aiport_candidate.py:2732",
-        "src/aikey/aiport_candidate.py:2836",
-        "src/aikey/aiport_candidate.py:2840",
-        "src/aikey/aiport_candidate.py:93",
-        "src/aikey/aiport_candidate.py:94"
+        "src/aikey/aiport_candidate.py:2681",
+        "src/aikey/aiport_candidate.py:2682",
+        "src/aikey/aiport_candidate.py:2696",
+        "src/aikey/aiport_candidate.py:2706",
+        "src/aikey/aiport_candidate.py:2810",
+        "src/aikey/aiport_candidate.py:2814",
+        "src/aikey/aiport_candidate.py:92",
+        "src/aikey/aiport_candidate.py:93"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
@@ -740,7 +739,7 @@
         "src/aikey/lab.py:86",
         "src/aikey/search.py:459",
         "src/aikey/search.py:609",
-        "src/aikey/worker.py:685"
+        "src/aikey/worker.py:684"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
@@ -782,21 +781,10 @@
       ]
     },
     {
-      "inventory_key": "wire_atom:/api/1.2/login",
-      "fact": "wire_atom: /api/1.2/login",
-      "code_locations": [
-        "src/aikey/aiport_candidate.py:2323"
-      ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
-      "removal_candidate_if_unobservable": true
-    },
-    {
       "inventory_key": "wire_atom:/api/1.2/manage",
       "fact": "wire_atom: /api/1.2/manage",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2324"
+        "src/aikey/aiport_candidate.py:2321"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -812,7 +800,7 @@
       "inventory_key": "wire_atom:/camera/1.0/ws",
       "fact": "wire_atom: /camera/1.0/ws",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:3484"
+        "src/aikey/aiport_candidate.py:3457"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
@@ -858,10 +846,10 @@
       "code_locations": [
         "src/aikey/deep_mode.py:274",
         "src/aikey/deep_mode.py:298",
-        "src/aikey/worker.py:1439",
-        "src/aikey/worker.py:1497",
-        "src/aikey/worker.py:1505",
-        "src/aikey/worker.py:1597"
+        "src/aikey/worker.py:1438",
+        "src/aikey/worker.py:1496",
+        "src/aikey/worker.py:1504",
+        "src/aikey/worker.py:1596"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -934,26 +922,17 @@
       "removal_candidate_if_unobservable": true
     },
     {
-      "inventory_key": "wire_atom:/internal/aiprocessors/snapshot/export-from-camera",
-      "fact": "wire_atom: /internal/aiprocessors/snapshot/export-from-camera",
-      "code_locations": [
-        "src/aikey/worker.py:341"
-      ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
-      "removal_candidate_if_unobservable": true
-    },
-    {
       "inventory_key": "wire_atom:/internal/aiprocessors/snapshot/generate",
       "fact": "wire_atom: /internal/aiprocessors/snapshot/generate",
       "code_locations": [
         "src/aikey/worker.py:340"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "protect_own_installation",
+      "reference": "docs/evidence/interface-installed-router-20261112.json",
+      "observation": "Exact installed-router construction checked; full path provenance resolved without exercising media generation.",
+      "removal_candidate_if_unobservable": false,
+      "reference_sha256": "b24ab76af2db9ee10a85c2e0556ae94b5a165596f31427236be4e85a9b7f346c",
+      "source_scope": "Installed Protect 7.4.96 static GET declaration: exact named-router singleton/export/import, base-constructor route merge and /internal prefix path handling. No live media request or generation result is claimed."
     },
     {
       "inventory_key": "wire_atom:/internal/aiprocessors/speech-to-text",
@@ -973,10 +952,10 @@
       "inventory_key": "wire_atom:/internal/aiprocessors/video/export",
       "fact": "wire_atom: /internal/aiprocessors/video/export",
       "code_locations": [
-        "src/aikey/worker.py:1146",
-        "src/aikey/worker.py:1694",
-        "src/aikey/worker.py:1718",
-        "src/aikey/worker.py:1877",
+        "src/aikey/worker.py:1145",
+        "src/aikey/worker.py:1693",
+        "src/aikey/worker.py:1717",
+        "src/aikey/worker.py:1876",
         "src/aikey/worker.py:339"
       ],
       "source_class": "live_trial",
@@ -1020,7 +999,7 @@
         "src/aikey/device.py:217",
         "src/aikey/device.py:60",
         "src/aikey/lab.py:218",
-        "src/aikey/worker.py:1066"
+        "src/aikey/worker.py:1065"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/live-protect-7.3.70.md#L40",
@@ -1033,8 +1012,8 @@
       "code_locations": [
         "src/aikey/device.py:217",
         "src/aikey/device.py:60",
-        "src/aikey/worker.py:1062",
-        "src/aikey/worker.py:1066"
+        "src/aikey/worker.py:1061",
+        "src/aikey/worker.py:1065"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -1050,7 +1029,7 @@
       "inventory_key": "wire_atom:Adopted",
       "fact": "wire_atom: Adopted",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:3483",
+        "src/aikey/aiport_candidate.py:3456",
         "src/aikey/processing_status.py:207",
         "src/aikey/processing_status.py:292"
       ],
@@ -1066,7 +1045,7 @@
       "inventory_key": "wire_atom:Camera-Firmware",
       "fact": "wire_atom: Camera-Firmware",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:3482"
+        "src/aikey/aiport_candidate.py:3455"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
@@ -1080,7 +1059,7 @@
       "inventory_key": "wire_atom:Camera-IP",
       "fact": "wire_atom: Camera-IP",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:3481"
+        "src/aikey/aiport_candidate.py:3454"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
@@ -1094,7 +1073,7 @@
       "inventory_key": "wire_atom:Camera-MAC",
       "fact": "wire_atom: Camera-MAC",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:3481"
+        "src/aikey/aiport_candidate.py:3454"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
@@ -1106,7 +1085,7 @@
       "inventory_key": "wire_atom:Camera-Model",
       "fact": "wire_atom: Camera-Model",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:3482"
+        "src/aikey/aiport_candidate.py:3455"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
@@ -1120,7 +1099,7 @@
       "inventory_key": "wire_atom:ChangeAnalyticsSettings",
       "fact": "wire_atom: ChangeAnalyticsSettings",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:102"
+        "src/aikey/aiport_candidate.py:101"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
@@ -1132,10 +1111,10 @@
       "inventory_key": "wire_atom:ChangeAudioEventsSettings",
       "fact": "wire_atom: ChangeAudioEventsSettings",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:102",
-        "src/aikey/aiport_candidate.py:1368",
-        "src/aikey/aiport_candidate.py:1382",
-        "src/aikey/aiport_candidate.py:2988"
+        "src/aikey/aiport_candidate.py:101",
+        "src/aikey/aiport_candidate.py:1366",
+        "src/aikey/aiport_candidate.py:1380",
+        "src/aikey/aiport_candidate.py:2961"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
@@ -1152,8 +1131,8 @@
       "inventory_key": "wire_atom:ChangeDeviceSettings",
       "fact": "wire_atom: ChangeDeviceSettings",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:100",
-        "src/aikey/aiport_candidate.py:2967"
+        "src/aikey/aiport_candidate.py:2940",
+        "src/aikey/aiport_candidate.py:99"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
@@ -1170,8 +1149,8 @@
       "inventory_key": "wire_atom:ChangeIspSettings",
       "fact": "wire_atom: ChangeIspSettings",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2889",
-        "src/aikey/aiport_candidate.py:97"
+        "src/aikey/aiport_candidate.py:2863",
+        "src/aikey/aiport_candidate.py:96"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
@@ -1183,7 +1162,7 @@
       "inventory_key": "wire_atom:ChangeNvrSettings",
       "fact": "wire_atom: ChangeNvrSettings",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:99"
+        "src/aikey/aiport_candidate.py:98"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -1199,15 +1178,15 @@
       "inventory_key": "wire_atom:ChangeSmartDetectSettings",
       "fact": "wire_atom: ChangeSmartDetectSettings",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:101",
-        "src/aikey/aiport_candidate.py:1779",
-        "src/aikey/aiport_candidate.py:1787",
-        "src/aikey/aiport_candidate.py:1806",
-        "src/aikey/aiport_candidate.py:1816",
-        "src/aikey/aiport_candidate.py:1832",
-        "src/aikey/aiport_candidate.py:1863",
-        "src/aikey/aiport_candidate.py:1885",
-        "src/aikey/aiport_candidate.py:3037"
+        "src/aikey/aiport_candidate.py:100",
+        "src/aikey/aiport_candidate.py:1777",
+        "src/aikey/aiport_candidate.py:1785",
+        "src/aikey/aiport_candidate.py:1804",
+        "src/aikey/aiport_candidate.py:1814",
+        "src/aikey/aiport_candidate.py:1830",
+        "src/aikey/aiport_candidate.py:1861",
+        "src/aikey/aiport_candidate.py:1883",
+        "src/aikey/aiport_candidate.py:3010"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/live-protect-7.3.70.md#L40",
@@ -1218,10 +1197,10 @@
       "inventory_key": "wire_atom:ChangeSmartMotionSettings",
       "fact": "wire_atom: ChangeSmartMotionSettings",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:101",
-        "src/aikey/aiport_candidate.py:1749",
-        "src/aikey/aiport_candidate.py:1762",
-        "src/aikey/aiport_candidate.py:3006"
+        "src/aikey/aiport_candidate.py:100",
+        "src/aikey/aiport_candidate.py:1747",
+        "src/aikey/aiport_candidate.py:1760",
+        "src/aikey/aiport_candidate.py:2979"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
@@ -1238,8 +1217,8 @@
       "inventory_key": "wire_atom:ChangeSoundLedSettings",
       "fact": "wire_atom: ChangeSoundLedSettings",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2946",
-        "src/aikey/aiport_candidate.py:99"
+        "src/aikey/aiport_candidate.py:2919",
+        "src/aikey/aiport_candidate.py:98"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
@@ -1256,9 +1235,9 @@
       "inventory_key": "wire_atom:ChangeVideoSettings",
       "fact": "wire_atom: ChangeVideoSettings",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2889",
-        "src/aikey/aiport_candidate.py:2899",
-        "src/aikey/aiport_candidate.py:97"
+        "src/aikey/aiport_candidate.py:2863",
+        "src/aikey/aiport_candidate.py:2873",
+        "src/aikey/aiport_candidate.py:96"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
@@ -1270,8 +1249,8 @@
       "inventory_key": "wire_atom:EventAIPortStatus",
       "fact": "wire_atom: EventAIPortStatus",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:103",
-        "src/aikey/aiport_candidate.py:2791"
+        "src/aikey/aiport_candidate.py:102",
+        "src/aikey/aiport_candidate.py:2765"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -1287,8 +1266,8 @@
       "inventory_key": "wire_atom:EventFeatureFlagsUpdated",
       "fact": "wire_atom: EventFeatureFlagsUpdated",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:103",
-        "src/aikey/aiport_candidate.py:2788"
+        "src/aikey/aiport_candidate.py:102",
+        "src/aikey/aiport_candidate.py:2762"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -1304,9 +1283,9 @@
       "inventory_key": "wire_atom:EventSmartAudio",
       "fact": "wire_atom: EventSmartAudio",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:1271",
-        "src/aikey/aiport_candidate.py:1295",
-        "src/aikey/aiport_candidate.py:2736"
+        "src/aikey/aiport_candidate.py:1269",
+        "src/aikey/aiport_candidate.py:1293",
+        "src/aikey/aiport_candidate.py:2710"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -1322,16 +1301,16 @@
       "inventory_key": "wire_atom:EventSmartDetect",
       "fact": "wire_atom: EventSmartDetect",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:1556",
-        "src/aikey/aiport_candidate.py:2080",
-        "src/aikey/aiport_candidate.py:2123",
-        "src/aikey/aiport_candidate.py:2274",
-        "src/aikey/aiport_candidate.py:2292",
-        "src/aikey/aiport_candidate.py:2306",
-        "src/aikey/aiport_candidate.py:2736",
-        "src/aikey/aiport_candidate.py:2743",
-        "src/aikey/aiport_candidate.py:3423",
-        "src/aikey/aiport_candidate.py:96"
+        "src/aikey/aiport_candidate.py:1554",
+        "src/aikey/aiport_candidate.py:2078",
+        "src/aikey/aiport_candidate.py:2121",
+        "src/aikey/aiport_candidate.py:2272",
+        "src/aikey/aiport_candidate.py:2290",
+        "src/aikey/aiport_candidate.py:2304",
+        "src/aikey/aiport_candidate.py:2710",
+        "src/aikey/aiport_candidate.py:2717",
+        "src/aikey/aiport_candidate.py:3396",
+        "src/aikey/aiport_candidate.py:95"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
@@ -1343,8 +1322,8 @@
       "inventory_key": "wire_atom:EventSmartMotion",
       "fact": "wire_atom: EventSmartMotion",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:1115",
-        "src/aikey/aiport_candidate.py:2736"
+        "src/aikey/aiport_candidate.py:1113",
+        "src/aikey/aiport_candidate.py:2710"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -1360,10 +1339,10 @@
       "inventory_key": "wire_atom:GetRequest",
       "fact": "wire_atom: GetRequest",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:100",
-        "src/aikey/aiport_candidate.py:3157",
-        "src/aikey/aiport_candidate.py:3268",
-        "src/aikey/aiport_candidate.py:3314"
+        "src/aikey/aiport_candidate.py:3130",
+        "src/aikey/aiport_candidate.py:3241",
+        "src/aikey/aiport_candidate.py:3287",
+        "src/aikey/aiport_candidate.py:99"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
@@ -1380,9 +1359,9 @@
       "inventory_key": "wire_atom:GetStreamList",
       "fact": "wire_atom: GetStreamList",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:3089",
-        "src/aikey/aiport_candidate.py:3094",
-        "src/aikey/aiport_candidate.py:93"
+        "src/aikey/aiport_candidate.py:3062",
+        "src/aikey/aiport_candidate.py:3067",
+        "src/aikey/aiport_candidate.py:92"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
@@ -1399,7 +1378,7 @@
       "inventory_key": "wire_atom:GetSystemStats",
       "fact": "wire_atom: GetSystemStats",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:95"
+        "src/aikey/aiport_candidate.py:94"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -1450,7 +1429,7 @@
       "inventory_key": "wire_atom:NetworkStatus",
       "fact": "wire_atom: NetworkStatus",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:95"
+        "src/aikey/aiport_candidate.py:94"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
@@ -1462,8 +1441,8 @@
       "inventory_key": "wire_atom:OnvifStreamControl",
       "fact": "wire_atom: OnvifStreamControl",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:100",
-        "src/aikey/aiport_candidate.py:3089"
+        "src/aikey/aiport_candidate.py:3062",
+        "src/aikey/aiport_candidate.py:99"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -1501,8 +1480,8 @@
       "inventory_key": "wire_atom:ResetAIPortStreams",
       "fact": "wire_atom: ResetAIPortStreams",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2861",
-        "src/aikey/aiport_candidate.py:96"
+        "src/aikey/aiport_candidate.py:2835",
+        "src/aikey/aiport_candidate.py:95"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -1518,8 +1497,8 @@
       "inventory_key": "wire_atom:StartService",
       "fact": "wire_atom: StartService",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2907",
-        "src/aikey/aiport_candidate.py:98"
+        "src/aikey/aiport_candidate.py:2881",
+        "src/aikey/aiport_candidate.py:97"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -1535,9 +1514,9 @@
       "inventory_key": "wire_atom:StopService",
       "fact": "wire_atom: StopService",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2907",
-        "src/aikey/aiport_candidate.py:2916",
-        "src/aikey/aiport_candidate.py:98"
+        "src/aikey/aiport_candidate.py:2881",
+        "src/aikey/aiport_candidate.py:2890",
+        "src/aikey/aiport_candidate.py:97"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
@@ -1554,7 +1533,7 @@
       "inventory_key": "wire_atom:UiStreamControl",
       "fact": "wire_atom: UiStreamControl",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:100"
+        "src/aikey/aiport_candidate.py:99"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/ai-port-controller-contract.md#L34",
@@ -1565,8 +1544,8 @@
       "inventory_key": "wire_atom:UpdateFaceDBRequest",
       "fact": "wire_atom: UpdateFaceDBRequest",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:104",
-        "src/aikey/aiport_candidate.py:2995"
+        "src/aikey/aiport_candidate.py:103",
+        "src/aikey/aiport_candidate.py:2968"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
@@ -1583,8 +1562,8 @@
       "inventory_key": "wire_atom:UpdateFirmwareRequest",
       "fact": "wire_atom: UpdateFirmwareRequest",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:104",
-        "src/aikey/aiport_candidate.py:3147"
+        "src/aikey/aiport_candidate.py:103",
+        "src/aikey/aiport_candidate.py:3120"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
@@ -1601,8 +1580,8 @@
       "inventory_key": "wire_atom:UpdateUsernamePassword",
       "fact": "wire_atom: UpdateUsernamePassword",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2925",
-        "src/aikey/aiport_candidate.py:98"
+        "src/aikey/aiport_candidate.py:2899",
+        "src/aikey/aiport_candidate.py:97"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
@@ -1660,7 +1639,7 @@
       "inventory_key": "wire_atom:consoleId",
       "fact": "wire_atom: consoleId",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:90"
+        "src/aikey/aiport_candidate.py:89"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-project-decisions.md#decisions",
@@ -1677,7 +1656,7 @@
       "inventory_key": "wire_atom:consoleName",
       "fact": "wire_atom: consoleName",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:91"
+        "src/aikey/aiport_candidate.py:90"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-project-decisions.md#decisions",
@@ -1694,7 +1673,7 @@
       "inventory_key": "wire_atom:controller",
       "fact": "wire_atom: controller",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:90"
+        "src/aikey/aiport_candidate.py:89"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-project-decisions.md#decisions",
@@ -1751,8 +1730,8 @@
       "inventory_key": "wire_atom:hosts",
       "fact": "wire_atom: hosts",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:88",
-        "src/aikey/aiport_candidate.py:89"
+        "src/aikey/aiport_candidate.py:87",
+        "src/aikey/aiport_candidate.py:88"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -1768,7 +1747,7 @@
       "inventory_key": "wire_atom:mgmt",
       "fact": "wire_atom: mgmt",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:88"
+        "src/aikey/aiport_candidate.py:87"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -1784,8 +1763,8 @@
       "inventory_key": "wire_atom:mode",
       "fact": "wire_atom: mode",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:88",
-        "src/aikey/aiport_candidate.py:89"
+        "src/aikey/aiport_candidate.py:87",
+        "src/aikey/aiport_candidate.py:88"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-project-decisions.md#decisions",
@@ -1819,7 +1798,7 @@
       "inventory_key": "wire_atom:nvr",
       "fact": "wire_atom: nvr",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:89"
+        "src/aikey/aiport_candidate.py:88"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-project-decisions.md#decisions",
@@ -1836,8 +1815,8 @@
       "inventory_key": "wire_atom:password",
       "fact": "wire_atom: password",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:88",
-        "src/aikey/aiport_candidate.py:90"
+        "src/aikey/aiport_candidate.py:87",
+        "src/aikey/aiport_candidate.py:89"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -1854,11 +1833,11 @@
       "fact": "wire_atom: postVLM",
       "code_locations": [
         "src/aikey/device.py:292",
-        "src/aikey/worker.py:1041",
-        "src/aikey/worker.py:1203",
-        "src/aikey/worker.py:1215",
-        "src/aikey/worker.py:1530",
-        "src/aikey/worker.py:1741"
+        "src/aikey/worker.py:1040",
+        "src/aikey/worker.py:1202",
+        "src/aikey/worker.py:1214",
+        "src/aikey/worker.py:1529",
+        "src/aikey/worker.py:1740"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/live-protect-7.3.70.md#L13",
@@ -1869,8 +1848,8 @@
       "inventory_key": "wire_atom:protocol",
       "fact": "wire_atom: protocol",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:88",
-        "src/aikey/aiport_candidate.py:89"
+        "src/aikey/aiport_candidate.py:87",
+        "src/aikey/aiport_candidate.py:88"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -1887,13 +1866,13 @@
       "fact": "wire_atom: recognizeFaces",
       "code_locations": [
         "src/aikey/caption_preflight.py:24",
-        "src/aikey/worker.py:1792",
+        "src/aikey/worker.py:1791",
+        "src/aikey/worker.py:1794",
         "src/aikey/worker.py:1795",
-        "src/aikey/worker.py:1796",
-        "src/aikey/worker.py:2250",
-        "src/aikey/worker.py:2265",
+        "src/aikey/worker.py:2249",
+        "src/aikey/worker.py:2264",
         "src/aikey/worker.py:264",
-        "src/aikey/worker.py:2985",
+        "src/aikey/worker.py:2984",
         "src/aikey/worker.py:50"
       ],
       "source_class": "live_trial",
@@ -1913,21 +1892,21 @@
         "src/aikey/device.py:602",
         "src/aikey/device.py:621",
         "src/aikey/device.py:836",
-        "src/aikey/worker.py:1017",
-        "src/aikey/worker.py:1023",
-        "src/aikey/worker.py:1039",
-        "src/aikey/worker.py:1198",
-        "src/aikey/worker.py:1212",
-        "src/aikey/worker.py:1251",
-        "src/aikey/worker.py:1255",
-        "src/aikey/worker.py:1834",
+        "src/aikey/worker.py:1016",
+        "src/aikey/worker.py:1022",
+        "src/aikey/worker.py:1038",
+        "src/aikey/worker.py:1197",
+        "src/aikey/worker.py:1211",
+        "src/aikey/worker.py:1250",
+        "src/aikey/worker.py:1254",
+        "src/aikey/worker.py:1833",
         "src/aikey/worker.py:186",
-        "src/aikey/worker.py:2250",
-        "src/aikey/worker.py:2265",
+        "src/aikey/worker.py:2249",
+        "src/aikey/worker.py:2264",
         "src/aikey/worker.py:266",
         "src/aikey/worker.py:276",
-        "src/aikey/worker.py:2990",
-        "src/aikey/worker.py:2995"
+        "src/aikey/worker.py:2989",
+        "src/aikey/worker.py:2994"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/live-protect-7.3.68.md#L11",
@@ -1975,11 +1954,11 @@
         "src/aikey/device.py:1407",
         "src/aikey/device.py:532",
         "src/aikey/device.py:622",
-        "src/aikey/worker.py:1013",
-        "src/aikey/worker.py:1704",
-        "src/aikey/worker.py:1708",
+        "src/aikey/worker.py:1012",
+        "src/aikey/worker.py:1703",
+        "src/aikey/worker.py:1707",
         "src/aikey/worker.py:265",
-        "src/aikey/worker.py:2969",
+        "src/aikey/worker.py:2968",
         "src/aikey/worker.py:50"
       ],
       "source_class": "live_trial",
@@ -2108,7 +2087,7 @@
       "inventory_key": "wire_atom:token",
       "fact": "wire_atom: token",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:89"
+        "src/aikey/aiport_candidate.py:88"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -2124,7 +2103,7 @@
       "inventory_key": "wire_atom:ubnt_avclient_features",
       "fact": "wire_atom: ubnt_avclient_features",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:94"
+        "src/aikey/aiport_candidate.py:93"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -2140,7 +2119,7 @@
       "inventory_key": "wire_atom:ubnt_avclient_hello",
       "fact": "wire_atom: ubnt_avclient_hello",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:93"
+        "src/aikey/aiport_candidate.py:92"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
@@ -2157,7 +2136,7 @@
       "inventory_key": "wire_atom:ubnt_avclient_paramAgreement",
       "fact": "wire_atom: ubnt_avclient_paramAgreement",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:93"
+        "src/aikey/aiport_candidate.py:92"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
@@ -2174,7 +2153,7 @@
       "inventory_key": "wire_atom:ubnt_avclient_time",
       "fact": "wire_atom: ubnt_avclient_time",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:94"
+        "src/aikey/aiport_candidate.py:93"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
@@ -2186,7 +2165,7 @@
       "inventory_key": "wire_atom:ubnt_avclient_timeSync",
       "fact": "wire_atom: ubnt_avclient_timeSync",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:94"
+        "src/aikey/aiport_candidate.py:93"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -2229,8 +2208,8 @@
       "inventory_key": "wire_atom:username",
       "fact": "wire_atom: username",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:88",
-        "src/aikey/aiport_candidate.py:90"
+        "src/aikey/aiport_candidate.py:87",
+        "src/aikey/aiport_candidate.py:89"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -2422,7 +2401,7 @@
       "inventory_key": "wire_field:clockWall",
       "fact": "wire_field: clockWall",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2740"
+        "src/aikey/aiport_candidate.py:2714"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
@@ -2434,7 +2413,7 @@
       "inventory_key": "wire_field:connectionSecurePort",
       "fact": "wire_field: connectionSecurePort",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2714"
+        "src/aikey/aiport_candidate.py:2688"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
@@ -2498,10 +2477,10 @@
       "inventory_key": "wire_field:deviceID",
       "fact": "wire_field: deviceID",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:1744",
-        "src/aikey/aiport_candidate.py:1784",
-        "src/aikey/aiport_candidate.py:2772",
-        "src/aikey/aiport_candidate.py:2792"
+        "src/aikey/aiport_candidate.py:1742",
+        "src/aikey/aiport_candidate.py:1782",
+        "src/aikey/aiport_candidate.py:2746",
+        "src/aikey/aiport_candidate.py:2766"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/ai-port-controller-contract.md#L37",
@@ -2512,7 +2491,7 @@
       "inventory_key": "wire_field:enableSmartDetect",
       "fact": "wire_field: enableSmartDetect",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:1791"
+        "src/aikey/aiport_candidate.py:1789"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -2649,7 +2628,7 @@
       "inventory_key": "wire_field:features",
       "fact": "wire_field: features",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2715"
+        "src/aikey/aiport_candidate.py:2689"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
@@ -2661,9 +2640,9 @@
       "inventory_key": "wire_field:from",
       "fact": "wire_field: from",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2707",
-        "src/aikey/aiport_candidate.py:2722",
-        "src/aikey/aiport_candidate.py:2732"
+        "src/aikey/aiport_candidate.py:2681",
+        "src/aikey/aiport_candidate.py:2696",
+        "src/aikey/aiport_candidate.py:2706"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
@@ -2675,10 +2654,10 @@
       "inventory_key": "wire_field:functionName",
       "fact": "wire_field: functionName",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2708",
-        "src/aikey/aiport_candidate.py:2723",
-        "src/aikey/aiport_candidate.py:2733",
-        "src/aikey/aiport_candidate.py:2813"
+        "src/aikey/aiport_candidate.py:2682",
+        "src/aikey/aiport_candidate.py:2697",
+        "src/aikey/aiport_candidate.py:2707",
+        "src/aikey/aiport_candidate.py:2787"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
@@ -2690,7 +2669,7 @@
       "inventory_key": "wire_field:fwVersion",
       "fact": "wire_field: fwVersion",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2710"
+        "src/aikey/aiport_candidate.py:2684"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
@@ -2764,11 +2743,11 @@
       "inventory_key": "wire_field:inResponseTo",
       "fact": "wire_field: inResponseTo",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2709",
-        "src/aikey/aiport_candidate.py:2724",
-        "src/aikey/aiport_candidate.py:2734",
-        "src/aikey/aiport_candidate.py:2819",
-        "src/aikey/aiport_candidate.py:2836"
+        "src/aikey/aiport_candidate.py:2683",
+        "src/aikey/aiport_candidate.py:2698",
+        "src/aikey/aiport_candidate.py:2708",
+        "src/aikey/aiport_candidate.py:2793",
+        "src/aikey/aiport_candidate.py:2810"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
@@ -2780,7 +2759,7 @@
       "inventory_key": "wire_field:ip",
       "fact": "wire_field: ip",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2713"
+        "src/aikey/aiport_candidate.py:2687"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
@@ -2792,7 +2771,7 @@
       "inventory_key": "wire_field:isAudioEventReady",
       "fact": "wire_field: isAudioEventReady",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2794"
+        "src/aikey/aiport_candidate.py:2768"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -2808,7 +2787,7 @@
       "inventory_key": "wire_field:isSmartDetectReady",
       "fact": "wire_field: isSmartDetectReady",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2793"
+        "src/aikey/aiport_candidate.py:2767"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -2824,7 +2803,7 @@
       "inventory_key": "wire_field:isStreaming",
       "fact": "wire_field: isStreaming",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2792"
+        "src/aikey/aiport_candidate.py:2766"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -2900,23 +2879,23 @@
       "inventory_key": "wire_field:messageId",
       "fact": "wire_field: messageId",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2709",
-        "src/aikey/aiport_candidate.py:2724",
-        "src/aikey/aiport_candidate.py:2734",
-        "src/aikey/aiport_candidate.py:2841",
-        "src/aikey/aiport_candidate.py:2863",
-        "src/aikey/aiport_candidate.py:2891",
-        "src/aikey/aiport_candidate.py:2909",
-        "src/aikey/aiport_candidate.py:2927",
-        "src/aikey/aiport_candidate.py:2948",
-        "src/aikey/aiport_candidate.py:2969",
-        "src/aikey/aiport_candidate.py:2990",
-        "src/aikey/aiport_candidate.py:2997",
-        "src/aikey/aiport_candidate.py:3008",
-        "src/aikey/aiport_candidate.py:3039",
-        "src/aikey/aiport_candidate.py:3091",
-        "src/aikey/aiport_candidate.py:3151",
-        "src/aikey/aiport_candidate.py:3159"
+        "src/aikey/aiport_candidate.py:2683",
+        "src/aikey/aiport_candidate.py:2698",
+        "src/aikey/aiport_candidate.py:2708",
+        "src/aikey/aiport_candidate.py:2815",
+        "src/aikey/aiport_candidate.py:2837",
+        "src/aikey/aiport_candidate.py:2865",
+        "src/aikey/aiport_candidate.py:2883",
+        "src/aikey/aiport_candidate.py:2901",
+        "src/aikey/aiport_candidate.py:2921",
+        "src/aikey/aiport_candidate.py:2942",
+        "src/aikey/aiport_candidate.py:2963",
+        "src/aikey/aiport_candidate.py:2970",
+        "src/aikey/aiport_candidate.py:2981",
+        "src/aikey/aiport_candidate.py:3012",
+        "src/aikey/aiport_candidate.py:3064",
+        "src/aikey/aiport_candidate.py:3124",
+        "src/aikey/aiport_candidate.py:3132"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
@@ -2928,8 +2907,8 @@
       "inventory_key": "wire_field:mgmt",
       "fact": "wire_field: mgmt",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2620",
-        "src/aikey/aiport_candidate.py:691"
+        "src/aikey/aiport_candidate.py:2617",
+        "src/aikey/aiport_candidate.py:690"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -2975,7 +2954,7 @@
       "inventory_key": "wire_field:motionDetect",
       "fact": "wire_field: motionDetect",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2787"
+        "src/aikey/aiport_candidate.py:2761"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -3022,9 +3001,8 @@
       "inventory_key": "wire_field:password",
       "fact": "wire_field: password",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2611",
-        "src/aikey/aiport_candidate.py:2622",
-        "src/aikey/aiport_candidate.py:2640",
+        "src/aikey/aiport_candidate.py:2608",
+        "src/aikey/aiport_candidate.py:2619",
         "src/aikey/device.py:887",
         "src/aikey/device.py:946"
       ],
@@ -3071,26 +3049,26 @@
       "inventory_key": "wire_field:payload",
       "fact": "wire_field: payload",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2710",
-        "src/aikey/aiport_candidate.py:2725",
-        "src/aikey/aiport_candidate.py:2735",
-        "src/aikey/aiport_candidate.py:2866",
-        "src/aikey/aiport_candidate.py:2895",
-        "src/aikey/aiport_candidate.py:2913",
-        "src/aikey/aiport_candidate.py:2936",
-        "src/aikey/aiport_candidate.py:2958",
-        "src/aikey/aiport_candidate.py:2979",
-        "src/aikey/aiport_candidate.py:2993",
-        "src/aikey/aiport_candidate.py:3016",
-        "src/aikey/aiport_candidate.py:3025",
-        "src/aikey/aiport_candidate.py:3044",
-        "src/aikey/aiport_candidate.py:3056",
-        "src/aikey/aiport_candidate.py:3060",
-        "src/aikey/aiport_candidate.py:3102",
-        "src/aikey/aiport_candidate.py:3116",
-        "src/aikey/aiport_candidate.py:3132",
-        "src/aikey/aiport_candidate.py:3169",
-        "src/aikey/aiport_candidate.py:3210",
+        "src/aikey/aiport_candidate.py:2684",
+        "src/aikey/aiport_candidate.py:2699",
+        "src/aikey/aiport_candidate.py:2709",
+        "src/aikey/aiport_candidate.py:2840",
+        "src/aikey/aiport_candidate.py:2869",
+        "src/aikey/aiport_candidate.py:2887",
+        "src/aikey/aiport_candidate.py:2910",
+        "src/aikey/aiport_candidate.py:2931",
+        "src/aikey/aiport_candidate.py:2952",
+        "src/aikey/aiport_candidate.py:2966",
+        "src/aikey/aiport_candidate.py:2989",
+        "src/aikey/aiport_candidate.py:2998",
+        "src/aikey/aiport_candidate.py:3017",
+        "src/aikey/aiport_candidate.py:3029",
+        "src/aikey/aiport_candidate.py:3033",
+        "src/aikey/aiport_candidate.py:3075",
+        "src/aikey/aiport_candidate.py:3089",
+        "src/aikey/aiport_candidate.py:3105",
+        "src/aikey/aiport_candidate.py:3142",
+        "src/aikey/aiport_candidate.py:3183",
         "src/aikey/device.py:1366"
       ],
       "source_class": "public_documentation",
@@ -3147,7 +3125,7 @@
       "inventory_key": "wire_field:protocolVersion",
       "fact": "wire_field: protocolVersion",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2711"
+        "src/aikey/aiport_candidate.py:2685"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
@@ -3208,10 +3186,10 @@
       "inventory_key": "wire_field:responseExpected",
       "fact": "wire_field: responseExpected",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2708",
-        "src/aikey/aiport_candidate.py:2723",
-        "src/aikey/aiport_candidate.py:2733",
-        "src/aikey/aiport_candidate.py:2821"
+        "src/aikey/aiport_candidate.py:2682",
+        "src/aikey/aiport_candidate.py:2697",
+        "src/aikey/aiport_candidate.py:2707",
+        "src/aikey/aiport_candidate.py:2795"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
@@ -3223,7 +3201,7 @@
       "inventory_key": "wire_field:smartDetect",
       "fact": "wire_field: smartDetect",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2773"
+        "src/aikey/aiport_candidate.py:2747"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -3272,7 +3250,7 @@
       "inventory_key": "wire_field:statusCode",
       "fact": "wire_field: statusCode",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2725"
+        "src/aikey/aiport_candidate.py:2699"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -3400,7 +3378,7 @@
       "inventory_key": "wire_field:timeStamp",
       "fact": "wire_field: timeStamp",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2739"
+        "src/aikey/aiport_candidate.py:2713"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/interface-installed-backend-20261112.md#findings",
@@ -3461,9 +3439,9 @@
       "inventory_key": "wire_field:to",
       "fact": "wire_field: to",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2707",
-        "src/aikey/aiport_candidate.py:2722",
-        "src/aikey/aiport_candidate.py:2732"
+        "src/aikey/aiport_candidate.py:2681",
+        "src/aikey/aiport_candidate.py:2696",
+        "src/aikey/aiport_candidate.py:2706"
       ],
       "source_class": "public_documentation",
       "reference": "docs/evidence/interface-public-protocols-20261111.md#attributed-facts",
@@ -3525,7 +3503,7 @@
       "inventory_key": "wire_field:uptime",
       "fact": "wire_field: uptime",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2712",
+        "src/aikey/aiport_candidate.py:2686",
         "src/aikey/device.py:865"
       ],
       "source_class": "public_documentation",
@@ -3538,9 +3516,8 @@
       "inventory_key": "wire_field:username",
       "fact": "wire_field: username",
       "code_locations": [
-        "src/aikey/aiport_candidate.py:2611",
-        "src/aikey/aiport_candidate.py:2621",
-        "src/aikey/aiport_candidate.py:2640",
+        "src/aikey/aiport_candidate.py:2608",
+        "src/aikey/aiport_candidate.py:2618",
         "src/aikey/device.py:1577",
         "src/aikey/device.py:801",
         "src/aikey/device.py:887",

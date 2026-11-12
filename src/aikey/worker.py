@@ -337,8 +337,7 @@ _SPEECH_EXPORT = {"camera", "event", "channel", "start", "end", "type", "format"
                   "createEvent"}
 _IMAGE_PATH = re.compile(r"^/internal/aiprocessors/image/[^/]+$")
 _VIDEO_PATHS = {"/internal/aiprocessors/video/export", "/internal/video/export"}
-_SNAPSHOT_PATHS = {"/internal/aiprocessors/snapshot/generate",
-                   "/internal/aiprocessors/snapshot/export-from-camera"}
+_SNAPSHOT_PATHS = {"/internal/aiprocessors/snapshot/generate"}
 _PROMPT = (
     "Describe only the visible subjects and actions in these security-camera images. "
     "Use at most 50 words. Do not invent events, identities, intent, or details that are "

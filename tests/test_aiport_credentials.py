@@ -74,7 +74,7 @@ def test_rotation_failure_keeps_previous_credential(tmp_path, monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_control_rotation_acknowledges_only_after_persistence_and_login_enforces(tmp_path):
+async def test_control_rotation_enforces_management_and_retired_login_stays_absent(tmp_path):
     config = fixture_state(tmp_path)
     config["diagnostic_hello_until"] = int(time.time()) + 60
     service = CandidateService(config, tmp_path)
@@ -101,14 +101,12 @@ async def test_control_rotation_acknowledges_only_after_persistence_and_login_en
     try:
         async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=False)) as client:
             login_url = str(server.make_url("/api/1.2/login"))
-            response = await client.post(login_url, json={"username": "synthetic-user",
-                                                          "password": "wrong"})
-            assert response.status == 401
-            response = await client.post(login_url, json={"username": "synthetic-user",
-                                                          "password": "synthetic-password"})
-            assert response.status == 200
-            assert response.cookies["AISESSION"]["secure"]
-            assert response.cookies["AISESSION"]["httponly"]
+            for password in ("wrong", "synthetic-password"):
+                response = await client.post(login_url, json={"username": "synthetic-user",
+                                                              "password": password})
+                assert response.status == 404
+                assert "Set-Cookie" not in response.headers
+                assert not response.cookies
             manage_url = str(server.make_url("/api/1.2/manage"))
             response = await client.post(manage_url, json={"username": "synthetic-user",
                                                         "password": "wrong", "mgmt": {}})
