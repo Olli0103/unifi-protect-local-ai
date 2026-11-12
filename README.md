@@ -10,7 +10,7 @@ or endorsed by Ubiquiti. No vendor firmware or model weights are included.
 
 ## Status and compatibility
 
-This is development software, currently version `0.1.0` in source. **There is no
+This is development software, currently version `0.1.0a1` in source. **There is no
 published stable release, supported release line or official prebuilt project
 image yet.** Build from a reviewed source revision; do not assume a registry tag
 or PyPI package with a similar name belongs to this project.

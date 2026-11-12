@@ -27,7 +27,8 @@ def clip_encoding(text_policy='literal'):
 
 def clip_query(text, text_policy='literal'):
     clip_encoding(text_policy)
-    # AI Key 2.2.8 slm_server.py:246-254; retain the actual query words.
+    # Preserve query words; preprocessing provenance and pending observation
+    # are tracked in docs/legal/interface-sources.md.
     return 'a photo of ' + text if text_policy == 'native-short-photo' and len(text.split()) < 3 else text
 
 

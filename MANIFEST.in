@@ -10,7 +10,7 @@ recursive-include tests *.py
 recursive-include docs/legal *.json
 recursive-include tools *.py *.sh
 recursive-include .github/workflows *.yml
-include THIRD_PARTY_NOTICES.txt CORRESPONDING_SOURCE.json
+include THIRD_PARTY_NOTICES.txt
 prune research
 prune private
 prune state

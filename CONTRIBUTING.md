@@ -111,8 +111,12 @@ retroactive evidence for existing commits.
 Do not contribute manufacturer binaries, extracted/translated functions,
 disassemblies, keys, tokens, private footage, real transcripts or model weights.
 Protocol fixtures must be independently written and synthetic. Use required
-interface facts with source references, and establish permission and necessity
-before further firmware analysis. We make no organizational clean-room claim.
+interface facts with source references. No analysis of AI Key or AI Port firmware
+or binaries, by people or agents. Interface facts must come from the maintainer's
+own Protect installation, observation of the maintainer's own devices, live
+interoperability trials or public documentation. We make no organizational
+clean-room claim. Record unresolved sources as `needs_observation` in
+[interface sources](docs/legal/interface-sources.md); do not invent observations.
 
 Run `python -m pytest -q`, `python -m ruff check .` and the audit-only release
 check before proposing changes. Report native behavior separately from synthetic
