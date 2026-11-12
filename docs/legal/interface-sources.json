@@ -314,10 +314,12 @@
         "src/aikey/lab.py:201",
         "src/aikey/lab.py:205"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-native-enrollment-20261112.json",
+      "observation": "Scoped native route observation completed; optional metadata necessity and other processor contexts are not inferred.",
+      "removal_candidate_if_unobservable": false,
+      "source_scope": "One owner-directed fresh Key enrollment on Protect 7.4.96: controller-origin HTTPS POST /api/adopt, allowlisted input types, HTTP 200, local/native adoption and matching control confirmation. The same route string in local lab fixtures is not a native trial itself.",
+      "reference_sha256": "c9830823d148dca0750cec438e08857e5e3d61bb57844a723d98136a9161ede7"
     },
     {
       "inventory_key": "inventory:/api/info",
