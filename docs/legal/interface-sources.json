@@ -2,7 +2,7 @@
   "schema": "interface-sources/1",
   "base_commit": "0108c3522ff681fdda6912ea8efa418de6d61f19",
   "inventory_regex": "0xa5f0|0xa5f1|UP-AI-KEY|UVC AI Port|10001|233\\.89\\.188\\.1|7442|7443|/api/adopt|/api/1\\.2/manage|/api/info|ucp4|x-ident|x-mode|x-key|x-adopted|ubnt_avclient|UiStreamControl|GetStreamList|ResetAIPortStreams|EventAIPortStatus|ChangeVideoSettings|UpdateUsernamePassword|/internal/aiprocessors|secure_transfer|/camera/1\\.0/ws|a photo of|ubntbox",
-  "status": "observations_pending",
+  "status": "mapped_with_scoped_sources",
   "rights_approval": false,
   "coverage_scope": "Exact regex occurrences across src plus reviewed AST command/header/target atoms, wire fields at protocol/device/AI Port boundaries, discovery TLVs/layouts and UCP framing. Coverage is a syntactic regression guard, not proof of complete semantic provenance.",
   "manual_review": {
@@ -916,10 +916,16 @@
       "code_locations": [
         "src/aikey/worker.py:225"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-native-reverification-20261112.md#attributed-facts",
+      "reference_sha256": "7e7a7d55a70c69fdb9cabcc2b05e3ddbaae6f16072e3679025ce42671edad864",
+      "source_scope": "Historical owner-installation trial on Protect 7.3.74: three exact camera/event-joined completed reverify jobs recorded HTTP 200. The recovered immutable deployed project image matches the original installed normalizer digest; that normalizer rejects every other callback path, and its sender posts to the admitted callback with redirects disabled. This is byte-bound derived path attribution, not a fresh 7.4.96 callback capture.",
+      "source_limitations": [
+        "Derived exact-path attribution joins original native receipts to their byte-bound project worker guards; no raw historical request capture is claimed.",
+        "The observation is scoped to the owner's Protect 7.3.74 installation on 3 November; current-version verifier compatibility and classifier accuracy are not established.",
+        "Original private receipts are retained by the owner and represented publicly only by digests and safe aggregate results. No manufacturer firmware/source or private identities are published.",
+        "Interface mapping grants no rights, image-compliance or release approval."
+      ]
     },
     {
       "inventory_key": "wire_atom:/internal/aiprocessors/snapshot/generate",
@@ -986,10 +992,16 @@
         "src/aikey/device.py:61",
         "src/aikey/worker.py:241"
       ],
-      "source_class": "needs_observation",
-      "reference": "",
-      "observation": "Find the exact route/target construction in your own Protect installation, or observe an owner-authorized emulator/controller request as an allowlisted route template and result code, with IDs/query values stripped. Do not run live tests from this PR. Otherwise mark this route/profile for removal.",
-      "removal_candidate_if_unobservable": true
+      "source_class": "live_trial",
+      "reference": "docs/evidence/interface-native-reverification-20261112.md#attributed-facts",
+      "reference_sha256": "7e7a7d55a70c69fdb9cabcc2b05e3ddbaae6f16072e3679025ce42671edad864",
+      "source_scope": "Historical owner-installation trial on Protect 7.3.74: three completed native reverify jobs are joined to their exact native camera/event identities. The recovered deployed project's worker bytes match its public revision and the original installed normalizer digest; the sole call to that normalizer is guarded by this exact RequestAI target. The 7.4.96 synthetic event did not produce a verifier job and is not used as proof.",
+      "source_limitations": [
+        "Derived exact-path attribution joins original native receipts to their byte-bound project worker guards; no raw historical request capture is claimed.",
+        "The observation is scoped to the owner's Protect 7.3.74 installation on 3 November; current-version verifier compatibility and classifier accuracy are not established.",
+        "Original private receipts are retained by the owner and represented publicly only by digests and safe aggregate results. No manufacturer firmware/source or private identities are published.",
+        "Interface mapping grants no rights, image-compliance or release approval."
+      ]
     },
     {
       "inventory_key": "wire_atom::7968/describe",
