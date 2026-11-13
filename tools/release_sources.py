@@ -150,7 +150,7 @@ def bundle_record(value, plan):
 
 def checked_pax(raw):
     """Validate control records before tarfile can interpret sparse/long metadata."""
-    seen, offset = set(), 0
+    fields, offset = {}, 0
     while offset < len(raw):
         space = raw.find(b" ", offset)
         require(0 < space - offset <= 6 and raw[offset:space].isdigit(),
@@ -160,7 +160,7 @@ def checked_pax(raw):
         require(space + 1 < end <= len(raw) and raw[end - 1:end] == b"\n",
                 "source_delivery_tar_member_refused")
         key, separator, value = raw[space + 1:end - 1].partition(b"=")
-        require(separator and key in (b"path", b"size", b"mtime") and key not in seen,
+        require(separator and key in (b"path", b"size", b"mtime") and key not in fields,
                 "source_delivery_tar_member_refused")
         if key == b"path":
             require(0 < len(value) <= 4096 and b"\0" not in value,
@@ -174,8 +174,9 @@ def checked_pax(raw):
             require(0 < len(value) <= 32 and number.count(b".") <= 1
                     and all(piece.isdigit() for piece in number.split(b".")),
                     "source_delivery_tar_member_refused")
-        seen.add(key)
+        fields[key] = value
         offset = end
+    return fields
 
 
 def preflight_tar(path):
@@ -183,31 +184,36 @@ def preflight_tar(path):
     with checked_file(path) as stream:
         size = os.fstat(stream.fileno()).st_size
         require(size >= 1024 and size % 512 == 0, "source_delivery_tar_member_refused")
-        records, pending = 0, False
+        records, pending = 0, None
         while stream.tell() < size:
             header = stream.read(512)
             if header == bytes(512):
-                require(not pending and size - stream.tell() >= 512,
+                require(pending is None and size - stream.tell() >= 512,
                         "source_delivery_tar_member_refused")
                 while raw := stream.read(1024**2):
                     require(not any(raw), "source_delivery_tar_member_refused")
                 return
             item = tarfile.TarInfo.frombuf(header, "utf-8", "strict")
             records += 1
-            padded = (item.size + 511) // 512 * 512
             require(records <= 2 * FILE_LIMIT and 0 <= item.size <= TOTAL_LIMIT
-                    and padded <= size - stream.tell()
                     and item.type in (tarfile.REGTYPE, tarfile.AREGTYPE, tarfile.XHDTYPE),
                     "source_delivery_tar_member_refused")
+            # tarfile applies a local PAX size to the next regular member before
+            # locating its successor. Walk those same bytes, not its raw size:
+            # a smaller override can otherwise hide a control header from us.
+            effective_size = (int(pending[b"size"]) if pending is not None
+                              and b"size" in pending and item.type != tarfile.XHDTYPE
+                              else item.size)
+            padded = (effective_size + 511) // 512 * 512
+            require(padded <= size - stream.tell(), "source_delivery_tar_member_refused")
             if item.type == tarfile.XHDTYPE:
-                require(not pending and 0 < item.size <= PAX_LIMIT,
+                require(pending is None and 0 < item.size <= PAX_LIMIT,
                         "source_delivery_tar_member_refused")
-                checked_pax(stream.read(item.size))
+                pending = checked_pax(stream.read(item.size))
                 stream.seek(padded - item.size, os.SEEK_CUR)
-                pending = True
             else:
                 stream.seek(padded, os.SEEK_CUR)
-                pending = False
+                pending = None
         require(False, "source_delivery_tar_member_refused")
 
 

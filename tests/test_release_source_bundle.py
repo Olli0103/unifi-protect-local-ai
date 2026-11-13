@@ -333,3 +333,63 @@ def test_bounded_pax_long_paths_from_real_producer_remain_supported(tmp_path):
     sources.preflight_tar(path)
     with tarfile.open(path, "r:") as archive:
         assert archive.getnames() == [name]
+
+
+
+def pax_size_prefix(size):
+    record = ("size=" + str(size) + "\n").encode()
+    length = len(record) + 2
+    while True:
+        raw = str(length).encode() + b" " + record
+        if len(raw) == length:
+            break
+        length = len(raw)
+    info = tarfile.TarInfo("././@PaxHeader")
+    info.type, info.size = tarfile.XHDTYPE, len(raw)
+    return info.tobuf(format=tarfile.USTAR_FORMAT) + raw + bytes((-len(raw)) % 512)
+
+
+@pytest.mark.parametrize("kind", [tarfile.XHDTYPE, tarfile.XGLTYPE,
+                                  tarfile.GNUTYPE_LONGNAME, tarfile.GNUTYPE_LONGLINK])
+def test_pax_size_override_cannot_hide_unsafe_controls_from_preflight(fixture, monkeypatch, kind):
+    root, _, _, target, plan = fixture
+    target.mkdir()
+    cover = tarfile.TarInfo("sources/cover")
+    cover.size = 512
+    hidden = tarfile.TarInfo("sources/hidden")
+    hidden.type, hidden.size = kind, 2 * sources.TOTAL_LIMIT
+    raw = (pax_size_prefix(0) + cover.tobuf(format=tarfile.USTAR_FORMAT)
+           + hidden.tobuf(format=tarfile.GNU_FORMAT) + bytes(1024))
+    name = sources.NAME + ".part001"
+    (target / name).write_bytes(raw)
+    info = sources.file_info(target / name)
+    value = {"schema": sources.SCHEMA, "revision": plan["source_revision"],
+             "manifest_sha256": plan["source_delivery"]["manifest_sha256"],
+             "sha256": info["sha256"], "parts": [dict(name=name, **info)]}
+    (target / "source-bundle.json").write_text(json.dumps(value, indent=2) + "\n")
+
+    def parser_must_not_run(*args, **kwargs):
+        raise AssertionError("PAX effective-size preflight missed a control header")
+
+    monkeypatch.setattr(sources.tarfile, "open", parser_must_not_run)
+    with pytest.raises(ValueError, match="tar_member_refused"):
+        sources.validate(root, target, plan)
+
+
+@pytest.mark.parametrize("raw_size,effective_size", [(512, 0), (0, 1), (1, 512), (512, 1)])
+def test_preflight_follows_valid_pax_effective_size_like_the_real_parser(tmp_path, raw_size,
+                                                                      effective_size):
+    first = tarfile.TarInfo("sources/first")
+    first.size = raw_size
+    second = tarfile.TarInfo("sources/second")
+    payload = b"x" * effective_size
+    path = tmp_path / "effective.tar"
+    path.write_bytes(pax_size_prefix(effective_size) + first.tobuf(format=tarfile.USTAR_FORMAT)
+                     + payload + bytes((-len(payload)) % 512)
+                     + second.tobuf(format=tarfile.USTAR_FORMAT) + bytes(1024))
+    sources.preflight_tar(path)
+    with tarfile.open(path, "r:") as archive:
+        members = archive.getmembers()
+        assert [(item.name, item.size) for item in members] == [
+            ("sources/first", effective_size), ("sources/second", 0)]
+        assert archive.extractfile(members[0]).read() == payload
