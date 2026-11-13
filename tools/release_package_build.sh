@@ -27,8 +27,10 @@ python -m venv "${RUNNER_TEMP}/release-runtime"
 "${RUNNER_TEMP}/release-runtime/bin/python" -m pip install --disable-pip-version-check --no-deps -r requirements-runtime.lock
 "${RUNNER_TEMP}/release-runtime/bin/python" -m pip install --disable-pip-version-check --no-deps "${RUNNER_TEMP}/release-packages/"*.whl
 "${RUNNER_TEMP}/release-runtime/bin/python" -m pip check
+# The package archives were compared above. The attested SBOM needs its standard
+# serialNumber; CycloneDX reproducible mode removes it and actions/attest refuses it.
 python -m cyclonedx_py environment "${RUNNER_TEMP}/release-runtime" --pyproject pyproject.toml \
-  --output-reproducible --of JSON -o "${RUNNER_TEMP}/release-packages/package.cdx.json"
+  --sv 1.6 --of JSON -o "${RUNNER_TEMP}/release-packages/package.cdx.json"
 python - <<'PY'
 import importlib.util, json, os, sys
 from pathlib import Path

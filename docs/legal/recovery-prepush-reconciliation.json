@@ -1,0 +1,781 @@
+{
+  "schema": "aikey-prepush-reconciliation/1",
+  "original_run_id": "43402688428",
+  "reservation_id": 444049704,
+  "source_revision": "a3da9c21715dade37fbe3a25529fa85fd17dc430",
+  "run_id": "43464180864",
+  "policy_revision": "39922d0ab2202ad2622f3fcc8ddd7284a4143b5c",
+  "workflow_sha256": "10a4e0345ea5dd9a3831718d5543ae5bf157068b907e5eff2be871c50f87d77a",
+  "jobs": [
+    {
+      "id": 132018759429,
+      "name": "qualify",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Exact dispatch source, no persisted Git credentials",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Python 3.12",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Resolve unchanged source or explicit original-run recovery",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Exact artifact source separate from workflow policy",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 6,
+          "name": "Set runner-local source delivery path",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 7,
+          "name": "Read-only readiness; publishing is opt-in",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 12,
+          "name": "Post Exact artifact source separate from workflow policy",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 13,
+          "name": "Post Python 3.12",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 14,
+          "name": "Post Exact dispatch source, no persisted Git credentials",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 15,
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 132018958672,
+      "name": "reserve",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Exact dispatch source, no persisted Git credentials",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Exact artifact source separate from workflow policy",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Python 3.12",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Set runner-local source delivery path",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 6,
+          "name": "Fresh non-audit source, tag, seven CI jobs and environment policy",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 7,
+          "name": "Reserve draft once; positively reconcile lost acknowledgement",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 8,
+          "name": "Retain release-reservation",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 14,
+          "name": "Post Python 3.12",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 15,
+          "name": "Post Exact artifact source separate from workflow policy",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 16,
+          "name": "Post Exact dispatch source, no persisted Git credentials",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 17,
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 132020187281,
+      "name": "sources",
+      "status": "completed",
+      "conclusion": "success",
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Exact dispatch source, no persisted Git credentials",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Exact artifact source separate from workflow policy",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Python 3.12",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Set runner-local source delivery path",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 6,
+          "name": "Fresh non-audit source, tag, seven CI jobs and environment policy",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 7,
+          "name": "Download only the owner-pinned upstream source collection",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 8,
+          "name": "Download exact-revision four-image qualification inputs",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 9,
+          "name": "Verify all original bytes and exact release-commit source inventory before delivery",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 10,
+          "name": "Retain only validated same-release source delivery",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 18,
+          "name": "Post Python 3.12",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 19,
+          "name": "Post Exact artifact source separate from workflow policy",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 20,
+          "name": "Post Exact dispatch source, no persisted Git credentials",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 21,
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 132021192033,
+      "name": "images (arm64, ubuntu-24.04-arm)",
+      "status": "completed",
+      "conclusion": "failure",
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Exact dispatch source, no persisted Git credentials",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Exact artifact source separate from workflow policy",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Python 3.12",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Set runner-local source delivery path",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 6,
+          "name": "Fresh non-audit source, tag, seven CI jobs and environment policy",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 7,
+          "name": "Download this run's validated source bundle before any image or asset upload",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 8,
+          "name": "Maintained native Docker Buildx",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 9,
+          "name": "Exact qualified main-run inventory, not an old head",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 10,
+          "name": "Verify native context",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 11,
+          "name": "Install checksum-pinned Syft",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 12,
+          "name": "Run the existing eight installed-source/state cases natively",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 13,
+          "name": "Bind pre-push intent to tested image configs and inventories",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "number": 14,
+          "name": "Retain release-image-intent-arm64",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 15,
+          "name": "Short-lived workflow registry login",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 16,
+          "name": "Push only these attempt-specific images; observe immutable manifests",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 17,
+          "name": "Remove owned local fixtures and verify zero remaining resources",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 18,
+          "name": "Retain only sanitized complete native handoff",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 19,
+          "name": "aikey provenance",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 20,
+          "name": "Retain standard bundle /home/runner/work/_temp/release-images/aikey-arm64-provenance.sigstore.json",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 21,
+          "name": "aikey sbom",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 22,
+          "name": "Retain standard bundle /home/runner/work/_temp/release-images/aikey-arm64-sbom.sigstore.json",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 23,
+          "name": "aiport provenance",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 24,
+          "name": "Retain standard bundle /home/runner/work/_temp/release-images/aiport-arm64-provenance.sigstore.json",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 25,
+          "name": "aiport sbom",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 26,
+          "name": "Retain standard bundle /home/runner/work/_temp/release-images/aiport-arm64-sbom.sigstore.json",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 27,
+          "name": "Retain release-images-arm64",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 51,
+          "name": "Post Maintained native Docker Buildx",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 52,
+          "name": "Post Python 3.12",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 53,
+          "name": "Post Exact artifact source separate from workflow policy",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 54,
+          "name": "Post Exact dispatch source, no persisted Git credentials",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 55,
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 132021192057,
+      "name": "packages",
+      "status": "completed",
+      "conclusion": "failure",
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Exact dispatch source, no persisted Git credentials",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Exact artifact source separate from workflow policy",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Python 3.12",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Set runner-local source delivery path",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 6,
+          "name": "Fresh non-audit source, tag, seven CI jobs and environment policy",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 7,
+          "name": "Download this run's validated source bundle before any image or asset upload",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 8,
+          "name": "Two clean reproducible builds and locked runtime SBOM",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 9,
+          "name": "Package provenance",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 10,
+          "name": "Retain standard bundle /home/runner/work/_temp/release-packages/package-provenance.sigstore.json",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 11,
+          "name": "Package SBOM attestation",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "number": 12,
+          "name": "Retain standard bundle /home/runner/work/_temp/release-packages/package-sbom.sigstore.json",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 13,
+          "name": "Retain release-packages",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 24,
+          "name": "Post Python 3.12",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 25,
+          "name": "Post Exact artifact source separate from workflow policy",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 26,
+          "name": "Post Exact dispatch source, no persisted Git credentials",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 27,
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 132021192149,
+      "name": "images (amd64, ubuntu-24.04)",
+      "status": "completed",
+      "conclusion": "failure",
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Exact dispatch source, no persisted Git credentials",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Exact artifact source separate from workflow policy",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Python 3.12",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Set runner-local source delivery path",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 6,
+          "name": "Fresh non-audit source, tag, seven CI jobs and environment policy",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 7,
+          "name": "Download this run's validated source bundle before any image or asset upload",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 8,
+          "name": "Maintained native Docker Buildx",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 9,
+          "name": "Exact qualified main-run inventory, not an old head",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 10,
+          "name": "Verify native context",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 11,
+          "name": "Install checksum-pinned Syft",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 12,
+          "name": "Run the existing eight installed-source/state cases natively",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 13,
+          "name": "Bind pre-push intent to tested image configs and inventories",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "number": 14,
+          "name": "Retain release-image-intent-amd64",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 15,
+          "name": "Short-lived workflow registry login",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 16,
+          "name": "Push only these attempt-specific images; observe immutable manifests",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 17,
+          "name": "Remove owned local fixtures and verify zero remaining resources",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 18,
+          "name": "Retain only sanitized complete native handoff",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 19,
+          "name": "aikey provenance",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 20,
+          "name": "Retain standard bundle /home/runner/work/_temp/release-images/aikey-amd64-provenance.sigstore.json",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 21,
+          "name": "aikey sbom",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 22,
+          "name": "Retain standard bundle /home/runner/work/_temp/release-images/aikey-amd64-sbom.sigstore.json",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 23,
+          "name": "aiport provenance",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 24,
+          "name": "Retain standard bundle /home/runner/work/_temp/release-images/aiport-amd64-provenance.sigstore.json",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 25,
+          "name": "aiport sbom",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 26,
+          "name": "Retain standard bundle /home/runner/work/_temp/release-images/aiport-amd64-sbom.sigstore.json",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 27,
+          "name": "Retain release-images-amd64",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 51,
+          "name": "Post Maintained native Docker Buildx",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 52,
+          "name": "Post Python 3.12",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "number": 53,
+          "name": "Post Exact artifact source separate from workflow policy",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 54,
+          "name": "Post Exact dispatch source, no persisted Git credentials",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 55,
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 132023331400,
+      "name": "assemble",
+      "status": "completed",
+      "conclusion": "skipped",
+      "steps": []
+    },
+    {
+      "id": 132023333639,
+      "name": "publish",
+      "status": "completed",
+      "conclusion": "skipped",
+      "steps": []
+    }
+  ]
+}

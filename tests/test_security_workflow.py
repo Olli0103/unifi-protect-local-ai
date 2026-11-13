@@ -37,13 +37,14 @@ def workflow_policy(value, *, publisher=False):
     triggers = value["on"]
     assert set(triggers) == {"workflow_dispatch"}
     inputs = triggers["workflow_dispatch"]["inputs"]
-    assert set(inputs) == {"tag", "publish", "profile", "recovery_run", "recovery_release_id"}
-    for name in ("recovery_run", "recovery_release_id"):
+    assert set(inputs) == {"tag", "publish", "profile", "recovery_run", "recovery_release_id", "recovery_preflight_run"}
+    for name in ("recovery_run", "recovery_release_id", "recovery_preflight_run"):
         assert inputs[name]["type"] == "string" and inputs[name]["default"] == ""
     assert value["defaults"] == {"run": {"working-directory": "source"}}
     assert value["env"] == {
         "RELEASE_RECOVERY_RUN": "${{ inputs.recovery_run }}",
         "RELEASE_RECOVERY_ID": "${{ inputs.recovery_release_id }}",
+        "RELEASE_RECOVERY_PREFLIGHT_RUN": "${{ inputs.recovery_preflight_run }}",
     }
     assert inputs["profile"] == {
         "description": "Artifact scope; package publishes wheel and sdist only",

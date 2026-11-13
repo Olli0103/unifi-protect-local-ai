@@ -709,7 +709,13 @@ def package_bom(root, plan, path):
     """Check the maintained CycloneDX producer against the runtime lock."""
     value = gate.load(gate.read(path, 16 * 1024 * 1024))
     require(
-        value.get("bomFormat") == "CycloneDX" and isinstance(value.get("components"), list),
+        value.get("bomFormat") == "CycloneDX"
+        and isinstance(value.get("specVersion"), str)
+        and re.fullmatch(r"1\.[4-7]", value["specVersion"])
+        and isinstance(value.get("serialNumber"), str)
+        and re.fullmatch(r"urn:uuid:[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}",
+                         value["serialNumber"])
+        and isinstance(value.get("components"), list),
         "release_package_sbom_refused",
     )
     rows = value["components"] + [value.get("metadata", {}).get("component", {})]
@@ -760,10 +766,13 @@ def main(argv=None):
     parser.add_argument("--destination", type=Path, required=True)
     args = parser.parse_args(argv)
     root = args.root.absolute()
+    stage = "preparation"
     try:
         require(args.release_id > 0, "release_reservation_required")
         plan = dict(publication.fresh(root, args.tag), reservation_id=args.release_id)
+        stage = "reservation"
         publication.original(root, plan)
+        stage = args.command
         if args.command == "image-intent":
             image_intent(
                 root,
@@ -803,11 +812,19 @@ def main(argv=None):
             finalize(root, plan, args.destination)
         return 0
     except (OSError, ValueError, KeyError, TypeError, RuntimeError,
-            subprocess.SubprocessError, tarfile.TarError):
+            subprocess.SubprocessError, tarfile.TarError) as error:
+        # Only fixed refusal codes from paired validators may leave this boundary.
+        # Raw provider errors, file paths, subprocess output and exception text never do.
+        trusted = (publication.PublicationError, gate.PreparationError,
+                   installation.CheckError, inventory.CheckError)
+        code = (str(error) if isinstance(error, trusted) and
+                re.fullmatch(r"(?:release|source_delivery|image_inventory|container)_[a-z0-9_]{1,100}",
+                             str(error)) else "release_candidate_unavailable")
         print(
             json.dumps(
                 {
-                    "error": "release_candidate_unavailable",
+                    "error": code,
+                    "stage": stage,
                     "automatic_retry": False,
                     "publication_outcome": "not_asserted",
                 }

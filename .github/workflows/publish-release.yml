@@ -21,6 +21,10 @@ name: Owner-gated signed release
         description: Exact original empty draft ID; required together with recovery_run
         type: string
         default: ''
+      recovery_preflight_run:
+        description: Explicit reviewed pre-push failed recovery run; no unknown effects accepted
+        type: string
+        default: ''
       publish:
         description: Request reviewed staging, then final candidate approval (default is read-only)
         type: boolean
@@ -31,6 +35,7 @@ defaults:
 env:
   RELEASE_RECOVERY_RUN: ${{ inputs.recovery_run }}
   RELEASE_RECOVERY_ID: ${{ inputs.recovery_release_id }}
+  RELEASE_RECOVERY_PREFLIGHT_RUN: ${{ inputs.recovery_preflight_run }}
 permissions:
   contents: read
 concurrency:
