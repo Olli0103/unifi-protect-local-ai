@@ -850,6 +850,47 @@ def verify_signatures(root, plan, directory, manifest, *, run=gate.command, insp
             )
 
 
+def package_metadata(argv, *, cwd):
+    """Use a separate read:packages credential only for this fixed GET.
+
+    The workflow token still owns repository reads and registry writes. Never
+    fall back to it when the owner package catalogue cannot be observed.
+    """
+    require(argv == ["gh", "api", "--paginate", "--slurp",
+                     f"users/{gate.OWNER}/packages?package_type=container&per_page=100"],
+            "release_package_metadata_command_refused")
+    token = os.environ.get("RELEASE_PACKAGES_READ_TOKEN", "")
+    require(token and len(token) <= 4096 and not any(char.isspace() for char in token),
+            "release_package_read_token_required")
+    owner = gate.load(_package_command(["gh", "api", "user"], cwd=cwd, token=token))
+    require(owner.get("login") == gate.OWNER and type(owner.get("id")) is int
+            and owner["id"] == gate.OWNER_ID and owner.get("type") == "User",
+            "release_package_read_owner_required")
+    return _package_command(argv, cwd=cwd, token=token)
+
+
+def _package_command(argv, *, cwd, token):
+    env = dict(os.environ)
+    for key in ("GITHUB_TOKEN", "RELEASE_PACKAGES_READ_TOKEN", "GH_DEBUG", "GH_HOST"):
+        env.pop(key, None)
+    env.update(GH_TOKEN=token, GH_HOST="github.com", GH_PROMPT_DISABLED="1")
+    with tempfile.TemporaryFile(dir=cwd) as output, tempfile.TemporaryFile(dir=cwd) as error:
+        try:
+            result = subprocess.run(argv, cwd=cwd, env=env, stdin=subprocess.DEVNULL,
+                                    stdout=output, stderr=error, check=False, timeout=20)
+        except (OSError, subprocess.TimeoutExpired):
+            raise PublicationError("release_package_metadata_unavailable") from None
+        if result.returncode != 0:
+            error.seek(0)
+            status = re.search(rb"\(HTTP ([1-5][0-9]{2})\)", error.read(8192))
+            code = ("release_package_metadata_http_" + status[1].decode("ascii")
+                    if status else "release_package_metadata_unavailable")
+            raise PublicationError(code)
+        require(output.tell() <= 128 * 1024, "release_package_metadata_too_large")
+        output.seek(0)
+        return output.read().decode("utf-8")
+
+
 def private_images(root, plan, *, run=gate.command, allow_missing=False):
     """Observe all pages; never infer absence from failed metadata transport.
 
@@ -859,6 +900,8 @@ def private_images(root, plan, *, run=gate.command, allow_missing=False):
     """
     if not plan["images"]:
         return
+    if run is gate.command:
+        run = package_metadata
     pages = rows(run([
         "gh", "api", "--paginate", "--slurp",
         f"users/{gate.OWNER}/packages?package_type=container&per_page=100",
@@ -1066,7 +1109,7 @@ def _complete_snapshot(root, plan, directory, *, run=gate.command, write=mutate)
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("reserve", "upload", "complete"))
+    parser.add_argument("command", choices=("reserve", "upload", "complete", "package-access"))
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument("--tag", required=True)
     parser.add_argument("--assets", type=Path)
@@ -1078,8 +1121,12 @@ def main(argv=None):
         # Every upload/image/signature consumer still requires the validated bundle.
         plan = (gate.prepare(root, args.tag, publish=True,
                             profile=os.environ.get("RELEASE_PROFILE", "image"))
-                if args.command == "reserve" else fresh(root, args.tag))
-        if args.command == "reserve":
+                if args.command in {"reserve", "package-access"} else fresh(root, args.tag))
+        if args.command == "package-access":
+            require(args.assets is None and args.release_id is None, "release_assets_option_refused")
+            private_images(root, plan, allow_missing=True)
+            result = {"schema": "aikey-package-access/1", "verified": True, "mutated": False}
+        elif args.command == "reserve":
             require(
                 args.assets is None and args.release_id is None, "release_assets_option_refused"
             )

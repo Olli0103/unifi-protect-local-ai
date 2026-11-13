@@ -126,7 +126,7 @@ def job_graph(value, gate, *, recorded=False):
 
 
 def verified_preflight_record(policy, revision, origin, release_id, current, gate, run,
-                              record, requested_run, *, package_conclusion):
+                              record, requested_run, *, package_conclusion, package_metadata=False):
     """Verify one reviewed exact live graph, never infer absence of effects."""
     gate.require(requested_run not in {origin, current}, "release_recovery_preflight_identity_refused")
     gate.require(set(record) == {"schema", "original_run_id", "reservation_id", "source_revision",
@@ -160,9 +160,9 @@ def verified_preflight_record(policy, revision, origin, release_id, current, gat
             continue
         states = {step["name_sha256"]: step["conclusion"] for step in row["steps"]}
         gate.require(len(states) == len(row["steps"])
-                     and states.get(step_name_digest("Bind pre-push intent to tested image configs and inventories")) == "failure"
-                     and states.get(step_name_digest("Short-lived workflow registry login")) == "skipped"
-                     and states.get(step_name_digest("Push only these attempt-specific images; observe immutable manifests")) == "skipped"
+                     and states.get(step_name_digest("Bind pre-push intent to tested image configs and inventories")) == ("success" if package_metadata else "failure")
+                     and states.get(step_name_digest("Short-lived workflow registry login")) == ("success" if package_metadata else "skipped")
+                     and states.get(step_name_digest("Push only these attempt-specific images; observe immutable manifests")) == ("failure" if package_metadata else "skipped")
                      and states.get(step_name_digest("Remove owned local fixtures and verify zero remaining resources")) == "success",
                      "release_recovery_preflight_effects_not_excluded")
     return {"run_id": requested_run, "workflow_revision": previous["head_sha"],
@@ -170,10 +170,11 @@ def verified_preflight_record(policy, revision, origin, release_id, current, gat
             "jobs_sha256": hashlib.sha256(json.dumps(observed, sort_keys=True).encode()).hexdigest()}
 
 def reconciled_preflight(policy, revision, origin, release_id, current, gate, env, run):
-    """Reconcile at most the two explicitly reviewed pre-registry failures.
+    """Reconcile only the explicitly reviewed finite chain of terminal failures.
 
-    The second record pins the first record's exact bytes. Both live graphs,
-    policies and full history must agree; this never authorizes another retry.
+    The package-read failure includes successful registry logins and failed push
+    steps, not proof of historical zero effects. Fresh positive package privacy
+    and unique current-run destinations remain required before every new push.
     """
     requested_run = env.get("RELEASE_RECOVERY_PREFLIGHT_RUN", "")
     if not requested_run:
@@ -192,6 +193,25 @@ def reconciled_preflight(policy, revision, origin, release_id, current, gate, en
                  and isinstance(followup["record"], dict)
                  and record.get("run_id") != requested_run,
                  "release_recovery_preflight_chain_refused")
+    if followup["record"].get("run_id") != requested_run:
+        package = gate.load(gate.read(policy / "docs/legal/recovery-package-read.json"))
+        gate.require(set(package) == {"schema", "previous_record_sha256", "record"}
+                     and package["schema"] == "aikey-package-read-reconciliation/1"
+                     and package["previous_record_sha256"] == hashlib.sha256(
+                         gate.read(policy / "docs/legal/recovery-prepush-followup.json")).hexdigest()
+                     and isinstance(package["record"], dict)
+                     and package["record"].get("run_id") == requested_run,
+                     "release_recovery_package_chain_refused")
+        prior_env = dict(env, RELEASE_RECOVERY_PREFLIGHT_RUN=identifier(
+            followup["record"].get("run_id"), gate))
+        previous = reconciled_preflight(policy, revision, origin, release_id, current,
+                                        gate, prior_env, run)
+        result = verified_preflight_record(policy, revision, origin, release_id, current,
+                                          gate, run, package["record"], requested_run,
+                                          package_conclusion="success", package_metadata=True)
+        result["preceding_preflights"] = previous.get("preceding_preflights", []) + [
+            {key: value for key, value in previous.items() if key != "preceding_preflights"}]
+        return result
     previous = verified_preflight_record(policy, revision, origin, release_id, current,
                                          gate, run, record, identifier(record.get("run_id"), gate),
                                          package_conclusion="failure")
