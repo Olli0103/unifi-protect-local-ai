@@ -100,6 +100,15 @@ jobs:
         arguments=()
         if [ "${REQUEST_PUBLICATION}" = true ]; then arguments+=(--publish); fi
         python "${GITHUB_WORKSPACE}/policy/tools/release_prepare.py" --root "${GITHUB_WORKSPACE}/source" --tag "${RELEASE_TAG}" "${arguments[@]}"
+    - name: Verify package catalogue access before any staging or native build
+      if: inputs.publish && inputs.profile == 'image'
+      env:
+        RELEASE_PACKAGES_READ_TOKEN: ${{ secrets.RELEASE_PACKAGES_READ_TOKEN }}
+      shell: bash
+      run: |
+        set -euo pipefail
+        umask 077
+        python "${GITHUB_WORKSPACE}/policy/tools/release_publication.py" package-access --root "${GITHUB_WORKSPACE}/source" --tag "${RELEASE_TAG}"
   reserve:
     if: inputs.publish
     needs: qualify
@@ -441,6 +450,7 @@ jobs:
       id: preparation
       env:
         GH_TOKEN: ${{ github.token }}
+        RELEASE_PACKAGES_READ_TOKEN: ${{ secrets.RELEASE_PACKAGES_READ_TOKEN }}
       shell: bash
       run: |
         set -euo pipefail
@@ -499,6 +509,7 @@ jobs:
     - name: Bind pre-push intent to tested image configs and inventories
       env:
         GH_TOKEN: ${{ github.token }}
+        RELEASE_PACKAGES_READ_TOKEN: ${{ secrets.RELEASE_PACKAGES_READ_TOKEN }}
       shell: bash
       run: |
         set -euo pipefail
@@ -524,6 +535,7 @@ jobs:
       id: push
       env:
         GH_TOKEN: ${{ github.token }}
+        RELEASE_PACKAGES_READ_TOKEN: ${{ secrets.RELEASE_PACKAGES_READ_TOKEN }}
       shell: bash
       run: |
         set -euo pipefail
@@ -539,6 +551,7 @@ jobs:
     - name: Retain only sanitized complete native handoff
       env:
         GH_TOKEN: ${{ github.token }}
+        RELEASE_PACKAGES_READ_TOKEN: ${{ secrets.RELEASE_PACKAGES_READ_TOKEN }}
       shell: bash
       run: |
         set -euo pipefail
@@ -669,6 +682,7 @@ jobs:
       id: preparation
       env:
         GH_TOKEN: ${{ github.token }}
+        RELEASE_PACKAGES_READ_TOKEN: ${{ secrets.RELEASE_PACKAGES_READ_TOKEN }}
       shell: bash
       run: |
         set -euo pipefail
@@ -716,6 +730,7 @@ jobs:
     - name: Verify upstream signatures, bytes and cleanup before index intent
       env:
         GH_TOKEN: ${{ github.token }}
+        RELEASE_PACKAGES_READ_TOKEN: ${{ secrets.RELEASE_PACKAGES_READ_TOKEN }}
       shell: bash
       run: |
         set -euo pipefail
@@ -732,6 +747,7 @@ jobs:
       id: push
       env:
         GH_TOKEN: ${{ github.token }}
+        RELEASE_PACKAGES_READ_TOKEN: ${{ secrets.RELEASE_PACKAGES_READ_TOKEN }}
       shell: bash
       run: |
         set -euo pipefail
@@ -776,6 +792,7 @@ jobs:
     - name: Bind complete release set and sorted checksums
       env:
         GH_TOKEN: ${{ github.token }}
+        RELEASE_PACKAGES_READ_TOKEN: ${{ secrets.RELEASE_PACKAGES_READ_TOKEN }}
       shell: bash
       run: |
         set -euo pipefail
@@ -801,6 +818,7 @@ jobs:
     - name: Use the final consumer against the captured candidate
       env:
         GH_TOKEN: ${{ github.token }}
+        RELEASE_PACKAGES_READ_TOKEN: ${{ secrets.RELEASE_PACKAGES_READ_TOKEN }}
       shell: bash
       run: |
         set -euo pipefail
@@ -839,6 +857,7 @@ jobs:
       packages: read
     env:
       GH_TOKEN: ${{ github.token }}
+      RELEASE_PACKAGES_READ_TOKEN: ${{ secrets.RELEASE_PACKAGES_READ_TOKEN }}
       RELEASE_TAG: ${{ inputs.tag }}
       RELEASE_PROFILE: ${{ inputs.profile }}
       RESERVATION_ID: ${{ needs.reserve.outputs.release_id }}
