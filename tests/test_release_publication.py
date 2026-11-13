@@ -22,8 +22,8 @@ def plan():
         "source_revision": "a" * 40,
         "source_snapshot_sha256": "b" * 64,
         "images": {
-            "aikey": "ghcr.io/olli0103/local-aikey",
-            "aiport": "ghcr.io/olli0103/local-aiport",
+            "aikey": "ghcr.io/olli0103/local-aikey-0.1.0rc1",
+            "aiport": "ghcr.io/olli0103/local-aiport-0.1.0rc1",
         },
     }
 
@@ -150,3 +150,45 @@ def test_failed_complete_listing_is_not_absence_or_permission_to_create(tmp_path
     with pytest.raises(ValueError):
         publication.reserve(tmp_path, packet, run=failed, write=transport.write)
     assert transport.writes == []
+
+
+@pytest.mark.parametrize("fault", ["none", "missing", "public", "internal", "foreign_repo",
+                                    "wrong_type", "duplicate", "failed", "bad_page"])
+def test_private_staging_requires_complete_unambiguous_provider_observation(tmp_path, fault):
+    packet = plan()
+    packages = [{"name": image.rsplit("/", 1)[1], "package_type": "container",
+                 "visibility": "private", "repository": {"full_name": publication.gate.REPOSITORY}}
+                for image in packet["images"].values()]
+    if fault == "missing":
+        packages.pop()
+    elif fault in ("public", "internal"):
+        packages[0]["visibility"] = fault
+    elif fault == "foreign_repo":
+        packages[0]["repository"] = {"full_name": "fictional/foreign"}
+    elif fault == "wrong_type":
+        packages[0]["package_type"] = "npm"
+    elif fault == "duplicate":
+        packages.append(copy.deepcopy(packages[0]))
+
+    def run(argv, **kwargs):
+        assert argv == ["gh", "api", "--paginate", "--slurp",
+                        f"users/{publication.gate.OWNER}/packages?package_type=container&per_page=100"]
+        if fault == "failed":
+            raise publication.gate.PreparationError("release_metadata_unavailable")
+        return json.dumps([packages[:1], packages[1:]] if fault != "bad_page" else [{}])
+
+    if fault == "none":
+        publication.private_images(tmp_path, packet, run=run)
+    else:
+        with pytest.raises(ValueError):
+            publication.private_images(tmp_path, packet, run=run)
+        if fault == "missing":
+            publication.private_images(tmp_path, packet, run=run, allow_missing=True)
+        else:
+            with pytest.raises(ValueError):
+                publication.private_images(tmp_path, packet, run=run, allow_missing=True)
+
+
+def test_empty_package_profile_does_not_query_registry(tmp_path):
+    publication.private_images(tmp_path, dict(plan(), images={}),
+                               run=lambda *a, **kw: pytest.fail("registry touched"))

@@ -303,9 +303,10 @@ def read_intent(path, plan, architecture):
     return value
 
 
-def push_images(root, plan, intent_path, architecture, results, destination, *, run=docker):
+def push_images(root, plan, intent_path, architecture, results, destination, *, run=docker, metadata_run=gate.command):
     intent = read_intent(intent_path, plan, architecture)
     require(not Path(destination).exists(), "release_image_attempt_already_recorded")
+    publication.private_images(root, plan, run=metadata_run, allow_missing=True)
     profiles = {}
     for profile, item in intent["profiles"].items():
         raw = gate.read(Path(results) / (profile + "-sbom.cdx.json"), 32 * 1024 * 1024)
@@ -325,6 +326,7 @@ def push_images(root, plan, intent_path, architecture, results, destination, *, 
         {"schema": "aikey-release-registry-started/1", **identity(plan, architecture=architecture)},
     )
     for profile, item in intent["profiles"].items():
+        publication.private_images(root, plan, run=metadata_run, allow_missing=True)
         run(
             ["docker", "image", "tag", item["configuration_digest"], item["reference"]],
             root,
@@ -344,10 +346,13 @@ def push_images(root, plan, intent_path, architecture, results, destination, *, 
             and manifest["config"].get("digest") == item["configuration_digest"],
             "release_pushed_configuration_unverified",
         )
+        publication.private_images(root, dict(plan, images={profile: plan["images"][profile]}),
+                                   run=metadata_run)
         # Remove only our newly added local registry tag. The original owned
         # install tag remains for the existing cleanup/finalization contract.
         run(["docker", "image", "rm", item["reference"]], root, mutate=True)
         profiles[profile] = {**item, "digest": manifest_digest, "write_acknowledged": acknowledged}
+    publication.private_images(root, plan, run=metadata_run)
     value = {
         "schema": "aikey-release-staged-images/1",
         **identity(plan, architecture=architecture),
@@ -535,7 +540,7 @@ def verify_staged(
                 )
 
 
-def push_indexes(root, plan, destination, *, run=docker):
+def push_indexes(root, plan, destination, *, run=docker, metadata_run=gate.command):
     target = Path(destination)
     value = gate.load(gate.read(target.parent / "candidate-inputs.json", 128 * 1024))
     require(
@@ -556,12 +561,14 @@ def push_indexes(root, plan, destination, *, run=docker):
     publication.verify_packages(root, plan, target)
     package_bom(root, plan, target / "package.cdx.json")
     verify_staged(root, plan, target, value["architectures"])
+    publication.private_images(root, plan, run=metadata_run)
     emit(
         target.parent / "index-started.json",
         {"schema": "aikey-release-index-started/1", **identity(plan)},
     )
     images = {}
     for profile in plan["images"]:
+        publication.private_images(root, plan, run=metadata_run)
         members = {}
         for architecture in (("amd64", "arm64") if plan["images"] else ()):
             item = value["architectures"][architecture]["profiles"][profile]
@@ -612,6 +619,7 @@ def push_indexes(root, plan, destination, *, run=docker):
             and all(row.get("platform", {}).get("os") == "linux" for row in descriptors),
             "release_pushed_index_unverified",
         )
+        publication.private_images(root, plan, run=metadata_run)
         images[profile] = {
             "digest": index_digest,
             "write_acknowledged": acknowledged,
@@ -645,6 +653,7 @@ def finalize(root, plan, destination):
                 "sbom_attestation": base + "-sbom.sigstore.json",
             }
         images[profile] = {
+            "reference": plan["images"][profile] + "@" + image["digest"],
             "digest": image["digest"],
             "architectures": members,
             "provenance": profile + "-index-provenance.sigstore.json",

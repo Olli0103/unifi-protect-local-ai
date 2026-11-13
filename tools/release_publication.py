@@ -374,8 +374,9 @@ def checked_assets(directory, plan, *, root=None):
     for profile, image in images.items():
         require(
             isinstance(image, dict)
-            and set(image) == ({"digest", "provenance", "architectures", "source_bundle"}
-                               if bundle else {"digest", "provenance", "architectures"})
+            and set(image) == ({"reference", "digest", "provenance", "architectures", "source_bundle"}
+                               if bundle else {"reference", "digest", "provenance", "architectures"})
+            and image["reference"] == plan["images"][profile] + "@" + image["digest"]
             and (bundle is None or image["source_bundle"] == bundle)
             and image["provenance"] == profile + "-index-provenance.sigstore.json"
             and image["provenance"] in files
@@ -822,21 +823,41 @@ def verify_signatures(root, plan, directory, manifest, *, run=gate.command, insp
             )
 
 
-def public_images(root, plan, *, run=gate.command):
-    """First-publish visibility is the maintainer's UI setting, never changed here."""
-    for image in plan["images"].values():
+def private_images(root, plan, *, run=gate.command, allow_missing=False):
+    """Observe all pages; never infer absence from failed metadata transport.
+
+    New GHCR packages default to private. Existing public packages are not
+    staging destinations. Visibility remains an owner UI operation after the
+    positively verified source/package release, not an automated mutation.
+    """
+    if not plan["images"]:
+        return
+    pages = rows(run([
+        "gh", "api", "--paginate", "--slurp",
+        f"users/{gate.OWNER}/packages?package_type=container&per_page=100",
+    ], cwd=root))
+    require(pages and all(isinstance(page, list) for page in pages),
+            "release_package_listing_incomplete")
+    packages = [item for page in pages for item in page]
+    require(len(packages) <= 1024
+            and all(isinstance(item, dict) and isinstance(item.get("name"), str)
+                    for item in packages)
+            and len({item["name"] for item in packages}) == len(packages),
+            "release_package_listing_refused")
+    for profile, image in plan["images"].items():
+        require(image == f"ghcr.io/olli0103/local-{profile}-{plan['version']}",
+                "release_image_destinations_refused")
         name = image.rsplit("/", 1)[1]
-        value = gate.load(
-            run(["gh", "api", f"users/{gate.OWNER}/packages/container/{name}"], cwd=root)
-        )
-        require(
-            value.get("name") == name
-            and value.get("package_type") == "container"
-            and value.get("visibility") == "public"
-            and isinstance(value.get("repository"), dict)
-            and value["repository"].get("full_name") == gate.REPOSITORY,
-            "release_image_visibility_or_repository_unverified",
-        )
+        found = [item for item in packages if item["name"] == name]
+        if not found and allow_missing:
+            continue
+        require(len(found) == 1, "release_private_image_missing")
+        value = found[0]
+        require(value.get("package_type") == "container"
+                and value.get("visibility") == "private"
+                and isinstance(value.get("repository"), dict)
+                and value["repository"].get("full_name") == gate.REPOSITORY,
+                "release_image_not_private_or_repository_unverified")
 
 
 def asset_rows(root, release_id, *, run=gate.command):
@@ -900,7 +921,7 @@ def upload(root, plan, directory, *, run=gate.command, write=mutate):
 def _upload_snapshot(root, plan, directory, *, run=gate.command, write=mutate):
     manifest = checked_assets(directory, plan, root=root)
     original(root, plan, run=run)
-    public_images(root, plan, run=run)
+    private_images(root, plan, run=run)
     verify_signatures(root, plan, directory, manifest, run=run)
     verify_packages(root, plan, directory, run=run)
     if asset_rows(root, plan["reservation_id"], run=run):
@@ -948,7 +969,7 @@ def complete(root, plan, directory, *, run=gate.command, write=mutate):
 
 def _complete_snapshot(root, plan, directory, *, run=gate.command, write=mutate):
     manifest = checked_assets(directory, plan, root=root)
-    public_images(root, plan, run=run)
+    private_images(root, plan, run=run)
     uploaded_assets(root, plan, manifest, directory, run=run)
     verify_signatures(root, plan, directory, manifest, run=run)
     verify_packages(root, plan, directory, run=run)
@@ -965,6 +986,9 @@ def _complete_snapshot(root, plan, directory, *, run=gate.command, write=mutate)
         + plan["source_revision"]
         + "/docs/releasing.md .\n\nThis is not native feature-parity, quality, sustained-operation "
         "or independent-installation acceptance. No model weights or camera data are included.\n"
+        + ("\nImages remain private. Only after verifying these public source/package assets "
+           "may the owner make the exact versioned GHCR packages public; no image "
+           "visibility was changed by this workflow.\n" if plan["images"] else "")
     )
     acknowledged = True
     with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=Path(root).parent) as body:
@@ -1006,6 +1030,8 @@ def _complete_snapshot(root, plan, directory, *, run=gate.command, write=mutate)
         "source_revision": plan["source_revision"],
         "workflow_run_id": plan["workflow_run_id"],
         "published": True,
+        "images_public": False,
+        "image_visibility_action": "owner_after_source_release" if plan["images"] else "none",
         "write_acknowledged": acknowledged,
         "provider_readback_verified": True,
     }

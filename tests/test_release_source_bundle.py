@@ -52,7 +52,7 @@ def fixture(tmp_path):
         shutil.copytree(directory, inputs / ("container-install-" + directory.name))
     plan = {"source_revision": revision, "tag": "v0.1.0rc1", "source_date_epoch": 1700000000,
             "source_delivery": {"manifest_sha256": pin},
-            "images": {"aikey": "ghcr.io/olli0103/local-aikey", "aiport": "ghcr.io/olli0103/local-aiport"}}
+            "images": {"aikey": "ghcr.io/olli0103/local-aikey-0.1.0rc1", "aiport": "ghcr.io/olli0103/local-aiport-0.1.0rc1"}}
     return root, source_root, inputs, tmp_path / "delivery", plan
 
 

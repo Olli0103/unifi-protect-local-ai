@@ -4,8 +4,9 @@ This implements WP3's transport and fail-closed source checks. It does not
 declare the selected upstream sources complete corresponding source, rebuild
 all third-party binaries or fill the owner's rights approvals.
 
-The public destinations are `ghcr.io/olli0103/local-aikey` and
-`ghcr.io/olli0103/local-aiport`. Device protocol identities remain unchanged.
+The alpha destinations are `ghcr.io/olli0103/local-aikey-0.1.0a1` and
+`ghcr.io/olli0103/local-aiport-0.1.0a1`; other releases use their exact version
+suffix, never an unversioned or already-public staging namespace. Device protocol identities remain unchanged.
 
 ## Owner inputs
 
@@ -64,9 +65,19 @@ database images are outside this four-default-image matrix.
    The standard root attestation signs release.json and SHA256SUMS, binding the
    actual source part bytes transitively; no nonexistent direct-part signatures
    are claimed. Upload and provider digest read-back cover the source assets.
-9. The existing protected final approval and standard signature/consumer
-   checks still precede public release. No tag, registry push, signing or
-   release dispatch is performed by implementing or testing this path.
+9. All registry writes require complete provider metadata: a new package must
+   be absent, an existing one private and associated with this repository.
+   GHCR documents private visibility as the initial default. Post-push, index,
+   asset upload and release completion recheck private status; public packages
+   are refused. The owner must not race staging with a visibility change.
+10. The protected final approval publishes the signed sources/packages first,
+   with positive provider read-back while images remain private. Only afterward
+   does the owner verify public source access and manually make the exact
+   versioned image packages public. The signed manifest includes each immutable
+   repository/digest reference. No automatic visibility mutation or relocation
+   into an existing public package occurs. See [GHCR's documented initial
+   visibility](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#pushing-container-images).
+   Implementing/testing this path performs no release dispatch or publication.
 
 ## Recipient verification
 

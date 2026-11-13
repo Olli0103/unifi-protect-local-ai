@@ -25,8 +25,8 @@ def decision():
             "tag": "v0.1.0rc1",
             "package_destination": "github-release",
             "images": {
-                "aikey": "ghcr.io/olli0103/local-aikey",
-                "aiport": "ghcr.io/olli0103/local-aiport",
+                "aikey": "ghcr.io/olli0103/local-aikey-0.1.0rc1",
+                "aiport": "ghcr.io/olli0103/local-aiport-0.1.0rc1",
             },
             "signing_method": "github_oidc_sigstore",
             "github_environment": "release",
@@ -250,6 +250,8 @@ def tagged_source(tmp_path, request):
         **decision(),
     }
     record["publication"]["tag"] = tag
+    record["publication"]["images"] = {p: "ghcr.io/olli0103/local-" + p + "-" + version
+                                         for p in ("aikey", "aiport")}
     evidence = root / "docs/legal/release-evidence.json"
     evidence.write_text(json.dumps(record))
     env = dict(
@@ -473,3 +475,11 @@ def test_release_kinds_preserve_full_source_and_publication_guards(tagged_source
     assert sum(len(row["job_ids"]) for row in result["continuous_integration"]) == 7
     for suffix in ("a0", "a01", "a-1", "a1rc1", "b1", "a1+local", "a1;echo"):
         assert gate.TAG.fullmatch("v0.1.0" + suffix) is None
+
+
+def test_unversioned_public_namespace_is_not_an_image_staging_destination():
+    record = decision()
+    record["publication"]["images"] = {p: "ghcr.io/olli0103/local-" + p
+                                        for p in ("aikey", "aiport")}
+    with pytest.raises(ValueError, match="destinations_refused"):
+        gate.publication(record, "v0.1.0rc1")

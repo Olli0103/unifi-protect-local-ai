@@ -35,6 +35,7 @@ def assets(tmp_path):
     images = {}
     for profile in ("aikey", "aiport"):
         image = {
+            "reference": packet["images"][profile] + "@sha256:" + sha(profile.encode()),
             "digest": "sha256:" + sha(profile.encode()),
             "provenance": profile + "-index-provenance.sigstore.json",
             "architectures": {},
@@ -459,7 +460,7 @@ class CandidateProvider:
         self.persist = True
         self.fail_signature = False
         self.corrupt_asset = False
-        self.private = False
+        self.private = True
 
     def read(self, argv, **kwargs):
         if argv[:3] == ["gh", "attestation", "verify"]:
@@ -474,15 +475,13 @@ class CandidateProvider:
             return json.dumps([[self.release]])
         if argv[-1].endswith("/assets?per_page=100"):
             return json.dumps([self.remote_assets])
-        name = argv[-1].rsplit("/", 1)[1]
-        return json.dumps(
-            {
-                "name": name,
-                "package_type": "container",
-                "visibility": "private" if self.private else "public",
-                "repository": {"full_name": publication.gate.REPOSITORY},
-            }
-        )
+        assert argv[-1] == f"users/{publication.gate.OWNER}/packages?package_type=container&per_page=100"
+        return json.dumps([[{
+            "name": image.rsplit("/", 1)[1],
+            "package_type": "container",
+            "visibility": "private" if self.private else "public",
+            "repository": {"full_name": publication.gate.REPOSITORY},
+        } for image in self.packet["images"].values()]])
 
     def write(self, argv, root):
         self.writes.append(argv)
@@ -553,7 +552,7 @@ def test_upload_then_publish_uses_captured_bytes_and_provider_readback(candidate
     [
         "signature",
         "changed_archive",
-        "private_image",
+        "public_image",
         "lost_upload",
         "false_digest",
         "lost_publish",
@@ -570,11 +569,11 @@ def test_failed_boundary_never_becomes_a_second_write_or_success(candidate, faul
         provider.persist, provider.lose_ack = False, True
     elif fault == "false_digest":
         provider.corrupt_asset = True
-    if fault in ("private_image", "lost_publish"):
+    if fault in ("public_image", "lost_publish"):
         publication.upload(root, packet, directory, run=provider.read, write=provider.write)
         provider.writes.clear()
-        if fault == "private_image":
-            provider.private = True
+        if fault == "public_image":
+            provider.private = False
         else:
             provider.persist, provider.lose_ack = False, True
         operation = publication.complete
@@ -629,3 +628,31 @@ def test_existing_exact_upload_is_reconciled_without_a_second_upload(candidate):
     with pytest.raises(ValueError, match="asset_set"):
         publication.upload(root, packet, directory, run=provider.read, write=provider.write)
     assert provider.writes == []
+
+
+def test_public_registry_namespace_is_refused_before_asset_upload(candidate):
+    root, packet, directory, _, provider = candidate
+    provider.private = False
+    with pytest.raises(ValueError, match="not_private"):
+        publication.upload(root, packet, directory, run=provider.read, write=provider.write)
+    assert provider.writes == [] and provider.release["draft"] is True
+
+
+def test_source_release_succeeds_with_private_images_without_changing_registry(candidate):
+    root, packet, directory, manifest, provider = candidate
+    publication.upload(root, packet, directory, run=provider.read, write=provider.write)
+    result = publication.complete(root, packet, directory, run=provider.read, write=provider.write)
+    assert result["published"] is True and result["images_public"] is False
+    assert result["image_visibility_action"] == "owner_after_source_release"
+    assert provider.private is True
+    assert all(argv[:2] == ["gh", "release"] for argv in provider.writes)
+    for profile, image in manifest["images"].items():
+        assert image["reference"] == packet["images"][profile] + "@" + image["digest"]
+
+
+def test_manifest_cannot_substitute_another_image_namespace(assets):
+    root, packet, directory, manifest = assets
+    manifest["images"]["aikey"]["reference"] = "ghcr.io/fictional/foreign@sha256:" + "a" * 64
+    seal(directory, manifest)
+    with pytest.raises(ValueError, match="image_manifest_refused"):
+        publication.checked_assets(directory, packet)

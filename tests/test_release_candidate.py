@@ -24,6 +24,15 @@ SPEC.loader.exec_module(candidate)
 sys.path.pop(0)
 
 
+def private_metadata(argv, **kwargs):
+    assert argv == ["gh", "api", "--paginate", "--slurp",
+                    f"users/{candidate.gate.OWNER}/packages?package_type=container&per_page=100"]
+    return json.dumps([[{"name": image.rsplit("/", 1)[1], "package_type": "container",
+                        "visibility": "private",
+                        "repository": {"full_name": candidate.gate.REPOSITORY}}
+                       for image in plan()["images"].values()]])
+
+
 @pytest.fixture
 def native_attempt(tmp_path, monkeypatch):
     root = tmp_path / "source"
@@ -239,7 +248,7 @@ def test_native_handoff_rejects_mismatch_before_any_image_write(native_attempt, 
 
 
 @pytest.mark.parametrize(
-    "fault", ["none", "lost_ack", "unobserved", "wrong_config", "stale_intent"]
+    "fault", ["none", "lost_ack", "unobserved", "wrong_config", "stale_intent", "public_before", "public_after", "new_packages"]
 )
 def test_registry_push_ack_is_not_authority_and_is_never_retried(native_attempt, fault):
     root, packet, results, inspected, _, inspect = native_attempt
@@ -286,30 +295,41 @@ def test_registry_push_ack_is_not_authority_and_is_never_retried(native_attempt,
             assert argv[:3] in (["docker", "image", "tag"], ["docker", "image", "rm"])
         return b""
 
+    def metadata(argv, **kwargs):
+        rows = json.loads(private_metadata(argv, **kwargs))
+        if fault == "new_packages":
+            pushed = {call[-1].split(":")[0].rsplit("/", 1)[1] for call in calls
+                      if call[:3] == ["docker", "image", "push"]}
+            rows[0] = [row for row in rows[0] if row["name"] in pushed]
+        if fault == "public_before" or (fault == "public_after" and any(
+                call[:3] == ["docker", "image", "push"] for call in calls)):
+            rows[0][0]["visibility"] = "public"
+        return json.dumps(rows)
+
     destination = root.parent / "staged.json"
     if fault == "stale_intent":
         packet["workflow_run_id"] = "124"
-    if fault in ("none", "lost_ack"):
+    if fault in ("none", "lost_ack", "new_packages"):
         result = candidate.push_images(
-            root, packet, intent_path, "amd64", results, destination, run=docker
+            root, packet, intent_path, "amd64", results, destination, run=docker, metadata_run=metadata
         )
         assert all(
-            item["write_acknowledged"] is (fault == "none") for item in result["profiles"].values()
+            item["write_acknowledged"] is (fault != "lost_ack") for item in result["profiles"].values()
         )
         assert len([argv for argv in calls if argv[:3] == ["docker", "image", "push"]]) == 2
         assert len([argv for argv in calls if argv[:3] == ["docker", "image", "rm"]]) == 2
         with pytest.raises(ValueError, match="already_recorded"):
             candidate.push_images(
-                root, packet, intent_path, "amd64", results, destination, run=docker
+                root, packet, intent_path, "amd64", results, destination, run=docker, metadata_run=metadata
             )
     else:
         with pytest.raises(ValueError):
             candidate.push_images(
-                root, packet, intent_path, "amd64", results, destination, run=docker
+                root, packet, intent_path, "amd64", results, destination, run=docker, metadata_run=metadata
             )
         assert not destination.exists()
         assert len([argv for argv in calls if argv[:3] == ["docker", "image", "push"]]) == (
-            0 if fault == "stale_intent" else 1
+            0 if fault in ("stale_intent", "public_before") else 1
         )
 
 
@@ -500,13 +520,13 @@ def test_complete_index_handoff_uses_real_archives_and_standard_verifier_contrac
 
     if fault == "unobserved":
         with pytest.raises(ValueError):
-            candidate.push_indexes(root, packet, destination, run=docker)
+            candidate.push_indexes(root, packet, destination, run=docker, metadata_run=private_metadata)
         assert len(writes) == 1 and not (destination.parent / "indexes.json").exists()
         with pytest.raises(FileExistsError):
-            candidate.push_indexes(root, packet, destination, run=docker)
+            candidate.push_indexes(root, packet, destination, run=docker, metadata_run=private_metadata)
         assert len(writes) == 1
         return
-    result = candidate.push_indexes(root, packet, destination, run=docker)
+    result = candidate.push_indexes(root, packet, destination, run=docker, metadata_run=private_metadata)
     assert len(writes) == 2 and all(
         item["write_acknowledged"] is (fault == "none") for item in result.values()
     )
@@ -627,3 +647,19 @@ def test_release_kind_registry_references_are_attempt_bound_and_read_only(tmp_pa
             assert manifest == {"schemaVersion": 2}
             assert ref.endswith("-run" + packet["workflow_run_id"])
     assert len(calls) == 6
+
+
+def test_public_package_refuses_index_write_before_started_receipt(assembly):
+    root, packet, inputs, destination, _ = assembly
+    candidate.indexes(root, packet, inputs, destination)
+    writes = []
+
+    def metadata(argv, **kwargs):
+        rows = json.loads(private_metadata(argv, **kwargs))
+        rows[0][1]["visibility"] = "public"
+        return json.dumps(rows)
+
+    with pytest.raises(ValueError, match="not_private"):
+        candidate.push_indexes(root, packet, destination,
+                               run=lambda *a, **kw: writes.append(a), metadata_run=metadata)
+    assert writes == [] and not (destination.parent / "index-started.json").exists()

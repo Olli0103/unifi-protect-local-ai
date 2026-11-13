@@ -150,8 +150,8 @@ def publication(record, tag, *, profile="image"):
         isinstance(images, dict)
         and set(images) == {"aikey", "aiport"}
         and all(isinstance(image, str) and IMAGE.fullmatch(image) for image in images.values())
-        and images == {"aikey": "ghcr.io/olli0103/local-aikey",
-                       "aiport": "ghcr.io/olli0103/local-aiport"},
+        and images == {profile: "ghcr.io/olli0103/local-" + profile + "-" + tag[1:]
+                       for profile in ("aikey", "aiport")},
         "release_image_destinations_refused",
     )
     return value
