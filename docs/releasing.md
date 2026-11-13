@@ -14,7 +14,7 @@ is not evidence of a published/supportable binary release. Use increasing
 Both kinds are published as GitHub prereleases. A final `vN.N.N` tag requires
 the matching final project version and actual maintainer release decision.
 Alpha spelling does not bypass any source, rights, signing or publication gate.
-The first proposed alpha is described in [the alpha delivery scope](alpha-release.md).
+The first alpha's scope is described in [the alpha delivery scope](alpha-release.md).
 Version spelling never upgrades experimental behavior into parity.
 
 | Surface | Present qualification | Support boundary |
@@ -43,11 +43,18 @@ package/image upload or signing, including candidate packages in CI artifacts.
 Its non-audit check, the reviewed source fingerprint and every required evidence
 entry for the selected artifact profile must pass. Package mode does not require
 image or model-rights approval for dependencies/weights that it does not ship.
-Existing employer/license-selection statements do not establish
-the remaining origin, redistribution, controller, dependency, model or legal facts.
+Employer/license-selection statements alone do not establish origin,
+redistribution, controller, dependency, model or legal facts. The later retained
+owner decisions for the exact alpha snapshot are described in the dated
+[alpha distribution status](legal/alpha-distribution-0.1.0a1.md); they are not
+engineering-generated rights attestations or model/firmware permissions.
 
 The `publication` object in [release-evidence.json](legal/release-evidence.json)
-is deliberately pending. Only the maintainer may record a substantiated decision:
+was pending before the 2026-11-13 owner decisions. It now records `verified`
+private-staging authorization for the named alpha snapshot, with final candidate
+publication and public image visibility explicitly reserved. This field is not
+a receipt of publication or permission to approve the final `release` environment.
+Only the maintainer may record a substantiated decision covering:
 
 - Exact existing public tag, matching `pyproject.toml` and the dispatched main
   commit. Supported spelling is `vN.N.N`, `vN.N.NaN` or `vN.N.NrcN` (for example,
@@ -66,8 +73,11 @@ is deliberately pending. Only the maintainer may record a substantiated decision
 
 Keep private permissions and agreements outside Git. Any tracked release-input
 change invalidates the reviewed fingerprint (the evidence record itself is
-excluded to avoid self-reference). Complete the actual review on the final tree,
-then create the public tag at that commit and wait for the main-push CI runs.
+excluded to avoid self-reference). This includes documentation-only changes:
+the retained fingerprint approves the original alpha tree, not the tree containing
+these corrections. Do not rebind evidence or move an existing tag to absorb them.
+For a new release source, complete the actual review on the final tree, then
+create its matching public tag and wait for the main-push CI runs.
 Seven actual jobs must succeed: five security/quality jobs and two native
 container-install jobs. A bot status is not an eighth workflow job or independent
 review. The current main commit and tag must agree: building an older tag while
@@ -84,7 +94,56 @@ bundle or nonzero exact-revision source-inventory result blocks upload. The
 source index and ordered archive parts ship alongside the other assets in the
 same GitHub release and are hash-bound by the signed release manifest.
 
+## Observed alpha attempt (2026-11-13)
+
+Tag `v0.1.0a1` points to `a3da9c21715dade37fbe3a25529fa85fd17dc430`.
+Its seven prerequisite main-CI jobs passed, and a current internal source bundle
+was verified. The owner authorized private staging and approved `release-stage`
+for [run 43402688428](https://github.com/Olli0103/unifi-protect-local-ai/actions/runs/43402688428).
+That run **failed in reservation** after creating private draft `444049704`.
+All downstream source/package/image/assembly/publication jobs were skipped:
+there is no signed candidate, no registry push by this run and no uploaded
+release assets (GitHub's automatic source-archive links are not such assets).
+The exact reservation refusal was not retained; its root cause is undetermined.
+
+Preserve that draft, run identity and tag; do not redispatch, rerun attempt 2,
+delete/recreate the draft or move the tag as a workaround. Deliberate recovery
+requires review of the retained failure and any changed release source. The
+final `release` approval and public image visibility remain owner gates, not
+steps already authorized by staging. See the
+[alpha distribution record](legal/alpha-distribution-0.1.0a1.md) for evidence
+references and the distinction between prepared and delivered sources.
+
+## Controlled recovery of the original empty draft
+
+A failed reservation may be reconciled with explicit `recovery_run` and
+`recovery_release_id` inputs on the same owner-only workflow. This is a new,
+reviewed execution, not an attempt-2 rerun or permission to create another draft.
+The original tag and artifact source remain unchanged. Policy and source use
+separate clean checkouts; both require their own exact-head seven-job CI.
+Normal mode still requires source and dispatched policy revisions to agree.
+
+Recovery accepts only an owner-dispatched original run that failed in reservation,
+with successful qualification and all downstream jobs skipped. Complete dispatch
+history must exclude an intervening attempt. The exact original ID, source, tag,
+ownership marker and empty asset list are positively checked; reservation adopts
+that draft with **no write**. Unknown history, existing assets or earlier image
+activity require separate reconciliation, not an automatic retry.
+
+The candidate's schema-2 manifest binds the unchanged source to the repaired
+workflow digest, new execution ID and original reservation ID/run. Standard
+GitHub/Sigstore verification pins the actual executing policy digest, not the
+older artifact-source digest; source-package bytes and every shipped module are
+independently compared with that tagged source. This does not transfer source
+approval to the policy checkout or ship changed policy files in the alpha.
+Final `release` approval and public image visibility remain separate owner gates.
+Refusal JSON is logged with fixed codes and retained even after reservation fails.
+An implemented recovery path is not evidence of an actually signed candidate.
+
 ## Concrete workflow
+
+The following is the workflow contract, not a claim that every step completed
+in the observed alpha attempt.
 
 [Owner-gated signed release](../.github/workflows/publish-release.yml) has only a
 manual `workflow_dispatch` trigger, restricted again in the gate to the owner,
@@ -205,7 +264,10 @@ Current upgrade/recovery source contracts are described in
 [Apple upgrade recovery](apple-upgrade-recovery.md) and
 [uninstall/restore](uninstall-restore.md). Source-predecessor fixtures are not a
 prior publicly supported release or proof of native Mac/NAS power-loss recovery.
-Actual first signed publication, redistribution/legal clearance, native pairing,
-quality and long-running/independent-installation acceptance remain separate open
-requirements. Report failures through the project's existing issue tracker with
-sanitized metadata, not private keys, model weights or camera data.
+The exact-snapshot rights/source preparation decisions recorded above are no
+longer blanket missing-evidence items. Actual signed-candidate qualification and
+the final public-release decision remain outstanding. Those decisions do not
+establish a legal guarantee, new firmware/model permissions, general native
+pairing, quality or long-running/independent-installation acceptance. Report
+failures through the project's existing issue tracker with sanitized metadata,
+not private keys, model weights or camera data.

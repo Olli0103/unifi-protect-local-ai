@@ -13,10 +13,24 @@ name: Owner-gated signed release
         options: [package, image]
         default: package
         required: true
+      recovery_run:
+        description: Original failed empty-draft run to reconcile; empty for a new release
+        type: string
+        default: ''
+      recovery_release_id:
+        description: Exact original empty draft ID; required together with recovery_run
+        type: string
+        default: ''
       publish:
         description: Request reviewed staging, then final candidate approval (default is read-only)
         type: boolean
         default: false
+defaults:
+  run:
+    working-directory: source
+env:
+  RELEASE_RECOVERY_RUN: ${{ inputs.recovery_run }}
+  RELEASE_RECOVERY_ID: ${{ inputs.recovery_release_id }}
 permissions:
   contents: read
 concurrency:
@@ -24,6 +38,8 @@ concurrency:
   cancel-in-progress: false
 jobs:
   qualify:
+    outputs:
+      source_revision: ${{ steps.source.outputs.source_revision }}
     if: github.repository == 'Olli0103/unifi-protect-local-ai' && github.ref == 'refs/heads/main' && github.actor == 'Olli0103'
       && github.triggering_actor == 'Olli0103' && github.run_attempt == 1
     runs-on: ubuntu-24.04
@@ -42,10 +58,26 @@ jobs:
         ref: ${{ github.sha }}
         fetch-depth: 0
         persist-credentials: false
+        path: policy
     - name: Python 3.12
       uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
       with:
         python-version: '3.12'
+    - name: Resolve unchanged source or explicit original-run recovery
+      id: source
+      working-directory: policy
+      shell: bash
+      run: |
+        set -euo pipefail
+        umask 077
+        python tools/release_recovery.py resolve
+    - name: Exact artifact source separate from workflow policy
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      with:
+        ref: ${{ steps.source.outputs.source_revision }}
+        fetch-depth: 0
+        persist-credentials: false
+        path: source
     # runner is unavailable in jobs.<job_id>.env; initialize on the runner.
     - name: Set runner-local source delivery path
       shell: bash
@@ -62,7 +94,7 @@ jobs:
         umask 077
         arguments=()
         if [ "${REQUEST_PUBLICATION}" = true ]; then arguments+=(--publish); fi
-        python tools/release_prepare.py --tag "${RELEASE_TAG}" "${arguments[@]}"
+        python "${GITHUB_WORKSPACE}/policy/tools/release_prepare.py" --root "${GITHUB_WORKSPACE}/source" --tag "${RELEASE_TAG}" "${arguments[@]}"
   reserve:
     if: inputs.publish
     needs: qualify
@@ -77,6 +109,7 @@ jobs:
       RELEASE_TAG: ${{ inputs.tag }}
       RELEASE_PROFILE: ${{ inputs.profile }}
     outputs:
+      source_revision: ${{ needs.qualify.outputs.source_revision }}
       release_id: ${{ steps.reserve.outputs.release_id }}
     steps:
     - name: Exact dispatch source, no persisted Git credentials
@@ -85,6 +118,14 @@ jobs:
         ref: ${{ github.sha }}
         fetch-depth: 0
         persist-credentials: false
+        path: policy
+    - name: Exact artifact source separate from workflow policy
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      with:
+        ref: ${{ needs.qualify.outputs.source_revision }}
+        fetch-depth: 0
+        persist-credentials: false
+        path: source
     - name: Python 3.12
       uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
       with:
@@ -102,7 +143,7 @@ jobs:
       run: |
         set -euo pipefail
         umask 077
-        python tools/release_prepare.py --tag "${RELEASE_TAG}" --publish > "${RUNNER_TEMP}/fresh-preparation.json"
+        python "${GITHUB_WORKSPACE}/policy/tools/release_prepare.py" --root "${GITHUB_WORKSPACE}/source" --tag "${RELEASE_TAG}" --publish > "${RUNNER_TEMP}/fresh-preparation.json"
         python - <<'PYCODE'
         import json,os
         from pathlib import Path
@@ -118,7 +159,7 @@ jobs:
       run: |
         set -euo pipefail
         umask 077
-        python tools/release_publication.py reserve --tag "${RELEASE_TAG}" > "${RUNNER_TEMP}/release-reservation.json"
+        python "${GITHUB_WORKSPACE}/policy/tools/release_publication.py" --root "${GITHUB_WORKSPACE}/source" reserve --tag "${RELEASE_TAG}" > "${RUNNER_TEMP}/release-reservation.json"
         python - <<'PY'
         import json, os
         from pathlib import Path
@@ -128,6 +169,7 @@ jobs:
             output.write("release_id="+str(value["release_id"])+"\n")
         PY
     - name: Retain release-reservation
+      if: ${{ !cancelled() && (steps.reserve.outcome == 'success' || steps.reserve.outcome == 'failure') }}
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
       with:
         name: release-reservation
@@ -153,6 +195,14 @@ jobs:
         ref: ${{ github.sha }}
         fetch-depth: 0
         persist-credentials: false
+        path: policy
+    - name: Exact artifact source separate from workflow policy
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      with:
+        ref: ${{ needs.reserve.outputs.source_revision }}
+        fetch-depth: 0
+        persist-credentials: false
+        path: source
     - name: Python 3.12
       uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
       with:
@@ -170,7 +220,7 @@ jobs:
       run: |
         set -euo pipefail
         umask 077
-        python tools/release_prepare.py --tag "${RELEASE_TAG}" --publish > "${RUNNER_TEMP}/fresh-preparation.json"
+        python "${GITHUB_WORKSPACE}/policy/tools/release_prepare.py" --root "${GITHUB_WORKSPACE}/source" --tag "${RELEASE_TAG}" --publish > "${RUNNER_TEMP}/fresh-preparation.json"
         python - <<'PYCODE'
         import json,os
         from pathlib import Path
@@ -207,7 +257,7 @@ jobs:
       run: |
         set -euo pipefail
         umask 077
-        python tools/release_sources.py --tag "${RELEASE_TAG}" --sources "${RUNNER_TEMP}/upstream-sources" --inventories "${RUNNER_TEMP}/qualified-source-inventories" --destination "${RUNNER_TEMP}/source-delivery"
+        python "${GITHUB_WORKSPACE}/policy/tools/release_sources.py" --root "${GITHUB_WORKSPACE}/source" --tag "${RELEASE_TAG}" --sources "${RUNNER_TEMP}/upstream-sources" --inventories "${RUNNER_TEMP}/qualified-source-inventories" --destination "${RUNNER_TEMP}/source-delivery"
     - name: Retain only validated same-release source delivery
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
       with:
@@ -240,6 +290,14 @@ jobs:
         ref: ${{ github.sha }}
         fetch-depth: 0
         persist-credentials: false
+        path: policy
+    - name: Exact artifact source separate from workflow policy
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      with:
+        ref: ${{ needs.reserve.outputs.source_revision }}
+        fetch-depth: 0
+        persist-credentials: false
+        path: source
     - name: Python 3.12
       uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
       with:
@@ -257,7 +315,7 @@ jobs:
       run: |
         set -euo pipefail
         umask 077
-        python tools/release_prepare.py --tag "${RELEASE_TAG}" --publish > "${RUNNER_TEMP}/fresh-preparation.json"
+        python "${GITHUB_WORKSPACE}/policy/tools/release_prepare.py" --root "${GITHUB_WORKSPACE}/source" --tag "${RELEASE_TAG}" --publish > "${RUNNER_TEMP}/fresh-preparation.json"
         python - <<'PYCODE'
         import json,os
         from pathlib import Path
@@ -279,7 +337,7 @@ jobs:
       run: |
         set -euo pipefail
         umask 077
-        bash tools/release_package_build.sh
+        bash "${GITHUB_WORKSPACE}/policy/tools/release_package_build.sh"
     - name: Package provenance
       id: package_provenance
       uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6
@@ -343,9 +401,11 @@ jobs:
       RELEASE_PROFILE: ${{ inputs.profile }}
       RESERVATION_ID: ${{ needs.reserve.outputs.release_id }}
       INSTALL_ARCH: ${{ matrix.arch }}
-      SOURCE_REVISION: ${{ github.sha }}
+      SOURCE_REVISION: ${{ needs.reserve.outputs.source_revision }}
       SOURCE_REPOSITORY: ${{ github.repository }}
       INSTALL_NONCE: ${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.arch }}
+      INSTALL_SOURCE_ROOT: ${{ github.workspace }}/source
+      INSTALL_TOOLS_ROOT: ${{ github.workspace }}/policy/tools
     steps:
     - name: Exact dispatch source, no persisted Git credentials
       uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -353,6 +413,14 @@ jobs:
         ref: ${{ github.sha }}
         fetch-depth: 0
         persist-credentials: false
+        path: policy
+    - name: Exact artifact source separate from workflow policy
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      with:
+        ref: ${{ needs.reserve.outputs.source_revision }}
+        fetch-depth: 0
+        persist-credentials: false
+        path: source
     - name: Python 3.12
       uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
       with:
@@ -370,7 +438,7 @@ jobs:
       run: |
         set -euo pipefail
         umask 077
-        python tools/release_prepare.py --tag "${RELEASE_TAG}" --publish > "${RUNNER_TEMP}/fresh-preparation.json"
+        python "${GITHUB_WORKSPACE}/policy/tools/release_prepare.py" --root "${GITHUB_WORKSPACE}/source" --tag "${RELEASE_TAG}" --publish > "${RUNNER_TEMP}/fresh-preparation.json"
         python - <<'PYCODE'
         import json,os
         from pathlib import Path
@@ -408,25 +476,25 @@ jobs:
       run: |
         set -euo pipefail
         umask 077
-        bash tools/container_install_run.sh context
+        bash "${GITHUB_WORKSPACE}/policy/tools/container_install_run.sh" context
     - name: Install checksum-pinned Syft
       shell: bash
       run: |
         set -euo pipefail
         umask 077
-        bash tools/container_install_run.sh scanner
+        bash "${GITHUB_WORKSPACE}/policy/tools/container_install_run.sh" scanner
     - name: Run the existing eight installed-source/state cases natively
       shell: bash
       run: |
         set -euo pipefail
         umask 077
-        bash tools/container_install_run.sh build
+        bash "${GITHUB_WORKSPACE}/policy/tools/container_install_run.sh" build
     - name: Bind pre-push intent to tested image configs and inventories
       shell: bash
       run: |
         set -euo pipefail
         umask 077
-        python tools/release_candidate.py image-intent --tag "${RELEASE_TAG}" --release-id "${RESERVATION_ID}" --architecture "${INSTALL_ARCH}" --qualified "${RUNNER_TEMP}/qualified-images" --results "${RUNNER_TEMP}/container-results" --destination "${RUNNER_TEMP}/image-intent.json"
+        python "${GITHUB_WORKSPACE}/policy/tools/release_candidate.py" --root "${GITHUB_WORKSPACE}/source" image-intent --tag "${RELEASE_TAG}" --release-id "${RESERVATION_ID}" --architecture "${INSTALL_ARCH}" --qualified "${RUNNER_TEMP}/qualified-images" --results "${RUNNER_TEMP}/container-results" --destination "${RUNNER_TEMP}/image-intent.json"
     - name: Retain release-image-intent-${{ matrix.arch }}
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
       with:
@@ -449,20 +517,20 @@ jobs:
       run: |
         set -euo pipefail
         umask 077
-        python tools/release_candidate.py push-images --tag "${RELEASE_TAG}" --release-id "${RESERVATION_ID}" --architecture "${INSTALL_ARCH}" --intent "${RUNNER_TEMP}/image-intent.json" --results "${RUNNER_TEMP}/container-results" --destination "${RUNNER_TEMP}/staged-images.json"
+        python "${GITHUB_WORKSPACE}/policy/tools/release_candidate.py" --root "${GITHUB_WORKSPACE}/source" push-images --tag "${RELEASE_TAG}" --release-id "${RESERVATION_ID}" --architecture "${INSTALL_ARCH}" --intent "${RUNNER_TEMP}/image-intent.json" --results "${RUNNER_TEMP}/container-results" --destination "${RUNNER_TEMP}/staged-images.json"
     - name: Remove owned local fixtures and verify zero remaining resources
       if: always()
       shell: bash
       run: |
         set -euo pipefail
         umask 077
-        bash tools/container_install_run.sh cleanup
+        bash "${GITHUB_WORKSPACE}/policy/tools/container_install_run.sh" cleanup
     - name: Retain only sanitized complete native handoff
       shell: bash
       run: |
         set -euo pipefail
         umask 077
-        python tools/release_candidate.py stage-assets --tag "${RELEASE_TAG}" --release-id "${RESERVATION_ID}" --architecture "${INSTALL_ARCH}" --results "${RUNNER_TEMP}/container-results" --staged "${RUNNER_TEMP}/staged-images.json" --destination "${RUNNER_TEMP}/release-images"
+        python "${GITHUB_WORKSPACE}/policy/tools/release_candidate.py" --root "${GITHUB_WORKSPACE}/source" stage-assets --tag "${RELEASE_TAG}" --release-id "${RESERVATION_ID}" --architecture "${INSTALL_ARCH}" --results "${RUNNER_TEMP}/container-results" --staged "${RUNNER_TEMP}/staged-images.json" --destination "${RUNNER_TEMP}/release-images"
     - name: aikey provenance
       id: aikey_provenance
       uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6
@@ -565,6 +633,14 @@ jobs:
         ref: ${{ github.sha }}
         fetch-depth: 0
         persist-credentials: false
+        path: policy
+    - name: Exact artifact source separate from workflow policy
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      with:
+        ref: ${{ needs.reserve.outputs.source_revision }}
+        fetch-depth: 0
+        persist-credentials: false
+        path: source
     - name: Python 3.12
       uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
       with:
@@ -582,7 +658,7 @@ jobs:
       run: |
         set -euo pipefail
         umask 077
-        python tools/release_prepare.py --tag "${RELEASE_TAG}" --publish > "${RUNNER_TEMP}/fresh-preparation.json"
+        python "${GITHUB_WORKSPACE}/policy/tools/release_prepare.py" --root "${GITHUB_WORKSPACE}/source" --tag "${RELEASE_TAG}" --publish > "${RUNNER_TEMP}/fresh-preparation.json"
         python - <<'PYCODE'
         import json,os
         from pathlib import Path
@@ -627,7 +703,7 @@ jobs:
       run: |
         set -euo pipefail
         umask 077
-        python tools/release_candidate.py indexes --tag "${RELEASE_TAG}" --release-id "${RESERVATION_ID}" --inputs "${RUNNER_TEMP}/inputs" --destination "${RUNNER_TEMP}/release-candidate"
+        python "${GITHUB_WORKSPACE}/policy/tools/release_candidate.py" --root "${GITHUB_WORKSPACE}/source" indexes --tag "${RELEASE_TAG}" --release-id "${RESERVATION_ID}" --inputs "${RUNNER_TEMP}/inputs" --destination "${RUNNER_TEMP}/release-candidate"
     - name: Retain release-index-intent
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
       with:
@@ -641,7 +717,7 @@ jobs:
       run: |
         set -euo pipefail
         umask 077
-        python tools/release_candidate.py push-indexes --tag "${RELEASE_TAG}" --release-id "${RESERVATION_ID}" --destination "${RUNNER_TEMP}/release-candidate"
+        python "${GITHUB_WORKSPACE}/policy/tools/release_candidate.py" --root "${GITHUB_WORKSPACE}/source" push-indexes --tag "${RELEASE_TAG}" --release-id "${RESERVATION_ID}" --destination "${RUNNER_TEMP}/release-candidate"
     - name: aikey multiarch provenance
       if: inputs.profile == 'image'
       id: aikey_index
@@ -683,7 +759,7 @@ jobs:
       run: |
         set -euo pipefail
         umask 077
-        python tools/release_candidate.py finalize --tag "${RELEASE_TAG}" --release-id "${RESERVATION_ID}" --destination "${RUNNER_TEMP}/release-candidate"
+        python "${GITHUB_WORKSPACE}/policy/tools/release_candidate.py" --root "${GITHUB_WORKSPACE}/source" finalize --tag "${RELEASE_TAG}" --release-id "${RESERVATION_ID}" --destination "${RUNNER_TEMP}/release-candidate"
     - name: Complete candidate and checksum provenance
       id: root
       uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6
@@ -706,7 +782,7 @@ jobs:
       run: |
         set -euo pipefail
         umask 077
-        python tools/release_candidate.py check --tag "${RELEASE_TAG}" --release-id "${RESERVATION_ID}" --destination "${RUNNER_TEMP}/release-candidate"
+        python "${GITHUB_WORKSPACE}/policy/tools/release_candidate.py" --root "${GITHUB_WORKSPACE}/source" check --tag "${RELEASE_TAG}" --release-id "${RESERVATION_ID}" --destination "${RUNNER_TEMP}/release-candidate"
     - name: Retain release-candidate
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
       with:
@@ -750,6 +826,14 @@ jobs:
         ref: ${{ github.sha }}
         fetch-depth: 0
         persist-credentials: false
+        path: policy
+    - name: Exact artifact source separate from workflow policy
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      with:
+        ref: ${{ needs.reserve.outputs.source_revision }}
+        fetch-depth: 0
+        persist-credentials: false
+        path: source
     - name: Python 3.12
       uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
       with:
@@ -767,7 +851,7 @@ jobs:
       run: |
         set -euo pipefail
         umask 077
-        python tools/release_prepare.py --tag "${RELEASE_TAG}" --publish > "${RUNNER_TEMP}/fresh-preparation.json"
+        python "${GITHUB_WORKSPACE}/policy/tools/release_prepare.py" --root "${GITHUB_WORKSPACE}/source" --tag "${RELEASE_TAG}" --publish > "${RUNNER_TEMP}/fresh-preparation.json"
         python - <<'PYCODE'
         import json,os
         from pathlib import Path
@@ -811,13 +895,13 @@ jobs:
       run: |
         set -euo pipefail
         umask 077
-        python tools/release_publication.py upload --tag "${RELEASE_TAG}" --release-id "${RESERVATION_ID}" --assets "${RUNNER_TEMP}/release-candidate" > "${RUNNER_TEMP}/release-upload.json"
+        python "${GITHUB_WORKSPACE}/policy/tools/release_publication.py" --root "${GITHUB_WORKSPACE}/source" upload --tag "${RELEASE_TAG}" --release-id "${RESERVATION_ID}" --assets "${RUNNER_TEMP}/release-candidate" > "${RUNNER_TEMP}/release-upload.json"
     - name: Publish only the same positively verified original draft
       shell: bash
       run: |
         set -euo pipefail
         umask 077
-        python tools/release_publication.py complete --tag "${RELEASE_TAG}" --release-id "${RESERVATION_ID}" --assets "${RUNNER_TEMP}/release-candidate" > "${RUNNER_TEMP}/release-publication.json"
+        python "${GITHUB_WORKSPACE}/policy/tools/release_publication.py" --root "${GITHUB_WORKSPACE}/source" complete --tag "${RELEASE_TAG}" --release-id "${RESERVATION_ID}" --assets "${RUNNER_TEMP}/release-candidate" > "${RUNNER_TEMP}/release-publication.json"
     - name: Retain release-publication
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
       with:

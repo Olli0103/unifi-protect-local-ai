@@ -152,6 +152,40 @@ def test_failed_complete_listing_is_not_absence_or_permission_to_create(tmp_path
     assert transport.writes == []
 
 
+@pytest.mark.parametrize("failure_at", ["prepare", "readback"])
+def test_cli_refusal_survives_stdout_artifact_redirection(monkeypatch, capsys, failure_at):
+    packet = plan()
+
+    def failed(*args, **kwargs):
+        raise publication.PublicationError("release_original_reservation_unavailable")
+
+    monkeypatch.setattr(publication.gate, "prepare",
+                        failed if failure_at == "prepare" else lambda *a, **kw: packet)
+    monkeypatch.setattr(publication, "reserve", failed)
+    assert publication.main(["reserve", "--tag", packet["tag"]]) == 2
+    output = capsys.readouterr()
+    refusal = json.loads(output.out)
+    assert json.loads(output.err) == refusal
+    assert refusal == {
+        "schema": "aikey-release-publication/1",
+        "error": "release_original_reservation_unavailable",
+        "publication_outcome": "not_asserted",
+        "automatic_retry": False,
+    }
+
+
+def test_cli_unknown_exception_never_echoes_provider_or_credential_text(monkeypatch, capsys):
+    def failed(*args, **kwargs):
+        raise OSError("FICTIONAL_PRIVATE_PROVIDER_CANARY")
+
+    monkeypatch.setattr(publication.gate, "prepare", failed)
+    assert publication.main(["reserve", "--tag", plan()["tag"]]) == 2
+    output = capsys.readouterr()
+    assert "FICTIONAL_PRIVATE_PROVIDER_CANARY" not in output.out + output.err
+    assert json.loads(output.out) == json.loads(output.err)
+    assert json.loads(output.err)["error"] == "release_publication_unavailable"
+
+
 @pytest.mark.parametrize("fault", ["none", "missing", "public", "internal", "foreign_repo",
                                     "wrong_type", "duplicate", "failed", "bad_page"])
 def test_private_staging_requires_complete_unambiguous_provider_observation(tmp_path, fault):

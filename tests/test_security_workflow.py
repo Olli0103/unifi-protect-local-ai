@@ -37,7 +37,14 @@ def workflow_policy(value, *, publisher=False):
     triggers = value["on"]
     assert set(triggers) == {"workflow_dispatch"}
     inputs = triggers["workflow_dispatch"]["inputs"]
-    assert set(inputs) == {"tag", "publish", "profile"}
+    assert set(inputs) == {"tag", "publish", "profile", "recovery_run", "recovery_release_id"}
+    for name in ("recovery_run", "recovery_release_id"):
+        assert inputs[name]["type"] == "string" and inputs[name]["default"] == ""
+    assert value["defaults"] == {"run": {"working-directory": "source"}}
+    assert value["env"] == {
+        "RELEASE_RECOVERY_RUN": "${{ inputs.recovery_run }}",
+        "RELEASE_RECOVERY_ID": "${{ inputs.recovery_release_id }}",
+    }
     assert inputs["profile"] == {
         "description": "Artifact scope; package publishes wheel and sdist only",
         "type": "choice", "options": ["package", "image"], "default": "package", "required": True,
@@ -121,14 +128,34 @@ def workflow_policy(value, *, publisher=False):
         assert job["env"]["RELEASE_PROFILE"] == "${{ inputs.profile }}"
         assert "SOURCE_DELIVERY_DIR" not in job["env"]
         steps = job["steps"]
+        # Check the ordered pre-effect prefix, not merely the presence of gates.
         assert steps[0]["uses"].startswith("actions/checkout@")
         assert steps[0]["with"] == {
-            "ref": "${{ github.sha }}",
-            "fetch-depth": 0,
-            "persist-credentials": False,
+            "ref": "${{ github.sha }}", "fetch-depth": 0,
+            "persist-credentials": False, "path": "policy",
         }
-        assert steps[1]["uses"].startswith("actions/setup-python@")
-        assert steps[2] == {
+        source_index = 3 if name == "qualify" else 1
+        source = steps[source_index]
+        assert source["uses"].startswith("actions/checkout@")
+        source_ref = (
+            "${{ steps.source.outputs.source_revision }}" if name == "qualify" else
+            "${{ needs.qualify.outputs.source_revision }}" if name == "reserve" else
+            "${{ needs.reserve.outputs.source_revision }}"
+        )
+        assert source["with"] == {
+            "ref": source_ref, "fetch-depth": 0,
+            "persist-credentials": False, "path": "source",
+        }
+        assert steps[1 if name == "qualify" else 2]["uses"].startswith("actions/setup-python@")
+        if name == "qualify":
+            assert steps[2] == {
+                "name": "Resolve unchanged source or explicit original-run recovery",
+                "id": "source", "working-directory": "policy", "shell": "bash",
+                "run": "set -euo pipefail\numask 077\npython tools/release_recovery.py resolve\n",
+            }
+            assert job["outputs"]["source_revision"] == "${{ steps.source.outputs.source_revision }}"
+        init_index = 4 if name == "qualify" else 3
+        assert steps[init_index] == {
             "name": "Set runner-local source delivery path",
             "shell": "bash",
             "run": (
@@ -138,14 +165,16 @@ def workflow_policy(value, *, publisher=False):
             ),
         }
         if name != "qualify":
-            # No upload/signing/registry login can be inserted before this
-            # fresh exact-source/legal/public-tag/CI/environment preflight.
-            assert steps[3]["id"] == "preparation"
+            preparation = steps[init_index + 1]
+            assert preparation["id"] == "preparation"
             assert (
-                'python tools/release_prepare.py --tag "${RELEASE_TAG}" --publish'
-                in steps[3]["run"]
+                'python "${GITHUB_WORKSPACE}/policy/tools/release_prepare.py" '
+                '--root "${GITHUB_WORKSPACE}/source" --tag "${RELEASE_TAG}" --publish'
+                in preparation["run"]
             )
-            assert steps[3].get("if") is None
+            assert preparation.get("if") is None
+        else:
+            assert steps[init_index + 1]["name"] == "Read-only readiness; publishing is opt-in"
         for step in steps:
             if "uses" in step:
                 assert re.fullmatch(r"[^@]+@[0-9a-f]{40}", step["uses"])
@@ -161,10 +190,16 @@ def workflow_policy(value, *, publisher=False):
             }
             if image_only:
                 assert step.get("if") == "inputs.profile == 'image'"
+            elif name == "reserve" and step.get("name") == "Retain release-reservation":
+                assert step.get("if") == (
+                    "${{ !cancelled() && (steps.reserve.outcome == 'success' || "
+                    "steps.reserve.outcome == 'failure') }}"
+                )
+                assert step["with"]["path"] == "${{ runner.temp }}/release-reservation.json"
             elif "if" in step:
                 assert name == "images" and step["if"] == "always()"
                 assert step.get("run") == (
-                    "set -euo pipefail\numask 077\nbash tools/container_install_run.sh cleanup\n"
+                    'set -euo pipefail\numask 077\nbash "${GITHUB_WORKSPACE}/policy/tools/container_install_run.sh" cleanup\n'
                 )
             if step.get("uses", "").startswith("actions/attest@"):
                 assert name in ("packages", "images", "assemble")
@@ -218,15 +253,15 @@ def test_publisher_exception_refuses_authorization_graph_and_privilege_regressio
     if fault == "job_runner_context":
         jobs["images"]["env"]["SOURCE_DELIVERY_DIR"] = "${{ runner.temp }}/source-delivery"
     elif fault == "skip_path_init":
-        jobs["images"]["steps"].pop(2)
+        jobs["images"]["steps"].pop(3)
     elif fault == "wrong_source_path":
-        jobs["images"]["steps"][2]["run"] = "set -euo pipefail\numask 077\necho wrong-path\n"
+        jobs["images"]["steps"][3]["run"] = "set -euo pipefail\numask 077\necho wrong-path\n"
     elif fault == "conditional_path_init":
-        jobs["images"]["steps"][2]["if"] = "inputs.publish"
+        jobs["images"]["steps"][3]["if"] = "inputs.publish"
     elif fault == "skip_sources":
         jobs["images"]["needs"] = ["reserve"]
     elif fault == "source_gate_bypass":
-        jobs["sources"]["steps"][3]["if"] = "false"
+        jobs["sources"]["steps"][4]["if"] = "false"
     elif fault == "unknown_profile":
         value["on"]["workflow_dispatch"]["inputs"]["profile"]["options"].append("unsafe")
     elif fault == "implicit_image":
@@ -269,13 +304,13 @@ def test_publisher_exception_refuses_authorization_graph_and_privilege_regressio
     elif fault == "pre_gate_upload":
         jobs["images"]["steps"].insert(2, deepcopy(jobs["images"]["steps"][-1]))
     elif fault == "skip_gate":
-        jobs["images"]["steps"][3]["if"] = "false"
+        jobs["images"]["steps"][4]["if"] = "false"
     elif fault == "always_publish":
         jobs["publish"]["if"] = "always()"
     elif fault == "unpinned_action":
         jobs["images"]["steps"][0]["uses"] = "actions/checkout@main"
     elif fault == "direct_input_shell":
-        jobs["images"]["steps"][3]["run"] += 'echo "${{ inputs.tag }}"\n'
+        jobs["images"]["steps"][4]["run"] += 'echo "${{ inputs.tag }}"\n'
     elif fault == "untrusted_runner":
         jobs["images"]["strategy"]["matrix"]["include"][0]["runner"] = "self-hosted"
     elif fault == "unconditional_upload":
@@ -326,7 +361,10 @@ def test_source_delivery_environment_reaches_later_steps(job_name, tmp_path):
     command_file = tmp_path / "github env"
     command_file.write_text("EXISTING=preserved\n")
     env = {"PATH": os.defpath, "RUNNER_TEMP": str(runner_temp), "GITHUB_ENV": str(command_file)}
-    subprocess.run(["bash", "-c", job["steps"][2]["run"]], env=env, check=True)
+    initializers = [step for step in job["steps"]
+                    if step.get("name") == "Set runner-local source delivery path"]
+    assert len(initializers) == 1 and "if" not in initializers[0]
+    subprocess.run(["bash", "-c", initializers[0]["run"]], env=env, check=True)
     # The runner loads GITHUB_ENV for subsequent steps, not for the writing step.
     downstream = dict(line.split("=", 1) for line in command_file.read_text().splitlines())
     assert downstream == {

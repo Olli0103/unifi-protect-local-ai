@@ -400,6 +400,13 @@ def test_actual_workflow_all_shells_parse_and_writers_follow_reviewed_stages(tmp
     assert jobs["publish"]["needs"] == ["reserve", "assemble"]
     assert jobs["qualify"]["permissions"] == {"contents": "read", "actions": "read"}
     assert jobs["publish"]["permissions"].get("id-token") is None
+    retention = next(step for step in jobs["reserve"]["steps"]
+                     if step.get("name") == "Retain release-reservation")
+    assert retention["if"] == (
+        "${{ !cancelled() && (steps.reserve.outcome == 'success' || "
+        "steps.reserve.outcome == 'failure') }}"
+    )
+    assert retention["with"]["path"] == "${{ runner.temp }}/release-reservation.json"
     for name, job in jobs.items():
         for index, step in enumerate(job["steps"]):
             if "uses" in step:

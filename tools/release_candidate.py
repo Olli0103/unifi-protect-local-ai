@@ -131,6 +131,8 @@ def identity(plan, *, architecture=None):
     }
     if architecture is not None:
         result["architecture"] = architecture
+    if plan.get("recovery"):
+        result["recovery"] = plan["recovery"]
     return result
 
 
@@ -684,7 +686,9 @@ def finalize(root, plan, destination):
     emit(
         target / "release.json",
         {
-            "schema": "aikey-release-assets/1",
+            "schema": ("aikey-release-assets/2" if plan.get("recovery")
+                       else "aikey-release-assets/1"),
+            **({"recovery": plan["recovery"]} if plan.get("recovery") else {}),
             **{
                 key: plan[key]
                 for key in (
@@ -744,6 +748,7 @@ def main(argv=None):
             "check",
         ),
     )
+    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument("--tag", required=True)
     parser.add_argument("--release-id", type=int, required=True)
     parser.add_argument("--architecture", choices=("amd64", "arm64"))
@@ -754,7 +759,7 @@ def main(argv=None):
     parser.add_argument("--inputs", type=Path)
     parser.add_argument("--destination", type=Path, required=True)
     args = parser.parse_args(argv)
-    root = Path(__file__).resolve().parents[1]
+    root = args.root.absolute()
     try:
         require(args.release_id > 0, "release_reservation_required")
         plan = dict(publication.fresh(root, args.tag), reservation_id=args.release_id)

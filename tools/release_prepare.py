@@ -394,8 +394,20 @@ def prepare(root, tag, *, publish=False, profile="image", env=None, run=command)
     staging_environment_id = None
     run_id = None
     ci = None
+    recovery = None
     if publish:
-        run_id = workflow_context(os.environ if env is None else env, revision)
+        recovery_path = Path(__file__).with_name("release_recovery.py")
+        recovery_spec = importlib.util.spec_from_file_location("paired_release_recovery", recovery_path)
+        recovery_gate = importlib.util.module_from_spec(recovery_spec)
+        recovery_spec.loader.exec_module(recovery_gate)
+        import types
+        # Bind this exact paired gate instance, not a same-named cached import.
+        policy = types.SimpleNamespace(**globals())
+        recovery = recovery_gate.context(root, revision, policy,
+                                         os.environ if env is None else env, run,
+                                         profile=profile)
+        run_id = (recovery["workflow_run_id"] if recovery
+                  else workflow_context(os.environ if env is None else env, revision))
         ci = continuous_integration(root, revision, run)
         environment = load(
             run(["gh", "api", "repos/" + REPOSITORY + "/environments/release"], cwd=root)
@@ -416,7 +428,7 @@ def prepare(root, tag, *, publish=False, profile="image", env=None, run=command)
         and load(read(root / "docs/legal/release-evidence.json")) == record,
         "release_source_changed_during_preparation",
     )
-    return {
+    result = {
         "schema": SCHEMA,
         "release_profile": profile,
         "source_delivery": delivery,
@@ -441,6 +453,9 @@ def prepare(root, tag, *, publish=False, profile="image", env=None, run=command)
         "human_evidence_truth": "not_established_by_automation",
     }
 
+    if recovery is not None:
+        result["recovery"] = recovery
+    return result
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)

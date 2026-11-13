@@ -2,22 +2,25 @@
 # Called only after the stage environment approved this exact dispatch.
 set -euo pipefail
 umask 077
-python tools/release_prepare.py --tag "${RELEASE_TAG}" --publish > "${RUNNER_TEMP}/package-preparation.json"
+source_root="$(pwd -P)"
+policy_tools="$(cd -- "$(dirname -- "$0")" && pwd -P)"
+export RELEASE_POLICY_TOOLS="${policy_tools}"
+python "${policy_tools}/release_prepare.py" --root "${source_root}" --tag "${RELEASE_TAG}" --publish > "${RUNNER_TEMP}/package-preparation.json"
 python -m pip install --disable-pip-version-check build==1.6.1 setuptools==84.0.0 cyclonedx-bom==7.4.0
 epoch="$(git log -1 --format=%ct)"
 for number in 1 2; do
   directory="${RUNNER_TEMP}/release-build-${number}"
-  git clone --quiet --no-local "${GITHUB_WORKSPACE}" "${directory}"
+  git clone --quiet --no-local "${source_root}" "${directory}"
   (
     cd "${directory}"
     SOURCE_DATE_EPOCH="${epoch}" PYTHONHASHSEED=0 python -m build --no-isolation --outdir dist
   )
-  python tools/release_check.py verify "${directory}/dist" --epoch "${epoch}" \
+  python "${policy_tools}/release_check.py" verify "${directory}/dist" --epoch "${epoch}" \
     --forbid "${HOME}" --forbid "${directory}" --forbid "${GITHUB_WORKSPACE}" \
     --manifest-out "${RUNNER_TEMP}/package-build-${number}.json"
 done
-python tools/release_check.py compare "${RUNNER_TEMP}/package-build-1.json" "${RUNNER_TEMP}/package-build-2.json"
-python tools/community_release_check.py --profile package --dist "${RUNNER_TEMP}/release-build-1/dist"
+python "${policy_tools}/release_check.py" compare "${RUNNER_TEMP}/package-build-1.json" "${RUNNER_TEMP}/package-build-2.json"
+python "${policy_tools}/community_release_check.py" --root "${source_root}" --profile package --dist "${RUNNER_TEMP}/release-build-1/dist"
 mkdir "${RUNNER_TEMP}/release-packages"
 cp "${RUNNER_TEMP}/release-build-1/dist/"* "${RUNNER_TEMP}/release-packages/"
 python -m venv "${RUNNER_TEMP}/release-runtime"
@@ -29,7 +32,7 @@ python -m cyclonedx_py environment "${RUNNER_TEMP}/release-runtime" --pyproject 
 python - <<'PY'
 import importlib.util, json, os, sys
 from pathlib import Path
-sys.path.insert(0, str(Path.cwd()/'tools'))
+sys.path.insert(0, os.environ["RELEASE_POLICY_TOOLS"])
 import release_candidate as candidate
 plan=json.loads((Path(os.environ['RUNNER_TEMP'])/'package-preparation.json').read_text())
 folder=Path(os.environ['RUNNER_TEMP'])/'release-packages'

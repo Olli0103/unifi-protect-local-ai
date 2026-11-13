@@ -332,12 +332,13 @@ def build(root, sources, inventories, destination, plan, *, part_limit=PART_LIMI
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument("--tag", required=True)
     parser.add_argument("--sources", type=Path, required=True)
     parser.add_argument("--inventories", type=Path, required=True)
     parser.add_argument("--destination", type=Path, required=True)
     args = parser.parse_args(argv)
-    root = Path(__file__).resolve().parents[1]
+    root = args.root.absolute()
     try:
         plan = gate.prepare(root, args.tag, publish=True, profile="image")
         result = build(root, args.sources, args.inventories, args.destination, plan)
