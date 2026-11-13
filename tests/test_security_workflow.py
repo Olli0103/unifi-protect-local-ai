@@ -179,6 +179,18 @@ def workflow_policy(value, *, publisher=False):
             assert preparation.get("if") is None
         else:
             assert steps[init_index + 1]["name"] == "Read-only readiness; publishing is opt-in"
+            package_access = {
+                "name": "Verify package catalogue access before any staging or native build",
+                "if": "inputs.publish && inputs.profile == 'image'",
+                "env": {"RELEASE_PACKAGES_READ_TOKEN": "${{ secrets.RELEASE_PACKAGES_READ_TOKEN }}"},
+                "shell": "bash",
+                "run": (
+                    'set -euo pipefail\numask 077\n'
+                    'python "${GITHUB_WORKSPACE}/policy/tools/release_publication.py" '
+                    'package-access --root "${GITHUB_WORKSPACE}/source" --tag "${RELEASE_TAG}"\n'
+                ),
+            }
+            assert steps[init_index + 2:] == [package_access]
         for step in steps:
             if "uses" in step:
                 assert re.fullmatch(r"[^@]+@[0-9a-f]{40}", step["uses"])
@@ -200,6 +212,8 @@ def workflow_policy(value, *, publisher=False):
                     "steps.reserve.outcome == 'failure') }}"
                 )
                 assert step["with"]["path"] == "${{ runner.temp }}/release-reservation.json"
+            elif name == "qualify" and step.get("name") == package_access["name"]:
+                assert step == package_access
             elif "if" in step:
                 assert name == "images" and step["if"] == "always()"
                 assert step.get("run") == (
@@ -249,12 +263,37 @@ def test_security_workflow_pins_actions_and_uses_read_only_permissions(path):
         "cancel_previous", "unknown_profile", "implicit_image", "image_profile_bypass",
         "assembly_failure_bypass", "registry_profile_bypass", "skip_sources", "source_gate_bypass",
         "job_runner_context", "skip_path_init", "wrong_source_path", "conditional_path_init",
+        "missing_package_probe", "duplicate_package_probe", "late_package_probe",
+        "package_probe_condition", "package_probe_environment", "package_probe_command",
+        "package_probe_continue", "package_probe_extra",
     ],
 )
 def test_publisher_exception_refuses_authorization_graph_and_privilege_regressions(fault):
     value = deepcopy(yaml.safe_load(PUBLISHER.read_text()))
     jobs = value["jobs"]
-    if fault == "job_runner_context":
+    if fault.startswith("package_probe_") or fault in {
+        "missing_package_probe", "duplicate_package_probe", "late_package_probe",
+    }:
+        steps = jobs["qualify"]["steps"]
+        probe = next(s for s in steps if "package-access" in s.get("run", ""))
+        if fault == "missing_package_probe":
+            steps.remove(probe)
+        elif fault == "duplicate_package_probe":
+            steps.append(deepcopy(probe))
+        elif fault == "late_package_probe":
+            steps.remove(probe)
+            jobs["reserve"]["steps"].append(probe)
+        elif fault == "package_probe_condition":
+            probe["if"] = "false"
+        elif fault == "package_probe_environment":
+            probe["env"]["RELEASE_PACKAGES_READ_TOKEN"] = "${{ github.token }}"
+        elif fault == "package_probe_command":
+            probe["run"] += "echo ignored\n"
+        elif fault == "package_probe_continue":
+            probe["continue-on-error"] = True
+        else:
+            steps.append({"name": "Unexpected effect", "run": "set -euo pipefail\numask 077\necho extra\n"})
+    elif fault == "job_runner_context":
         jobs["images"]["env"]["SOURCE_DELIVERY_DIR"] = "${{ runner.temp }}/source-delivery"
     elif fault == "skip_path_init":
         jobs["images"]["steps"].pop(3)
