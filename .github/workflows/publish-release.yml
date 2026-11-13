@@ -395,13 +395,13 @@ jobs:
         - arch: arm64
           runner: ubuntu-24.04-arm
     permissions:
-      contents: read
+      # GitHub hides draft releases from tokens without push access.
+      contents: write
       actions: read
       packages: write
       id-token: write
       attestations: write
     env:
-      GH_TOKEN: ${{ github.token }}
       RELEASE_TAG: ${{ inputs.tag }}
       RELEASE_PROFILE: ${{ inputs.profile }}
       RESERVATION_ID: ${{ needs.reserve.outputs.release_id }}
@@ -439,6 +439,8 @@ jobs:
         printf 'SOURCE_DELIVERY_DIR=%s/source-delivery\n' "${RUNNER_TEMP}" >> "${GITHUB_ENV}"
     - name: Fresh non-audit source, tag, seven CI jobs and environment policy
       id: preparation
+      env:
+        GH_TOKEN: ${{ github.token }}
       shell: bash
       run: |
         set -euo pipefail
@@ -495,6 +497,8 @@ jobs:
         umask 077
         bash "${GITHUB_WORKSPACE}/policy/tools/container_install_run.sh" build
     - name: Bind pre-push intent to tested image configs and inventories
+      env:
+        GH_TOKEN: ${{ github.token }}
       shell: bash
       run: |
         set -euo pipefail
@@ -518,6 +522,8 @@ jobs:
         logout: true
     - name: Push only these attempt-specific images; observe immutable manifests
       id: push
+      env:
+        GH_TOKEN: ${{ github.token }}
       shell: bash
       run: |
         set -euo pipefail
@@ -531,6 +537,8 @@ jobs:
         umask 077
         bash "${GITHUB_WORKSPACE}/policy/tools/container_install_run.sh" cleanup
     - name: Retain only sanitized complete native handoff
+      env:
+        GH_TOKEN: ${{ github.token }}
       shell: bash
       run: |
         set -euo pipefail
@@ -621,13 +629,13 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     permissions:
-      contents: read
+      # GitHub hides draft releases from tokens without push access.
+      contents: write
       actions: read
       packages: write
       id-token: write
       attestations: write
     env:
-      GH_TOKEN: ${{ github.token }}
       RELEASE_TAG: ${{ inputs.tag }}
       RELEASE_PROFILE: ${{ inputs.profile }}
       RESERVATION_ID: ${{ needs.reserve.outputs.release_id }}
@@ -659,6 +667,8 @@ jobs:
         printf 'SOURCE_DELIVERY_DIR=%s/source-delivery\n' "${RUNNER_TEMP}" >> "${GITHUB_ENV}"
     - name: Fresh non-audit source, tag, seven CI jobs and environment policy
       id: preparation
+      env:
+        GH_TOKEN: ${{ github.token }}
       shell: bash
       run: |
         set -euo pipefail
@@ -704,6 +714,8 @@ jobs:
         merge-multiple: false
         digest-mismatch: error
     - name: Verify upstream signatures, bytes and cleanup before index intent
+      env:
+        GH_TOKEN: ${{ github.token }}
       shell: bash
       run: |
         set -euo pipefail
@@ -718,6 +730,8 @@ jobs:
         retention-days: 14
     - name: Create only attempt-specific dual-native indices
       id: push
+      env:
+        GH_TOKEN: ${{ github.token }}
       shell: bash
       run: |
         set -euo pipefail
@@ -760,6 +774,8 @@ jobs:
         umask 077
         cp -- "${BUNDLE}" "${{ runner.temp }}/release-candidate/aiport-index-provenance.sigstore.json"
     - name: Bind complete release set and sorted checksums
+      env:
+        GH_TOKEN: ${{ github.token }}
       shell: bash
       run: |
         set -euo pipefail
@@ -783,6 +799,8 @@ jobs:
         umask 077
         cp -- "${BUNDLE}" "${{ runner.temp }}/release-candidate/release-provenance.sigstore.json"
     - name: Use the final consumer against the captured candidate
+      env:
+        GH_TOKEN: ${{ github.token }}
       shell: bash
       run: |
         set -euo pipefail

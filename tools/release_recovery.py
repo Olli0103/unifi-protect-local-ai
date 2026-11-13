@@ -125,19 +125,10 @@ def job_graph(value, gate, *, recorded=False):
     return sorted(result, key=lambda row: row["id"])
 
 
-def reconciled_preflight(policy, revision, origin, release_id, current, gate, env, run):
-    """Opt in to one separately reviewed, exact no-registry failed-run record.
-
-    The policy-side record is reviewed with the repair, never read from the old
-    artifact source. Live run/job metadata must still be identical. Unknown later
-    dispatches and reruns remain refused by the complete history check.
-    """
-    requested_run = env.get("RELEASE_RECOVERY_PREFLIGHT_RUN", "")
-    if not requested_run:
-        return None
-    requested_run = identifier(requested_run, gate)
+def verified_preflight_record(policy, revision, origin, release_id, current, gate, run,
+                              record, requested_run, *, package_conclusion):
+    """Verify one reviewed exact live graph, never infer absence of effects."""
     gate.require(requested_run not in {origin, current}, "release_recovery_preflight_identity_refused")
-    record = gate.load(gate.read(policy / "docs/legal/recovery-prepush-reconciliation.json"))
     gate.require(set(record) == {"schema", "original_run_id", "reservation_id", "source_revision",
                                 "run_id", "policy_revision", "workflow_sha256", "jobs"}
                  and record["schema"] == "aikey-prepush-reconciliation/2"
@@ -159,7 +150,7 @@ def reconciled_preflight(policy, revision, origin, release_id, current, gate, en
     gate.require(observed == expected, "release_recovery_preflight_graph_changed")
     names = {row["name"]: row for row in observed}
     expected_jobs = {"qualify": "success", "reserve": "success", "sources": "success",
-                     "packages": "failure", "images (amd64, ubuntu-24.04)": "failure",
+                     "packages": package_conclusion, "images (amd64, ubuntu-24.04)": "failure",
                      "images (arm64, ubuntu-24.04-arm)": "failure", "assemble": "skipped", "publish": "skipped"}
     gate.require({name: row["conclusion"] for name, row in names.items()} == expected_jobs
                  and not names["assemble"]["steps"] and not names["publish"]["steps"],
@@ -177,6 +168,38 @@ def reconciled_preflight(policy, revision, origin, release_id, current, gate, en
     return {"run_id": requested_run, "workflow_revision": previous["head_sha"],
             "created_at": previous["created_at"], "updated_at": previous["updated_at"],
             "jobs_sha256": hashlib.sha256(json.dumps(observed, sort_keys=True).encode()).hexdigest()}
+
+def reconciled_preflight(policy, revision, origin, release_id, current, gate, env, run):
+    """Reconcile at most the two explicitly reviewed pre-registry failures.
+
+    The second record pins the first record's exact bytes. Both live graphs,
+    policies and full history must agree; this never authorizes another retry.
+    """
+    requested_run = env.get("RELEASE_RECOVERY_PREFLIGHT_RUN", "")
+    if not requested_run:
+        return None
+    requested_run = identifier(requested_run, gate)
+    raw = gate.read(policy / "docs/legal/recovery-prepush-reconciliation.json")
+    record = gate.load(raw)
+    if record.get("run_id") == requested_run:
+        return verified_preflight_record(policy, revision, origin, release_id, current,
+                                         gate, run, record, requested_run,
+                                         package_conclusion="failure")
+    followup = gate.load(gate.read(policy / "docs/legal/recovery-prepush-followup.json"))
+    gate.require(set(followup) == {"schema", "previous_record_sha256", "record"}
+                 and followup["schema"] == "aikey-prepush-followup/1"
+                 and followup["previous_record_sha256"] == hashlib.sha256(raw).hexdigest()
+                 and isinstance(followup["record"], dict)
+                 and record.get("run_id") != requested_run,
+                 "release_recovery_preflight_chain_refused")
+    previous = verified_preflight_record(policy, revision, origin, release_id, current,
+                                         gate, run, record, identifier(record.get("run_id"), gate),
+                                         package_conclusion="failure")
+    result = verified_preflight_record(policy, revision, origin, release_id, current,
+                                       gate, run, followup["record"], requested_run,
+                                       package_conclusion="success")
+    result["preceding_preflights"] = [previous]
+    return result
 
 def context(root, revision, gate, env, run, *, profile):
     request = requested(env, gate)
@@ -232,15 +255,20 @@ def context(root, revision, gate, env, run, *, profile):
     allowed = {int(origin), int(current)}
     if preflight is not None:
         listing_by_id = {item["id"]: item for item in runs}
-        prior = listing_by_id.get(int(preflight["run_id"]), {})
         active = listing_by_id[int(current)]
-        gate.require(prior.get("head_sha") == preflight["workflow_revision"]
-                     and prior.get("run_attempt") == 1 and type(prior.get("run_attempt")) is int
-                     and prior.get("status") == "completed" and prior.get("conclusion") == "failure"
-                     and created(original.get("created_at"), gate) < created(preflight["created_at"], gate)
-                     <= created(preflight["updated_at"], gate) < created(active.get("created_at"), gate),
-                     "release_recovery_preflight_history_refused")
-        allowed.add(int(preflight["run_id"]))
+        previous_end = created(original.get("created_at"), gate)
+        for reviewed in preflight.get("preceding_preflights", []) + [preflight]:
+            prior = listing_by_id.get(int(reviewed["run_id"]), {})
+            gate.require(prior.get("head_sha") == reviewed["workflow_revision"]
+                         and prior.get("run_attempt") == 1 and type(prior.get("run_attempt")) is int
+                         and prior.get("status") == "completed" and prior.get("conclusion") == "failure"
+                         and prior.get("created_at") == reviewed["created_at"]
+                         and prior.get("updated_at") == reviewed["updated_at"]
+                         and previous_end < created(reviewed["created_at"], gate)
+                         <= created(reviewed["updated_at"], gate) < created(active.get("created_at"), gate),
+                         "release_recovery_preflight_history_refused")
+            previous_end = created(reviewed["updated_at"], gate)
+            allowed.add(int(reviewed["run_id"]))
     origin_time = created(original.get("created_at"), gate)
     # created_at never changes on rerun. Require an older, terminal, single
     # attempt whose entire observed activity ended before the original dispatch.
