@@ -5,7 +5,7 @@ case "${1:-}" in
   context)
 set -euo pipefail
 umask 077
-tool="${GITHUB_WORKSPACE}/tools/container_install_check.py"
+tool="${INSTALL_TOOLS_ROOT:-${GITHUB_WORKSPACE}/tools}/container_install_check.py"
 python "${tool}" context --repository "${SOURCE_REPOSITORY}" \
   --revision "${SOURCE_REVISION}" --nonce "${INSTALL_NONCE}"
 test "$(git rev-parse HEAD)" = "${SOURCE_REVISION}"
@@ -18,7 +18,7 @@ server_arch="$(docker version --format '{{.Server.Arch}}')"
 test "${server_arch}" = "${INSTALL_ARCH}"
 python tools/community_release_check.py --audit-only
 mkdir "${RUNNER_TEMP}/container-results"
-python "${tool}" manifest --source "${GITHUB_WORKSPACE}" \
+python "${tool}" manifest --source "${INSTALL_SOURCE_ROOT:-${GITHUB_WORKSPACE}}" \
   --revision "${SOURCE_REVISION}" --output "${RUNNER_TEMP}/container-expected.json"
 # This file contains public source digests only. The non-root guest
 # must be able to read the explicit read-only file mount.
@@ -44,7 +44,7 @@ python tools/image_sbom_check.py install --architecture "${INSTALL_ARCH}" \
   build)
 set -euo pipefail
 umask 077
-tool="${GITHUB_WORKSPACE}/tools/container_install_check.py"
+tool="${INSTALL_TOOLS_ROOT:-${GITHUB_WORKSPACE}/tools}/container_install_check.py"
 if ! context="$(python "${tool}" context --repository "${SOURCE_REPOSITORY}" \
     --revision "${SOURCE_REVISION}" --nonce "${INSTALL_NONCE}")"; then
   exit 1
@@ -73,7 +73,7 @@ for role in aikey aiport; do
   # by the scanner. Native raw metadata stays temporary on the runner.
   python tools/image_sbom_check.py collect --architecture "${INSTALL_ARCH}" \
     --repository "${SOURCE_REPOSITORY}" --revision "${SOURCE_REVISION}" \
-    --nonce "${INSTALL_NONCE}" --profile "${role}" --source "${GITHUB_WORKSPACE}" \
+    --nonce "${INSTALL_NONCE}" --profile "${role}" --source "${INSTALL_SOURCE_ROOT:-${GITHUB_WORKSPACE}}" \
     --tool "${RUNNER_TEMP}/image-inventory-tool/syft" --results "${results}"
   docker run --pull=never --rm --name "aikey-ci-${INSTALL_NONCE}-${role}-ffmpeg" \
     --label "org.local-aikey.install-run=${INSTALL_NONCE}" \
@@ -124,7 +124,7 @@ done
   cleanup)
 set -euo pipefail
 umask 077
-tool="${GITHUB_WORKSPACE}/tools/container_install_check.py"
+tool="${INSTALL_TOOLS_ROOT:-${GITHUB_WORKSPACE}/tools}/container_install_check.py"
 # Validate scope again before any cleanup, even if preflight failed.
 python "${tool}" context --repository "${SOURCE_REPOSITORY}" \
   --revision "${SOURCE_REVISION}" --nonce "${INSTALL_NONCE}" > /dev/null

@@ -16,11 +16,35 @@ The [evidence record](release-evidence.json) uses `community-release-evidence/2`
 | `owner_risk_decision` | Required | Required | Owner records the E1–E11 decision and answers/resolves the concrete outstanding rights/access questions. No blanket lawyer approval is manufactured. |
 | `image_licenses` | Not required | Required | WP3 accepted: exact image digests, licenses/notices, corresponding-source and delivery chain, with current-revision `source_inventory_check` exit 0. Candidate matching alone is not complete-source approval. |
 
-Every effective check is still `needs_evidence`. A `verified` entry needs a
-nonblank reviewer and retained-evidence reference. A matching
-`reviewed_snapshot_sha256`, active nonempty LICENSE and clean source inputs
-remain mandatory. Any tracked input change invalidates the fingerprint.
-An agent must not fill the owner's declarations.
+## Recorded decision and snapshot boundary (2026-11-13)
+
+At the schema-2 migration, all effective checks were reset to `needs_evidence`.
+That is historical, not the status of the subsequently reviewed alpha source.
+For `a3da9c21715dade37fbe3a25529fa85fd17dc430` (tag `v0.1.0a1`), the
+[evidence record](release-evidence.json) contains all seven checks as `verified`
+by `Olli0103`, with references to the retained owner decisions and explicit
+test-only source-transition confirmation. Both non-audit profiles passed for
+reviewed input fingerprint
+`ad5ac45a4c12e863241e93f3f1a9fdd422b58a8ddd25f1e3e7b4d152db4499cd`.
+This records the owner's bounded rights/risk/source decision for preparation,
+not an agent's legal finding or a guarantee of rights. The nonblocking
+`research_record` remains `needs_evidence`; historical firmware-access rights
+are not established and no further firmware analysis is authorized.
+
+The `publication` entry is also `verified`, but its retained decision authorizes
+**private staging only**, not final candidate publication or public image
+visibility. The attempted staging failed after creating a private draft; no
+signed candidate or completed public release resulted. See the dated
+[alpha distribution status](alpha-distribution-0.1.0a1.md).
+
+A `verified` entry needs a nonblank reviewer and retained-evidence reference.
+A matching `reviewed_snapshot_sha256`, active nonempty LICENSE and clean source
+inputs remain mandatory. Any tracked input change, including these documentation
+corrections, invalidates that fingerprint (only the evidence record is excluded).
+The retained approval belongs to the named alpha snapshot, not a later tree:
+these corrections do not rebind it, move the tag or authorize another staging
+attempt. Any successor release source requires exact-snapshot review and fresh
+qualification. An agent must not fill the owner's declarations.
 
 ## Schema migration and nonblocking records
 
@@ -67,8 +91,10 @@ Both modes retain all seven prerequisite CI jobs, exact public-tag/source
 bindings, fresh non-audit gates, protected staging/final environments,
 standard signature verification and provider asset-digest readback.
 The package consumer explicitly uses `package`; image publication uses fresh
-`image` preparation. Neither mode is dispatched by this change.
+`image` preparation. This documentation correction dispatches neither mode.
 
-First distribute wheel/sdist after owner acceptance; image publication follows
-WP3 and the separate owner image decision. No tag, upload or signature is
-created by implementing or testing these paths.
+Distribution still requires the final owner decision on the actual signed
+candidate. The recorded source/image preparation decisions do not substitute
+for that gate. Documenting or testing these paths creates no tag, upload or
+signature; the dated alpha status separately records the actual tag and failed
+private-staging attempt.

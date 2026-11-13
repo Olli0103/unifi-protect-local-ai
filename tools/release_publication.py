@@ -22,6 +22,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
+import sys
 import tempfile
 import tarfile
 import tomllib
@@ -122,7 +123,7 @@ def fresh(root, tag):
 def marker(plan):
     return (
         "<!-- local-aikey-release run="
-        + plan["workflow_run_id"]
+        + plan.get("recovery", {}).get("original_run_id", plan["workflow_run_id"])
         + " source="
         + plan["source_revision"]
         + " -->"
@@ -162,6 +163,9 @@ def releases(root, run=gate.command):
 
 
 def original(root, plan, *, run=gate.command, published=False, after_create=False):
+    if plan.get("recovery"):
+        require(plan.get("reservation_id") == plan["recovery"]["reservation_id"],
+                "release_recovery_reservation_id_mismatch")
     found = [row for row in releases(root, run) if row["tag_name"] == plan["tag"]]
     require(len(found) == 1, "release_original_reservation_unavailable")
     value = found[0]
@@ -206,6 +210,25 @@ def mutate(argv, root):
 
 
 def reserve(root, plan, *, run=gate.command, write=mutate):
+    if plan.get("recovery"):
+        bound = dict(plan, reservation_id=plan["recovery"]["reservation_id"])
+        observed = original(root, bound, run=run)
+        require(observed.get("target_commitish") == plan["source_revision"],
+                "release_recovery_target_mismatch")
+        require(not asset_rows(root, observed["id"], run=run),
+                "release_recovery_draft_not_empty")
+        return {
+            "schema": "aikey-release-publication/1",
+            "phase": "draft_reserved",
+            "release_id": observed["id"],
+            "source_revision": plan["source_revision"],
+            "tag": plan["tag"],
+            "workflow_run_id": plan["workflow_run_id"],
+            "recovery": plan["recovery"],
+            "write_acknowledged": False,
+            "provider_readback_verified": True,
+            "published": False,
+        }
     require(
         not any(row["tag_name"] == plan["tag"] for row in releases(root, run)),
         "release_already_exists_needs_reconciliation",
@@ -274,9 +297,13 @@ def checked_assets(directory, plan, *, root=None):
         "files",
         "images",
     }
+    if plan.get("recovery"):
+        fields.add("recovery")
     require(
         set(manifest) == fields
-        and manifest["schema"] == "aikey-release-assets/1"
+        and manifest.get("recovery") == plan.get("recovery")
+        and manifest["schema"] == ("aikey-release-assets/2" if plan.get("recovery")
+                                   else "aikey-release-assets/1")
         and all(
             manifest[key] == plan[key]
             for key in (
@@ -710,9 +737,9 @@ def verify_subject(
         "--repo",
         gate.REPOSITORY,
         "--source-digest",
-        plan["source_revision"],
+        plan.get("recovery", {}).get("workflow_revision", plan["source_revision"]),
         "--signer-digest",
-        plan["source_revision"],
+        plan.get("recovery", {}).get("workflow_revision", plan["source_revision"]),
         "--source-ref",
         "refs/heads/main",
         "--signer-workflow",
@@ -1040,11 +1067,12 @@ def _complete_snapshot(root, plan, directory, *, run=gate.command, write=mutate)
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=("reserve", "upload", "complete"))
+    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument("--tag", required=True)
     parser.add_argument("--assets", type=Path)
     parser.add_argument("--release-id", type=int)
     args = parser.parse_args(argv)
-    root = Path(__file__).resolve().parents[1]
+    root = args.root.absolute()
     try:
         # Reserving an empty owner-approved draft precedes source preparation.
         # Every upload/image/signature consumer still requires the validated bundle.
@@ -1072,16 +1100,18 @@ def main(argv=None):
             if isinstance(error, (PublicationError, gate.PreparationError)) and error.args
             else "release_publication_unavailable"
         )
-        print(
-            json.dumps(
-                {
-                    "schema": "aikey-release-publication/1",
-                    "error": code,
-                    "publication_outcome": "not_asserted",
-                    "automatic_retry": False,
-                }
-            )
+        refusal = json.dumps(
+            {
+                "schema": "aikey-release-publication/1",
+                "error": code,
+                "publication_outcome": "not_asserted",
+                "automatic_retry": False,
+            }
         )
+        print(refusal)
+        # stdout is an artifact file in Actions. Keep the same fixed-code
+        # refusal in the job log even when the step fails before artifact upload.
+        print(refusal, file=sys.stderr)
         return 2
 
 
