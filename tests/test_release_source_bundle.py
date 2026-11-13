@@ -225,3 +225,41 @@ def test_final_asset_consumer_binds_all_image_records_to_captured_source_bytes(f
     seal(directory, manifest)
     with pytest.raises(ValueError, match="image_manifest_refused"):
         publication.checked_assets(directory, packet, root=root)
+
+
+def test_part_growth_during_captured_descriptor_read_is_bounded_before_write(fixture, monkeypatch):
+    root, original, inputs, target, plan = fixture
+    value = sources.build(root, original, inputs, target, plan)
+    part = target / value["parts"][0]["name"]
+    real_open = sources.checked_file
+    visits = 0
+    reads = 0
+
+    class GrowingReader:
+        def __init__(self, stream):
+            self.stream = stream
+        def __enter__(self):
+            return self
+        def __exit__(self, *args):
+            return self.stream.__exit__(*args)
+        def read(self, size):
+            nonlocal reads
+            reads += 1
+            if reads == 1:
+                with part.open("ab") as writer:
+                    writer.write(b"FICTIONAL growth after fstat")
+            return self.stream.read(size)
+
+    def raced_open(path, limit=sources.TOTAL_LIMIT):
+        nonlocal visits
+        stream = real_open(path, limit)
+        if Path(path) == part:
+            visits += 1
+            if visits == 2:
+                return GrowingReader(stream)
+        return stream
+
+    monkeypatch.setattr(sources, "checked_file", raced_open)
+    with pytest.raises(ValueError, match="part_growth_refused"):
+        sources.validate(root, target, plan)
+    assert reads == 1  # Refuse the first oversized chunk, never drain a growing input.

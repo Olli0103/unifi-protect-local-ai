@@ -161,9 +161,15 @@ def validate(root, directory, plan):
                         == {"bytes": part["bytes"], "sha256": part["sha256"]},
                         "source_delivery_part_bytes_mismatch")
                 with checked_file(directory / part["name"], PART_LIMIT) as source:
+                    copied, part_digest = 0, hashlib.sha256()
                     while raw := source.read(1024**2):
+                        copied += len(raw)
+                        require(copied <= part["bytes"], "source_delivery_part_growth_refused")
+                        part_digest.update(raw)
                         digest.update(raw)
                         output.write(raw)
+                    require(copied == part["bytes"] and part_digest.hexdigest() == part["sha256"],
+                            "source_delivery_digest_mismatch")
         require(digest.hexdigest() == value["sha256"], "source_delivery_digest_mismatch")
         unpacked = stage / "unpacked"
         unpacked.mkdir(mode=0o700)
