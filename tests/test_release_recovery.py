@@ -492,3 +492,92 @@ def test_pre_push_reconciliation_refuses_every_ambiguous_effect(prepush_records,
         state['history'][2]['created_at'] = '2026-01-01T02:30:00Z'
     with pytest.raises((gate.PreparationError, OSError, KeyError)):
         recovery.context(policy.parent / 'source', source, gate, env, run, profile='image')
+
+
+@pytest.fixture
+def followup_records(prepush_records):
+    """Fictional second terminal pre-registry failure; no API writes."""
+    import hashlib
+    policy, source, policy_sha, env, state, base_run = prepush_records
+    earlier = state['preflight_run']
+    current = copy.deepcopy(earlier)
+    current.update(id=175, head_sha='e' * 40, created_at='2026-01-01T03:10:00Z',
+                   updated_at='2026-01-01T03:20:00Z')
+    record = copy.deepcopy(state['preflight_record'])
+    record.update(run_id='175', policy_revision='e' * 40,
+                  workflow_sha256=hashlib.sha256(b'FICTIONAL second workflow\n').hexdigest())
+    jobs = copy.deepcopy(state['preflight_jobs'])
+    for recorded, live in zip(record['jobs'], jobs, strict=True):
+        recorded['id'] += 1000
+        live['id'] += 1000
+        if recorded['name'] == 'packages':
+            recorded['conclusion'] = live['conclusion'] = 'success'
+    wrapper = {'schema': 'aikey-prepush-followup/1',
+               'previous_record_sha256': hashlib.sha256(state['record_path'].read_bytes()).hexdigest(),
+               'record': record}
+    path = policy / 'docs/legal/recovery-prepush-followup.json'
+    path.write_text(json.dumps(wrapper))
+    state.update(followup_path=path, followup_wrapper=wrapper, followup_run=current,
+                 followup_jobs=jobs)
+    state['history'].insert(2, copy.deepcopy(current))
+    env['RELEASE_RECOVERY_PREFLIGHT_RUN'] = '175'
+
+    def run(argv, *, cwd, **kwargs):
+        if argv[-1].endswith('/runs/175'):
+            return json.dumps(state['followup_run'])
+        if argv[-1].endswith('/runs/175/jobs?per_page=100'):
+            return json.dumps({'total_count': 8, 'jobs': state['followup_jobs']})
+        if argv == ['git', 'show', 'e' * 40 + ':.github/workflows/publish-release.yml']:
+            return 'FICTIONAL second workflow\n'
+        return base_run(argv, cwd=cwd, **kwargs)
+    return policy, source, policy_sha, env, state, run
+
+
+@pytest.mark.parametrize('fault', [
+    'none', 'wrong_previous_hash', 'missing_previous', 'newer_unknown', 'third_dispatch',
+    'new_rerun', 'old_rerun', 'reversed_times', 'listing_time_mismatch', 'old_graph_changed',
+    'new_graph_changed', 'missing_new_job', 'new_registry_login', 'new_push',
+    'new_cleanup_failure', 'new_package_failed', 'old_package_succeeded', 'extra_record_key',
+])
+def test_both_reviewed_preflight_runs_remain_exact_and_no_later_effects(followup_records, fault):
+    policy, source, _, env, state, run = followup_records
+    if fault == 'wrong_previous_hash':
+        state['followup_wrapper']['previous_record_sha256'] = '0' * 64
+    elif fault == 'missing_previous':
+        state['record_path'].unlink()
+    elif fault == 'newer_unknown':
+        env['RELEASE_RECOVERY_PREFLIGHT_RUN'] = '176'
+    elif fault == 'third_dispatch':
+        state['history'].append({'id': 180, 'created_at': '2026-01-01T03:30:00Z'})
+    elif fault in ('new_rerun', 'old_rerun'):
+        state['followup_run' if fault == 'new_rerun' else 'preflight_run']['run_attempt'] = 2
+    elif fault == 'reversed_times':
+        state['followup_run']['created_at'] = '2026-01-01T02:30:00Z'
+    elif fault == 'listing_time_mismatch':
+        state['history'][2]['updated_at'] = '2026-01-01T03:21:00Z'
+    elif fault in ('old_graph_changed', 'new_graph_changed'):
+        state['preflight_jobs' if fault == 'old_graph_changed' else 'followup_jobs'][0]['id'] += 9
+    elif fault == 'missing_new_job':
+        state['followup_jobs'].pop()
+    elif fault in ('new_registry_login', 'new_push', 'new_cleanup_failure'):
+        name = {'new_registry_login': 'Short-lived workflow registry login',
+                'new_push': 'Push only these attempt-specific images; observe immutable manifests',
+                'new_cleanup_failure': 'Remove owned local fixtures and verify zero remaining resources'}[fault]
+        job = next(j for j in state['followup_jobs'] if j['name'].startswith('images ('))
+        step = next(s for s in job['steps'] if s['name'] == name)
+        step['conclusion'] = 'failure' if fault == 'new_cleanup_failure' else 'success'
+    elif fault in ('new_package_failed', 'old_package_succeeded'):
+        jobs = state['followup_jobs' if fault == 'new_package_failed' else 'preflight_jobs']
+        next(j for j in jobs if j['name'] == 'packages')['conclusion'] = (
+            'failure' if fault == 'new_package_failed' else 'success')
+    elif fault == 'extra_record_key':
+        state['followup_wrapper']['allow_future'] = True
+    state['followup_path'].write_text(json.dumps(state['followup_wrapper']))
+    if fault == 'none':
+        result = recovery.context(policy.parent / 'source', source, gate, env, run, profile='image')
+        assert result['reconciled_preflight']['run_id'] == '175'
+        assert result['reconciled_preflight']['preceding_preflights'][0]['run_id'] == '150'
+        assert state['ci'] == [(policy, 'a' * 40)]
+    else:
+        with pytest.raises((gate.PreparationError, OSError, KeyError)):
+            recovery.context(policy.parent / 'source', source, gate, env, run, profile='image')

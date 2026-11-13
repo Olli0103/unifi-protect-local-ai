@@ -64,7 +64,7 @@ def workflow_policy(value, *, publisher=False):
         ),
         "images": (
             {
-                "contents": "read",
+                "contents": "write",
                 "actions": "read",
                 "packages": "write",
                 "id-token": "write",
@@ -75,7 +75,7 @@ def workflow_policy(value, *, publisher=False):
         ),
         "assemble": (
             {
-                "contents": "read",
+                "contents": "write",
                 "actions": "read",
                 "packages": "write",
                 "id-token": "write",
@@ -124,7 +124,10 @@ def workflow_policy(value, *, publisher=False):
             }
         else:
             assert job["runs-on"] == "ubuntu-24.04"
-        assert job["env"]["GH_TOKEN"] == "${{ github.token }}"
+        if name in ("images", "assemble"):
+            assert "GH_TOKEN" not in job["env"]
+        else:
+            assert job["env"]["GH_TOKEN"] == "${{ github.token }}"
         assert job["env"]["RELEASE_TAG"] == "${{ inputs.tag }}"
         assert job["env"]["RELEASE_PROFILE"] == "${{ inputs.profile }}"
         assert "SOURCE_DELIVERY_DIR" not in job["env"]
@@ -398,3 +401,24 @@ def test_workflow_validation_is_required_in_existing_test_and_build_job():
     assert "job.services.postgres.ports['5432']" in next(
         s for s in steps if s["name"] == "Run tests"
     )["env"]["AIKEY_TEST_PG_DSN"]
+
+
+def test_draft_readers_have_required_visibility_but_native_shells_have_no_token():
+    """GitHub draft listings require push; native builds must not receive GH_TOKEN."""
+    workflow = yaml.safe_load(PUBLISHER.read_text())
+    for name in ('images', 'assemble'):
+        job = workflow['jobs'][name]
+        assert job['permissions']['contents'] == 'write'
+        assert 'GH_TOKEN' not in job['env']
+        for step in job['steps']:
+            if 'run' not in step:
+                continue
+            needs_api = ('/policy/tools/release_prepare.py' in step['run'] or
+                         '/policy/tools/release_candidate.py' in step['run'])
+            assert ('GH_TOKEN' in step.get('env', {})) is needs_api
+            if needs_api:
+                assert step['env']['GH_TOKEN'] == '${{ github.token }}'
+        assert all(s['with']['persist-credentials'] is False for s in job['steps']
+                   if s.get('uses', '').startswith('actions/checkout@'))
+    assert workflow['jobs']['reserve']['environment'] == 'release-stage'
+    assert workflow['jobs']['publish']['environment'] == 'release'
