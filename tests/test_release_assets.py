@@ -79,6 +79,8 @@ def assets(tmp_path):
         json.dumps(
             {
                 "bomFormat": "CycloneDX",
+                "specVersion": "1.6",
+                "serialNumber": "urn:uuid:00000000-0000-4000-8000-000000000001",
                 "components": [],
                 "metadata": {"component": {"name": "local-aikey", "version": packet["version"]}},
             }

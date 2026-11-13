@@ -376,6 +376,8 @@ def test_package_sbom_requires_all_pinned_runtime_versions(tmp_path):
     path = tmp_path / "package.cdx.json"
     value = {
         "bomFormat": "CycloneDX",
+        "specVersion": "1.6",
+        "serialNumber": "urn:uuid:00000000-0000-4000-8000-000000000001",
         "components": [{"name": "typing_extensions", "version": "4.16.0"}],
         "metadata": {"component": {"name": "local-aikey", "version": packet["version"]}},
     }
@@ -670,3 +672,61 @@ def test_public_package_refuses_index_write_before_started_receipt(assembly):
         candidate.push_indexes(root, packet, destination,
                                run=lambda *a, **kw: writes.append(a), metadata_run=metadata)
     assert writes == [] and not (destination.parent / "index-started.json").exists()
+
+
+@pytest.mark.parametrize('field,value', [
+    ('serialNumber', None), ('serialNumber', ''), ('serialNumber', 'FICTIONAL-not-a-UUID'),
+    ('specVersion', None), ('specVersion', 1.6), ('specVersion', 'unknown'),
+])
+def test_package_sbom_rejects_unsigned_format_before_attestation(tmp_path, field, value):
+    (tmp_path / 'requirements-runtime.lock').write_text('')
+    packet = plan()
+    bom = {'bomFormat': 'CycloneDX', 'specVersion': '1.6',
+           'serialNumber': 'urn:uuid:00000000-0000-4000-8000-000000000001',
+           'components': [], 'metadata': {'component': {
+               'name': 'local-aikey', 'version': packet['version']}}}
+    bom[field] = value
+    path = tmp_path / 'package.cdx.json'
+    path.write_text(json.dumps(bom))
+    with pytest.raises(ValueError, match='release_package_sbom_refused'):
+        candidate.package_bom(tmp_path, packet, path)
+
+
+@pytest.mark.parametrize('kind,expected', [
+    ('publication', 'release_reservation_owned_elsewhere'),
+    ('preparation', 'release_metadata_too_large'),
+    ('inventory', 'image_inventory_saved_sbom_changed'),
+    ('raw_value', 'release_candidate_unavailable'),
+    ('raw_os', 'release_candidate_unavailable'),
+    ('unbounded', 'release_candidate_unavailable'),
+])
+def test_candidate_reports_only_fixed_refusal_without_provider_text(
+        tmp_path, monkeypatch, capsys, kind, expected):
+    canary = 'FICTIONAL-private-provider-path-and-content'
+    errors = {
+        'publication': candidate.publication.PublicationError(expected),
+        'preparation': candidate.gate.PreparationError(expected),
+        'inventory': candidate.inventory.CheckError(expected),
+        'raw_value': ValueError(canary), 'raw_os': OSError(canary),
+        'unbounded': candidate.publication.PublicationError(canary),
+    }
+    def refuse(*args, **kwargs):
+        raise errors[kind]
+    monkeypatch.setattr(candidate.publication, 'fresh', refuse)
+    destination = tmp_path / 'no-write.json'
+    assert candidate.main(['image-intent', '--root', str(tmp_path), '--tag', 'v0.1.0a1',
+                           '--release-id', '99', '--destination', str(destination)]) == 2
+    captured = capsys.readouterr()
+    assert canary not in captured.out + captured.err
+    assert json.loads(captured.out) == {
+        'error': expected, 'stage': 'preparation',
+        'automatic_retry': False, 'publication_outcome': 'not_asserted'}
+    assert not destination.exists()
+
+
+def test_package_producer_retains_signer_required_cyclonedx_serial_number():
+    script = (TOOLS / 'release_package_build.sh').read_text()
+    command = script.split('python -m cyclonedx_py environment', 1)[1].split("python - <<'PY'", 1)[0]
+    assert '--output-reproducible' not in command
+    assert '--sv 1.6 --of JSON' in command
+    assert 'release_check.py\" compare' in script

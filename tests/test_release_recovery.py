@@ -341,3 +341,154 @@ def test_older_dispatch_must_be_closed_single_attempt_before_origin(records, fau
     else:
         with pytest.raises(gate.PreparationError):
             recovery.context(policy.parent / "source", source, gate, env, run, profile="image")
+
+
+@pytest.fixture
+def prepush_records(records):
+    import hashlib
+    policy, source, policy_sha, env, state, base_run = records
+    env['RELEASE_RECOVERY_PREFLIGHT_RUN'] = '150'
+    record = json.loads((Path(__file__).resolve().parents[1] /
+                         'docs/legal/recovery-prepush-reconciliation.json').read_text())
+    record.update(original_run_id='123', reservation_id=99, source_revision=source,
+                  run_id='150', policy_revision='d' * 40,
+                  workflow_sha256=hashlib.sha256(b'FICTIONAL reviewed workflow\n').hexdigest())
+    for number, row in enumerate(record['jobs'], 100):
+        row['id'] = number
+    # Fictional live graph: required guard names plus unique fixture-only steps.
+    live_jobs = copy.deepcopy(record['jobs'])
+    effect_names = {
+        13: 'Bind pre-push intent to tested image configs and inventories',
+        15: 'Short-lived workflow registry login',
+        16: 'Push only these attempt-specific images; observe immutable manifests',
+        17: 'Remove owned local fixtures and verify zero remaining resources',
+    }
+    for recorded_job, live_job in zip(record['jobs'], live_jobs, strict=True):
+        for recorded_step, live_step in zip(recorded_job['steps'], live_job['steps'], strict=True):
+            name = (effect_names.get(live_step['number'])
+                    if live_job['name'].startswith('images (') else None)
+            name = name or f'FICTIONAL step {live_step["number"]}'
+            live_step.pop('name_sha256')
+            live_step['name'] = name
+            recorded_step['name_sha256'] = hashlib.sha256(name.encode('utf-8')).hexdigest()
+    state['preflight_record'] = record
+    state['preflight_jobs'] = live_jobs
+    previous = copy.deepcopy(state['original'])
+    previous.update(id=150, head_sha='d' * 40, created_at='2026-01-01T02:00:00Z',
+                    updated_at='2026-01-01T03:00:00Z')
+    state['preflight_run'] = previous
+    state['history'] = [{'id': 123}, copy.deepcopy(previous),
+                        {'id': 200, 'created_at': '2026-01-01T04:00:00Z'}]
+    folder = policy / 'docs/legal'
+    folder.mkdir(parents=True)
+    path = folder / 'recovery-prepush-reconciliation.json'
+    path.write_text(json.dumps(record))
+    state['record_path'] = path
+
+    def run(argv, *, cwd, **kwargs):
+        if argv[-1].endswith('/runs/150'):
+            return json.dumps(state['preflight_run'])
+        if argv[-1].endswith('/runs/150/jobs?per_page=100'):
+            return json.dumps({'total_count': state.get('preflight_total', 8),
+                               'jobs': state['preflight_jobs']})
+        if argv[:2] == ['git', 'show']:
+            assert argv[-1] == 'd' * 40 + ':.github/workflows/publish-release.yml'
+            return state.get('workflow_bytes', 'FICTIONAL reviewed workflow\n')
+        return base_run(argv, cwd=cwd, **kwargs)
+    return policy, source, policy_sha, env, state, run
+
+
+def test_exact_reviewed_pre_push_failure_can_be_reconciled_without_writes(prepush_records):
+    policy, source, _, env, state, run = prepush_records
+    result = recovery.context(policy.parent / 'source', source, gate, env, run, profile='image')
+    assert result['original_run_id'] == '123' and result['reservation_id'] == 99
+    assert result['reconciled_preflight']['run_id'] == '150'
+    assert result['reconciled_preflight']['workflow_revision'] == 'd' * 40
+    assert len(result['reconciled_preflight']['jobs_sha256']) == 64
+    assert state['ci'] == [(policy, 'a' * 40)]
+
+
+@pytest.mark.parametrize('fault', [
+    'no_opt_in', 'unknown_run', 'same_current', 'same_original', 'no_original_inputs',
+    'missing_record', 'different_source', 'different_draft', 'different_origin',
+    'different_policy', 'workflow_bytes', 'rerun', 'foreign_owner', 'partial_jobs',
+    'missing_job', 'extra_job', 'duplicate_job', 'missing_step', 'unknown_step',
+    'changed_step', 'registry_login', 'image_push', 'cleanup_failed', 'package_succeeded',
+    'publish_ran', 'assemble_ran', 'intervening_other', 'prior_not_in_history',
+    'prior_still_running', 'newer_current_race', 'renamed_step',
+    'raw_record_name', 'bad_name_digest', 'legacy_record',
+])
+def test_pre_push_reconciliation_refuses_every_ambiguous_effect(prepush_records, fault):
+    policy, source, _, env, state, run = prepush_records
+    if fault == 'no_opt_in':
+        env.pop('RELEASE_RECOVERY_PREFLIGHT_RUN')
+    elif fault == 'unknown_run':
+        env['RELEASE_RECOVERY_PREFLIGHT_RUN'] = '151'
+    elif fault == 'same_current':
+        env['RELEASE_RECOVERY_PREFLIGHT_RUN'] = '200'
+    elif fault == 'same_original':
+        env['RELEASE_RECOVERY_PREFLIGHT_RUN'] = '123'
+    elif fault == 'no_original_inputs':
+        env['RELEASE_RECOVERY_RUN'] = env['RELEASE_RECOVERY_ID'] = ''
+    elif fault == 'missing_record':
+        state['record_path'].unlink()
+    elif fault.startswith('different_'):
+        key = {'source': 'source_revision', 'draft': 'reservation_id',
+               'origin': 'original_run_id', 'policy': 'policy_revision'}[fault[10:]]
+        state['preflight_record'][key] = 100 if key == 'reservation_id' else 'c' * 40
+        state['record_path'].write_text(json.dumps(state['preflight_record']))
+    elif fault in ('raw_record_name', 'bad_name_digest', 'legacy_record'):
+        record = state['preflight_record']
+        if fault == 'legacy_record':
+            record['schema'] = 'aikey-prepush-reconciliation/1'
+        else:
+            step = record['jobs'][0]['steps'][0]
+            if fault == 'raw_record_name':
+                step['name'] = 'FICTIONAL runner path'
+            else:
+                step['name_sha256'] = 'not a digest'
+        state['record_path'].write_text(json.dumps(record))
+    elif fault == 'renamed_step':
+        state['preflight_jobs'][0]['steps'][0]['name'] += ' changed'
+    elif fault == 'workflow_bytes':
+        state['workflow_bytes'] = 'FICTIONAL unknown policy'
+    elif fault == 'rerun':
+        state['preflight_run']['run_attempt'] = 2
+    elif fault == 'foreign_owner':
+        state['preflight_run']['actor']['id'] = 1
+    elif fault == 'partial_jobs':
+        state['preflight_total'] = 100
+    elif fault == 'missing_job':
+        state['preflight_jobs'].pop()
+    elif fault == 'extra_job':
+        state['preflight_jobs'].append(copy.deepcopy(state['preflight_jobs'][0]))
+    elif fault == 'duplicate_job':
+        state['preflight_jobs'][1]['id'] = state['preflight_jobs'][0]['id']
+    elif fault in ('missing_step', 'unknown_step', 'changed_step', 'registry_login',
+                   'image_push', 'cleanup_failed'):
+        row = next(row for row in state['preflight_jobs'] if row['name'].startswith('images ('))
+        if fault == 'missing_step':
+            row['steps'].pop()
+        elif fault == 'unknown_step':
+            row['steps'].append({'number': 999, 'name': 'FICTIONAL unknown step',
+                                 'status': 'completed', 'conclusion': 'success'})
+        else:
+            name = {'changed_step': 'Bind pre-push intent to tested image configs and inventories',
+                    'registry_login': 'Short-lived workflow registry login',
+                    'image_push': 'Push only these attempt-specific images; observe immutable manifests',
+                    'cleanup_failed': 'Remove owned local fixtures and verify zero remaining resources'}[fault]
+            step = next(step for step in row['steps'] if step['name'] == name)
+            step['conclusion'] = 'failure' if fault == 'cleanup_failed' else 'success'
+    elif fault in ('package_succeeded', 'publish_ran', 'assemble_ran'):
+        name = {'package_succeeded': 'packages', 'publish_ran': 'publish', 'assemble_ran': 'assemble'}[fault]
+        next(row for row in state['preflight_jobs'] if row['name'] == name)['conclusion'] = 'success'
+    elif fault == 'intervening_other':
+        state['history'].append({'id': 175, 'created_at': '2026-01-01T03:30:00Z'})
+    elif fault == 'prior_not_in_history':
+        state['history'].pop(1)
+    elif fault == 'prior_still_running':
+        state['history'][1]['status'] = 'in_progress'
+    elif fault == 'newer_current_race':
+        state['history'][2]['created_at'] = '2026-01-01T02:30:00Z'
+    with pytest.raises((gate.PreparationError, OSError, KeyError)):
+        recovery.context(policy.parent / 'source', source, gate, env, run, profile='image')
