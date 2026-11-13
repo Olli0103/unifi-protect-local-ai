@@ -37,6 +37,17 @@ To match CI's locked runtime dependencies, replace the install step with `.venv/
 
 CI runs the same `ruff` and `pytest` commands, plus a Gitleaks history scan and a dependency and SBOM check. A pull request needs all of them green.
 
+The existing test/build job first runs checksum-pinned actionlint 1.7.12 on all
+GitHub Actions workflows, including the manual owner-gated release workflow.
+It checks syntax, expression types and context availability; YAML parsing alone
+does not check whether a context is available at a particular workflow key.
+Optional shellcheck/pyflakes integration is disabled for this Actions-specific
+check; Python checks still run separately. With actionlint installed, run:
+
+```sh
+actionlint -shellcheck= -pyflakes=
+```
+
 The test/build job also runs checksum-pinned lychee 0.24.2 on repository Markdown:
 local file targets and heading anchors, offline and without a cache. It does not
 contact external links, authenticate to services or download linked artifacts.

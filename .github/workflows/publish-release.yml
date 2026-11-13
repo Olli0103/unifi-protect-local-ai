@@ -35,7 +35,6 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       RELEASE_TAG: ${{ inputs.tag }}
       RELEASE_PROFILE: ${{ inputs.profile }}
-      SOURCE_DELIVERY_DIR: ${{ runner.temp }}/source-delivery
     steps:
     - name: Exact dispatch source, no persisted Git credentials
       uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -47,6 +46,13 @@ jobs:
       uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
       with:
         python-version: '3.12'
+    # runner is unavailable in jobs.<job_id>.env; initialize on the runner.
+    - name: Set runner-local source delivery path
+      shell: bash
+      run: |
+        set -euo pipefail
+        umask 077
+        printf 'SOURCE_DELIVERY_DIR=%s/source-delivery\n' "${RUNNER_TEMP}" >> "${GITHUB_ENV}"
     - name: Read-only readiness; publishing is opt-in
       env:
         REQUEST_PUBLICATION: ${{ inputs.publish }}
@@ -70,7 +76,6 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       RELEASE_TAG: ${{ inputs.tag }}
       RELEASE_PROFILE: ${{ inputs.profile }}
-      SOURCE_DELIVERY_DIR: ${{ runner.temp }}/source-delivery
     outputs:
       release_id: ${{ steps.reserve.outputs.release_id }}
     steps:
@@ -84,6 +89,13 @@ jobs:
       uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
       with:
         python-version: '3.12'
+    # runner is unavailable in jobs.<job_id>.env; initialize on the runner.
+    - name: Set runner-local source delivery path
+      shell: bash
+      run: |
+        set -euo pipefail
+        umask 077
+        printf 'SOURCE_DELIVERY_DIR=%s/source-delivery\n' "${RUNNER_TEMP}" >> "${GITHUB_ENV}"
     - name: Fresh non-audit source, tag, seven CI jobs and environment policy
       id: preparation
       shell: bash
@@ -134,7 +146,6 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       RELEASE_TAG: ${{ inputs.tag }}
       RELEASE_PROFILE: ${{ inputs.profile }}
-      SOURCE_DELIVERY_DIR: ${{ runner.temp }}/source-delivery
     steps:
     - name: Exact dispatch source, no persisted Git credentials
       uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -146,6 +157,13 @@ jobs:
       uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
       with:
         python-version: '3.12'
+    # runner is unavailable in jobs.<job_id>.env; initialize on the runner.
+    - name: Set runner-local source delivery path
+      shell: bash
+      run: |
+        set -euo pipefail
+        umask 077
+        printf 'SOURCE_DELIVERY_DIR=%s/source-delivery\n' "${RUNNER_TEMP}" >> "${GITHUB_ENV}"
     - name: Fresh non-audit source, tag, seven CI jobs and environment policy
       id: preparation
       shell: bash
@@ -214,7 +232,6 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       RELEASE_TAG: ${{ inputs.tag }}
       RELEASE_PROFILE: ${{ inputs.profile }}
-      SOURCE_DELIVERY_DIR: ${{ runner.temp }}/source-delivery
       RESERVATION_ID: ${{ needs.reserve.outputs.release_id }}
     steps:
     - name: Exact dispatch source, no persisted Git credentials
@@ -227,6 +244,13 @@ jobs:
       uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
       with:
         python-version: '3.12'
+    # runner is unavailable in jobs.<job_id>.env; initialize on the runner.
+    - name: Set runner-local source delivery path
+      shell: bash
+      run: |
+        set -euo pipefail
+        umask 077
+        printf 'SOURCE_DELIVERY_DIR=%s/source-delivery\n' "${RUNNER_TEMP}" >> "${GITHUB_ENV}"
     - name: Fresh non-audit source, tag, seven CI jobs and environment policy
       id: preparation
       shell: bash
@@ -317,7 +341,6 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       RELEASE_TAG: ${{ inputs.tag }}
       RELEASE_PROFILE: ${{ inputs.profile }}
-      SOURCE_DELIVERY_DIR: ${{ runner.temp }}/source-delivery
       RESERVATION_ID: ${{ needs.reserve.outputs.release_id }}
       INSTALL_ARCH: ${{ matrix.arch }}
       SOURCE_REVISION: ${{ github.sha }}
@@ -334,6 +357,13 @@ jobs:
       uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
       with:
         python-version: '3.12'
+    # runner is unavailable in jobs.<job_id>.env; initialize on the runner.
+    - name: Set runner-local source delivery path
+      shell: bash
+      run: |
+        set -euo pipefail
+        umask 077
+        printf 'SOURCE_DELIVERY_DIR=%s/source-delivery\n' "${RUNNER_TEMP}" >> "${GITHUB_ENV}"
     - name: Fresh non-audit source, tag, seven CI jobs and environment policy
       id: preparation
       shell: bash
@@ -527,7 +557,6 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       RELEASE_TAG: ${{ inputs.tag }}
       RELEASE_PROFILE: ${{ inputs.profile }}
-      SOURCE_DELIVERY_DIR: ${{ runner.temp }}/source-delivery
       RESERVATION_ID: ${{ needs.reserve.outputs.release_id }}
     steps:
     - name: Exact dispatch source, no persisted Git credentials
@@ -540,6 +569,13 @@ jobs:
       uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
       with:
         python-version: '3.12'
+    # runner is unavailable in jobs.<job_id>.env; initialize on the runner.
+    - name: Set runner-local source delivery path
+      shell: bash
+      run: |
+        set -euo pipefail
+        umask 077
+        printf 'SOURCE_DELIVERY_DIR=%s/source-delivery\n' "${RUNNER_TEMP}" >> "${GITHUB_ENV}"
     - name: Fresh non-audit source, tag, seven CI jobs and environment policy
       id: preparation
       shell: bash
@@ -706,7 +742,6 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       RELEASE_TAG: ${{ inputs.tag }}
       RELEASE_PROFILE: ${{ inputs.profile }}
-      SOURCE_DELIVERY_DIR: ${{ runner.temp }}/source-delivery
       RESERVATION_ID: ${{ needs.reserve.outputs.release_id }}
     steps:
     - name: Exact dispatch source, no persisted Git credentials
@@ -719,6 +754,13 @@ jobs:
       uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
       with:
         python-version: '3.12'
+    # runner is unavailable in jobs.<job_id>.env; initialize on the runner.
+    - name: Set runner-local source delivery path
+      shell: bash
+      run: |
+        set -euo pipefail
+        umask 077
+        printf 'SOURCE_DELIVERY_DIR=%s/source-delivery\n' "${RUNNER_TEMP}" >> "${GITHUB_ENV}"
     - name: Fresh non-audit source, tag, seven CI jobs and environment policy
       id: preparation
       shell: bash
