@@ -7,6 +7,8 @@ GitHub protection rules. The release preparation gate checks those separately.
 from copy import deepcopy
 from pathlib import Path
 import re
+import os
+import subprocess
 
 import pytest
 import yaml
@@ -117,7 +119,7 @@ def workflow_policy(value, *, publisher=False):
         assert job["env"]["GH_TOKEN"] == "${{ github.token }}"
         assert job["env"]["RELEASE_TAG"] == "${{ inputs.tag }}"
         assert job["env"]["RELEASE_PROFILE"] == "${{ inputs.profile }}"
-        assert job["env"]["SOURCE_DELIVERY_DIR"] == "${{ runner.temp }}/source-delivery"
+        assert "SOURCE_DELIVERY_DIR" not in job["env"]
         steps = job["steps"]
         assert steps[0]["uses"].startswith("actions/checkout@")
         assert steps[0]["with"] == {
@@ -126,15 +128,24 @@ def workflow_policy(value, *, publisher=False):
             "persist-credentials": False,
         }
         assert steps[1]["uses"].startswith("actions/setup-python@")
+        assert steps[2] == {
+            "name": "Set runner-local source delivery path",
+            "shell": "bash",
+            "run": (
+                "set -euo pipefail\numask 077\n"
+                "printf 'SOURCE_DELIVERY_DIR=%s/source-delivery\\n' "
+                '"${RUNNER_TEMP}" >> "${GITHUB_ENV}"\n'
+            ),
+        }
         if name != "qualify":
             # No upload/signing/registry login can be inserted before this
             # fresh exact-source/legal/public-tag/CI/environment preflight.
-            assert steps[2]["id"] == "preparation"
+            assert steps[3]["id"] == "preparation"
             assert (
                 'python tools/release_prepare.py --tag "${RELEASE_TAG}" --publish'
-                in steps[2]["run"]
+                in steps[3]["run"]
             )
-            assert steps[2].get("if") is None
+            assert steps[3].get("if") is None
         for step in steps:
             if "uses" in step:
                 assert re.fullmatch(r"[^@]+@[0-9a-f]{40}", step["uses"])
@@ -198,15 +209,24 @@ def test_security_workflow_pins_actions_and_uses_read_only_permissions(path):
         "unconditional_upload",
         "cancel_previous", "unknown_profile", "implicit_image", "image_profile_bypass",
         "assembly_failure_bypass", "registry_profile_bypass", "skip_sources", "source_gate_bypass",
+        "job_runner_context", "skip_path_init", "wrong_source_path", "conditional_path_init",
     ],
 )
 def test_publisher_exception_refuses_authorization_graph_and_privilege_regressions(fault):
     value = deepcopy(yaml.safe_load(PUBLISHER.read_text()))
     jobs = value["jobs"]
-    if fault == "skip_sources":
+    if fault == "job_runner_context":
+        jobs["images"]["env"]["SOURCE_DELIVERY_DIR"] = "${{ runner.temp }}/source-delivery"
+    elif fault == "skip_path_init":
+        jobs["images"]["steps"].pop(2)
+    elif fault == "wrong_source_path":
+        jobs["images"]["steps"][2]["run"] = "set -euo pipefail\numask 077\necho wrong-path\n"
+    elif fault == "conditional_path_init":
+        jobs["images"]["steps"][2]["if"] = "inputs.publish"
+    elif fault == "skip_sources":
         jobs["images"]["needs"] = ["reserve"]
     elif fault == "source_gate_bypass":
-        jobs["sources"]["steps"][2]["if"] = "false"
+        jobs["sources"]["steps"][3]["if"] = "false"
     elif fault == "unknown_profile":
         value["on"]["workflow_dispatch"]["inputs"]["profile"]["options"].append("unsafe")
     elif fault == "implicit_image":
@@ -249,13 +269,13 @@ def test_publisher_exception_refuses_authorization_graph_and_privilege_regressio
     elif fault == "pre_gate_upload":
         jobs["images"]["steps"].insert(2, deepcopy(jobs["images"]["steps"][-1]))
     elif fault == "skip_gate":
-        jobs["images"]["steps"][2]["if"] = "false"
+        jobs["images"]["steps"][3]["if"] = "false"
     elif fault == "always_publish":
         jobs["publish"]["if"] = "always()"
     elif fault == "unpinned_action":
         jobs["images"]["steps"][0]["uses"] = "actions/checkout@main"
     elif fault == "direct_input_shell":
-        jobs["images"]["steps"][2]["run"] += 'echo "${{ inputs.tag }}"\n'
+        jobs["images"]["steps"][3]["run"] += 'echo "${{ inputs.tag }}"\n'
     elif fault == "untrusted_runner":
         jobs["images"]["strategy"]["matrix"]["include"][0]["runner"] = "self-hosted"
     elif fault == "unconditional_upload":
@@ -296,3 +316,46 @@ def test_security_workflow_keeps_required_release_gates():
         assert required in workflow
     assert "GITHUB_TOKEN" not in workflow
     assert "gitleaks/gitleaks-action" not in workflow
+
+
+@pytest.mark.parametrize("job_name", yaml.safe_load(PUBLISHER.read_text())["jobs"])
+def test_source_delivery_environment_reaches_later_steps(job_name, tmp_path):
+    job = yaml.safe_load(PUBLISHER.read_text())["jobs"][job_name]
+    runner_temp = tmp_path / "runner temp with spaces"
+    runner_temp.mkdir()
+    command_file = tmp_path / "github env"
+    command_file.write_text("EXISTING=preserved\n")
+    env = {"PATH": os.defpath, "RUNNER_TEMP": str(runner_temp), "GITHUB_ENV": str(command_file)}
+    subprocess.run(["bash", "-c", job["steps"][2]["run"]], env=env, check=True)
+    # The runner loads GITHUB_ENV for subsequent steps, not for the writing step.
+    downstream = dict(line.split("=", 1) for line in command_file.read_text().splitlines())
+    assert downstream == {
+        "EXISTING": "preserved",
+        "SOURCE_DELIVERY_DIR": str(runner_temp / "source-delivery"),
+    }
+    subprocess.run(
+        ["bash", "-eu", "-c", 'test "${SOURCE_DELIVERY_DIR}" = "${RUNNER_TEMP}/source-delivery"'],
+        env={**env, **downstream}, check=True,
+    )
+
+
+def test_workflow_validation_is_required_in_existing_test_and_build_job():
+    workflow = yaml.safe_load(WORKFLOW.read_text())
+    job = workflow["jobs"]["test-and-build"]
+    steps = job["steps"]
+    install = next(s for s in steps if s["name"] == "Install checksum-pinned GitHub Actions validator")
+    lint = next(s for s in steps if s["name"] == "Validate every GitHub Actions workflow")
+    assert install["env"]["ACTIONLINT_ARCHIVE_SHA256"] == (
+        "8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8"
+    )
+    assert "actionlint_1.7.12_linux_amd64.tar.gz" in install["run"]
+    assert "sha256sum --check --strict" in install["run"]
+    assert install["run"].index("sha256sum --check --strict") < install["run"].index("tar --extract")
+    assert lint["run"] == '"${RUNNER_TEMP}/actionlint" -shellcheck= -pyflakes='
+    assert steps.index(install) < steps.index(lint) < steps.index(next(s for s in steps if s["name"] == "Run tests"))
+    for step in (install, lint):
+        assert "if" not in step and "continue-on-error" not in step
+    assert "if" not in job and "continue-on-error" not in job
+    assert "job.services.postgres.ports['5432']" in next(
+        s for s in steps if s["name"] == "Run tests"
+    )["env"]["AIKEY_TEST_PG_DSN"]
