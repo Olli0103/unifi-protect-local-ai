@@ -355,8 +355,24 @@ def prepush_records(records):
                   workflow_sha256=hashlib.sha256(b'FICTIONAL reviewed workflow\n').hexdigest())
     for number, row in enumerate(record['jobs'], 100):
         row['id'] = number
+    # Fictional live graph: required guard names plus unique fixture-only steps.
+    live_jobs = copy.deepcopy(record['jobs'])
+    effect_names = {
+        13: 'Bind pre-push intent to tested image configs and inventories',
+        15: 'Short-lived workflow registry login',
+        16: 'Push only these attempt-specific images; observe immutable manifests',
+        17: 'Remove owned local fixtures and verify zero remaining resources',
+    }
+    for recorded_job, live_job in zip(record['jobs'], live_jobs, strict=True):
+        for recorded_step, live_step in zip(recorded_job['steps'], live_job['steps'], strict=True):
+            name = (effect_names.get(live_step['number'])
+                    if live_job['name'].startswith('images (') else None)
+            name = name or f'FICTIONAL step {live_step["number"]}'
+            live_step.pop('name_sha256')
+            live_step['name'] = name
+            recorded_step['name_sha256'] = hashlib.sha256(name.encode('utf-8')).hexdigest()
     state['preflight_record'] = record
-    state['preflight_jobs'] = copy.deepcopy(record['jobs'])
+    state['preflight_jobs'] = live_jobs
     previous = copy.deepcopy(state['original'])
     previous.update(id=150, head_sha='d' * 40, created_at='2026-01-01T02:00:00Z',
                     updated_at='2026-01-01T03:00:00Z')
@@ -399,7 +415,8 @@ def test_exact_reviewed_pre_push_failure_can_be_reconciled_without_writes(prepus
     'missing_job', 'extra_job', 'duplicate_job', 'missing_step', 'unknown_step',
     'changed_step', 'registry_login', 'image_push', 'cleanup_failed', 'package_succeeded',
     'publish_ran', 'assemble_ran', 'intervening_other', 'prior_not_in_history',
-    'prior_still_running', 'newer_current_race',
+    'prior_still_running', 'newer_current_race', 'renamed_step',
+    'raw_record_name', 'bad_name_digest', 'legacy_record',
 ])
 def test_pre_push_reconciliation_refuses_every_ambiguous_effect(prepush_records, fault):
     policy, source, _, env, state, run = prepush_records
@@ -420,6 +437,19 @@ def test_pre_push_reconciliation_refuses_every_ambiguous_effect(prepush_records,
                'origin': 'original_run_id', 'policy': 'policy_revision'}[fault[10:]]
         state['preflight_record'][key] = 100 if key == 'reservation_id' else 'c' * 40
         state['record_path'].write_text(json.dumps(state['preflight_record']))
+    elif fault in ('raw_record_name', 'bad_name_digest', 'legacy_record'):
+        record = state['preflight_record']
+        if fault == 'legacy_record':
+            record['schema'] = 'aikey-prepush-reconciliation/1'
+        else:
+            step = record['jobs'][0]['steps'][0]
+            if fault == 'raw_record_name':
+                step['name'] = 'FICTIONAL runner path'
+            else:
+                step['name_sha256'] = 'not a digest'
+        state['record_path'].write_text(json.dumps(record))
+    elif fault == 'renamed_step':
+        state['preflight_jobs'][0]['steps'][0]['name'] += ' changed'
     elif fault == 'workflow_bytes':
         state['workflow_bytes'] = 'FICTIONAL unknown policy'
     elif fault == 'rerun':

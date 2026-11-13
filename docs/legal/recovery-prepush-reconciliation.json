@@ -1,5 +1,5 @@
 {
-  "schema": "aikey-prepush-reconciliation/1",
+  "schema": "aikey-prepush-reconciliation/2",
   "original_run_id": "43402688428",
   "reservation_id": 444049704,
   "source_revision": "a3da9c21715dade37fbe3a25529fa85fd17dc430",
@@ -15,69 +15,69 @@
       "steps": [
         {
           "number": 1,
-          "name": "Set up job",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "0f18368152a8d471ade424813fb96bbe7d7b2074d20d611502ff922956e5e521"
         },
         {
           "number": 2,
-          "name": "Exact dispatch source, no persisted Git credentials",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "ce1cffb26b22e599e1b329aa5b0253224a5d00353cf9514f1287cb44c024ce9a"
         },
         {
           "number": 3,
-          "name": "Python 3.12",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "b8688dde49bc7a83b79318716cfcb6efe79f55f91f4fa62809167eaf318400bf"
         },
         {
           "number": 4,
-          "name": "Resolve unchanged source or explicit original-run recovery",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "0f80d0122424291e26fe6b09caaafd9f6586f171190eeba88bbb5f95397b3c59"
         },
         {
           "number": 5,
-          "name": "Exact artifact source separate from workflow policy",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "77c42f6f129afd43ec5510eaf5ba91b46c1d8fa6aa9f2c0d8b620a0bc5622bb2"
         },
         {
           "number": 6,
-          "name": "Set runner-local source delivery path",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "43301ace430412fc712de37144960543ecaf983f5fc2e50e16892e6b1fe49ea9"
         },
         {
           "number": 7,
-          "name": "Read-only readiness; publishing is opt-in",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "1207f69499ffbe36127b8a3d61465add1a221aaf53bacc90b3547d2e7abf47ae"
         },
         {
           "number": 12,
-          "name": "Post Exact artifact source separate from workflow policy",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "82a00373da1e51adf12b6ae567eca8e0f90236e7e794146301d6d3d823e892ba"
         },
         {
           "number": 13,
-          "name": "Post Python 3.12",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "7ed544e4d01080b4532ca4ed641b1425cb007f5203ef88eb64d3b896c3cb5b0c"
         },
         {
           "number": 14,
-          "name": "Post Exact dispatch source, no persisted Git credentials",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "38f882140c79a750dd083afc6aa5a3c4e3570cd869f573c7b24fe71a2cbeef39"
         },
         {
           "number": 15,
-          "name": "Complete job",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "a007f8748e6073491ed6bd8677558b71fd544fc5f89608af6f65686ee6175a67"
         }
       ]
     },
@@ -89,75 +89,75 @@
       "steps": [
         {
           "number": 1,
-          "name": "Set up job",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "0f18368152a8d471ade424813fb96bbe7d7b2074d20d611502ff922956e5e521"
         },
         {
           "number": 2,
-          "name": "Exact dispatch source, no persisted Git credentials",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "ce1cffb26b22e599e1b329aa5b0253224a5d00353cf9514f1287cb44c024ce9a"
         },
         {
           "number": 3,
-          "name": "Exact artifact source separate from workflow policy",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "77c42f6f129afd43ec5510eaf5ba91b46c1d8fa6aa9f2c0d8b620a0bc5622bb2"
         },
         {
           "number": 4,
-          "name": "Python 3.12",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "b8688dde49bc7a83b79318716cfcb6efe79f55f91f4fa62809167eaf318400bf"
         },
         {
           "number": 5,
-          "name": "Set runner-local source delivery path",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "43301ace430412fc712de37144960543ecaf983f5fc2e50e16892e6b1fe49ea9"
         },
         {
           "number": 6,
-          "name": "Fresh non-audit source, tag, seven CI jobs and environment policy",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "13b526a7d1f66cedc206dc55eef77e12eb51515395fab2c75d4fb19c4ddc84ff"
         },
         {
           "number": 7,
-          "name": "Reserve draft once; positively reconcile lost acknowledgement",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "388def902bee01092e11c257ffefa1d31c7b8b7bdec0c15df473ce0cf3f991ff"
         },
         {
           "number": 8,
-          "name": "Retain release-reservation",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "ac782630702a68fd3f1e3be5d8c154417a9b93224ebc67a90c93995555d6291e"
         },
         {
           "number": 14,
-          "name": "Post Python 3.12",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "7ed544e4d01080b4532ca4ed641b1425cb007f5203ef88eb64d3b896c3cb5b0c"
         },
         {
           "number": 15,
-          "name": "Post Exact artifact source separate from workflow policy",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "82a00373da1e51adf12b6ae567eca8e0f90236e7e794146301d6d3d823e892ba"
         },
         {
           "number": 16,
-          "name": "Post Exact dispatch source, no persisted Git credentials",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "38f882140c79a750dd083afc6aa5a3c4e3570cd869f573c7b24fe71a2cbeef39"
         },
         {
           "number": 17,
-          "name": "Complete job",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "a007f8748e6073491ed6bd8677558b71fd544fc5f89608af6f65686ee6175a67"
         }
       ]
     },
@@ -169,87 +169,87 @@
       "steps": [
         {
           "number": 1,
-          "name": "Set up job",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "0f18368152a8d471ade424813fb96bbe7d7b2074d20d611502ff922956e5e521"
         },
         {
           "number": 2,
-          "name": "Exact dispatch source, no persisted Git credentials",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "ce1cffb26b22e599e1b329aa5b0253224a5d00353cf9514f1287cb44c024ce9a"
         },
         {
           "number": 3,
-          "name": "Exact artifact source separate from workflow policy",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "77c42f6f129afd43ec5510eaf5ba91b46c1d8fa6aa9f2c0d8b620a0bc5622bb2"
         },
         {
           "number": 4,
-          "name": "Python 3.12",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "b8688dde49bc7a83b79318716cfcb6efe79f55f91f4fa62809167eaf318400bf"
         },
         {
           "number": 5,
-          "name": "Set runner-local source delivery path",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "43301ace430412fc712de37144960543ecaf983f5fc2e50e16892e6b1fe49ea9"
         },
         {
           "number": 6,
-          "name": "Fresh non-audit source, tag, seven CI jobs and environment policy",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "13b526a7d1f66cedc206dc55eef77e12eb51515395fab2c75d4fb19c4ddc84ff"
         },
         {
           "number": 7,
-          "name": "Download only the owner-pinned upstream source collection",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "f5649ccb0dbd6eb75df171057e783d63db7c01884f3dd567b5032909aa4ee869"
         },
         {
           "number": 8,
-          "name": "Download exact-revision four-image qualification inputs",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "f72e2e173b0fd4d70dc7aadcc027f664b84001118cc702d978032c2b1f937f62"
         },
         {
           "number": 9,
-          "name": "Verify all original bytes and exact release-commit source inventory before delivery",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "4a82a9f32f721ee8e978c29c5b1ade6513d7751466c8cdb89d3b0cb3f2f45dca"
         },
         {
           "number": 10,
-          "name": "Retain only validated same-release source delivery",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "e0acfc478bbfd3fa7a51e9ba16fdbd137963393b1beb05554f33d1fcbbf94249"
         },
         {
           "number": 18,
-          "name": "Post Python 3.12",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "7ed544e4d01080b4532ca4ed641b1425cb007f5203ef88eb64d3b896c3cb5b0c"
         },
         {
           "number": 19,
-          "name": "Post Exact artifact source separate from workflow policy",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "82a00373da1e51adf12b6ae567eca8e0f90236e7e794146301d6d3d823e892ba"
         },
         {
           "number": 20,
-          "name": "Post Exact dispatch source, no persisted Git credentials",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "38f882140c79a750dd083afc6aa5a3c4e3570cd869f573c7b24fe71a2cbeef39"
         },
         {
           "number": 21,
-          "name": "Complete job",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "a007f8748e6073491ed6bd8677558b71fd544fc5f89608af6f65686ee6175a67"
         }
       ]
     },
@@ -261,195 +261,195 @@
       "steps": [
         {
           "number": 1,
-          "name": "Set up job",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "0f18368152a8d471ade424813fb96bbe7d7b2074d20d611502ff922956e5e521"
         },
         {
           "number": 2,
-          "name": "Exact dispatch source, no persisted Git credentials",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "ce1cffb26b22e599e1b329aa5b0253224a5d00353cf9514f1287cb44c024ce9a"
         },
         {
           "number": 3,
-          "name": "Exact artifact source separate from workflow policy",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "77c42f6f129afd43ec5510eaf5ba91b46c1d8fa6aa9f2c0d8b620a0bc5622bb2"
         },
         {
           "number": 4,
-          "name": "Python 3.12",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "b8688dde49bc7a83b79318716cfcb6efe79f55f91f4fa62809167eaf318400bf"
         },
         {
           "number": 5,
-          "name": "Set runner-local source delivery path",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "43301ace430412fc712de37144960543ecaf983f5fc2e50e16892e6b1fe49ea9"
         },
         {
           "number": 6,
-          "name": "Fresh non-audit source, tag, seven CI jobs and environment policy",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "13b526a7d1f66cedc206dc55eef77e12eb51515395fab2c75d4fb19c4ddc84ff"
         },
         {
           "number": 7,
-          "name": "Download this run's validated source bundle before any image or asset upload",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "d27cb26cac5a2acbc0001214de1c98329c884c11ff7955c2f817c84437163f6e"
         },
         {
           "number": 8,
-          "name": "Maintained native Docker Buildx",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "623f6e30138940283610179a5f6c84b0ad9afb3f9323e7e19411e7a75f350a72"
         },
         {
           "number": 9,
-          "name": "Exact qualified main-run inventory, not an old head",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "dcb4766ab6cf56ba573cbd6cfb81ec9604ce45c06b2830963e7fbbf54e9484bf"
         },
         {
           "number": 10,
-          "name": "Verify native context",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "dccb6dc736607ae6aaea93696be903a53706789338eef1b33b3fb0684a564cce"
         },
         {
           "number": 11,
-          "name": "Install checksum-pinned Syft",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "1aed1b25ae7b7a70240b557880c98db4883f92aebc5aa1ad2c55b79e79144b9f"
         },
         {
           "number": 12,
-          "name": "Run the existing eight installed-source/state cases natively",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "5da68137c7c721a47e609f640bffce230945a5385d9f16493598941ee400a961"
         },
         {
           "number": 13,
-          "name": "Bind pre-push intent to tested image configs and inventories",
           "status": "completed",
-          "conclusion": "failure"
+          "conclusion": "failure",
+          "name_sha256": "a1791fa931457f0fc5728da661c010666b6c4d537ec963aa75b7a249078a60dd"
         },
         {
           "number": 14,
-          "name": "Retain release-image-intent-arm64",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "bb56294629a3c0c8d190f8395b17c7833b09529925d1d05206b23a483e632996"
         },
         {
           "number": 15,
-          "name": "Short-lived workflow registry login",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "f2e46cd6d91d0002cb1fffbc1ee39f81700a7bb5ce490ffe1a617aa097376174"
         },
         {
           "number": 16,
-          "name": "Push only these attempt-specific images; observe immutable manifests",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "0ec17df6606a50a5f0cccb580bd65ae58a498453ca3df3f64dec01cd0cae4ffe"
         },
         {
           "number": 17,
-          "name": "Remove owned local fixtures and verify zero remaining resources",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "e6e6dbc56391eb9486b423eaecaf1b136cb6733782aaf258272645590140c367"
         },
         {
           "number": 18,
-          "name": "Retain only sanitized complete native handoff",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "8a7a937cf04be456eaad4ae0baa03201b3ebb29f702f0e6104eefbc6c91a1e69"
         },
         {
           "number": 19,
-          "name": "aikey provenance",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "ed998466b797ed4d783fc41fcac9242d2ef0b7997caf8fa7f045e09b10c4a939"
         },
         {
           "number": 20,
-          "name": "Retain standard bundle /home/runner/work/_temp/release-images/aikey-arm64-provenance.sigstore.json",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "a38dbc08399311b7d28e2ef5ee82b4567d8c042fb9d1f4803a3548f8a78215f5"
         },
         {
           "number": 21,
-          "name": "aikey sbom",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "46af1b246b982fcc3fcbd3be2f8f612459346504e3aa4ad9eea0e4695bd04f18"
         },
         {
           "number": 22,
-          "name": "Retain standard bundle /home/runner/work/_temp/release-images/aikey-arm64-sbom.sigstore.json",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "7b1d88fba94485ea785b06dd69bff186b28a4f52bc5b5270a79d665dfa6fb307"
         },
         {
           "number": 23,
-          "name": "aiport provenance",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "7c74b46b294a5af64afb14986ce1f2e2e997b9a9a2a5cbb9a5df4589d9a44a6a"
         },
         {
           "number": 24,
-          "name": "Retain standard bundle /home/runner/work/_temp/release-images/aiport-arm64-provenance.sigstore.json",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "91a26a8984b0a7d392f931fa2cb5cbb03c39539bfb14770996dc6e4f4a2400b0"
         },
         {
           "number": 25,
-          "name": "aiport sbom",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "80f704d6af53549d9d00013530c09738dcfed4d97b1e695e8cfa6ec3a3184fdc"
         },
         {
           "number": 26,
-          "name": "Retain standard bundle /home/runner/work/_temp/release-images/aiport-arm64-sbom.sigstore.json",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "214dd0723873e0c30c2f41817d73fbd9ad078ebffa7f5ff94b4e62f5c8a1ba77"
         },
         {
           "number": 27,
-          "name": "Retain release-images-arm64",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "f89e6c58b8400d7a11f38f56b14b0c4c4e04ddef6d179143b23d1ac2529bc244"
         },
         {
           "number": 51,
-          "name": "Post Maintained native Docker Buildx",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "6a01fe3d3705ed4a0a015d52c8aac83462fbbda60f2737e8a63e2dbf6e051293"
         },
         {
           "number": 52,
-          "name": "Post Python 3.12",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "7ed544e4d01080b4532ca4ed641b1425cb007f5203ef88eb64d3b896c3cb5b0c"
         },
         {
           "number": 53,
-          "name": "Post Exact artifact source separate from workflow policy",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "82a00373da1e51adf12b6ae567eca8e0f90236e7e794146301d6d3d823e892ba"
         },
         {
           "number": 54,
-          "name": "Post Exact dispatch source, no persisted Git credentials",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "38f882140c79a750dd083afc6aa5a3c4e3570cd869f573c7b24fe71a2cbeef39"
         },
         {
           "number": 55,
-          "name": "Complete job",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "a007f8748e6073491ed6bd8677558b71fd544fc5f89608af6f65686ee6175a67"
         }
       ]
     },
@@ -461,105 +461,105 @@
       "steps": [
         {
           "number": 1,
-          "name": "Set up job",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "0f18368152a8d471ade424813fb96bbe7d7b2074d20d611502ff922956e5e521"
         },
         {
           "number": 2,
-          "name": "Exact dispatch source, no persisted Git credentials",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "ce1cffb26b22e599e1b329aa5b0253224a5d00353cf9514f1287cb44c024ce9a"
         },
         {
           "number": 3,
-          "name": "Exact artifact source separate from workflow policy",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "77c42f6f129afd43ec5510eaf5ba91b46c1d8fa6aa9f2c0d8b620a0bc5622bb2"
         },
         {
           "number": 4,
-          "name": "Python 3.12",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "b8688dde49bc7a83b79318716cfcb6efe79f55f91f4fa62809167eaf318400bf"
         },
         {
           "number": 5,
-          "name": "Set runner-local source delivery path",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "43301ace430412fc712de37144960543ecaf983f5fc2e50e16892e6b1fe49ea9"
         },
         {
           "number": 6,
-          "name": "Fresh non-audit source, tag, seven CI jobs and environment policy",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "13b526a7d1f66cedc206dc55eef77e12eb51515395fab2c75d4fb19c4ddc84ff"
         },
         {
           "number": 7,
-          "name": "Download this run's validated source bundle before any image or asset upload",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "d27cb26cac5a2acbc0001214de1c98329c884c11ff7955c2f817c84437163f6e"
         },
         {
           "number": 8,
-          "name": "Two clean reproducible builds and locked runtime SBOM",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "0730b3e789ed16e4b9f503e75d6d79cf1f5964076530c4ff48a0774d27e407a7"
         },
         {
           "number": 9,
-          "name": "Package provenance",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "a4c6e97ae50ea0358f4a31f04dc8469d1ac4749fa8744a9aa7d392f95b6acf81"
         },
         {
           "number": 10,
-          "name": "Retain standard bundle /home/runner/work/_temp/release-packages/package-provenance.sigstore.json",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "37515270af20821c98c02e7aefacf59dc47062c1fd62accdf4897f1b85b55bdf"
         },
         {
           "number": 11,
-          "name": "Package SBOM attestation",
           "status": "completed",
-          "conclusion": "failure"
+          "conclusion": "failure",
+          "name_sha256": "1bdc71e692e620c8d64b2a3d91262302f5c9e97483d1c7afb94b897b592ea224"
         },
         {
           "number": 12,
-          "name": "Retain standard bundle /home/runner/work/_temp/release-packages/package-sbom.sigstore.json",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "a493b4171abc8d6bbb112cceb91340b395c64196393c30a0824516bc438bc570"
         },
         {
           "number": 13,
-          "name": "Retain release-packages",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "f70d1ec8ce00fa02c065ce24e5fb192cb74da22eebc831058fbcdfcbaa010126"
         },
         {
           "number": 24,
-          "name": "Post Python 3.12",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "7ed544e4d01080b4532ca4ed641b1425cb007f5203ef88eb64d3b896c3cb5b0c"
         },
         {
           "number": 25,
-          "name": "Post Exact artifact source separate from workflow policy",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "82a00373da1e51adf12b6ae567eca8e0f90236e7e794146301d6d3d823e892ba"
         },
         {
           "number": 26,
-          "name": "Post Exact dispatch source, no persisted Git credentials",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "38f882140c79a750dd083afc6aa5a3c4e3570cd869f573c7b24fe71a2cbeef39"
         },
         {
           "number": 27,
-          "name": "Complete job",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "a007f8748e6073491ed6bd8677558b71fd544fc5f89608af6f65686ee6175a67"
         }
       ]
     },
@@ -571,195 +571,195 @@
       "steps": [
         {
           "number": 1,
-          "name": "Set up job",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "0f18368152a8d471ade424813fb96bbe7d7b2074d20d611502ff922956e5e521"
         },
         {
           "number": 2,
-          "name": "Exact dispatch source, no persisted Git credentials",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "ce1cffb26b22e599e1b329aa5b0253224a5d00353cf9514f1287cb44c024ce9a"
         },
         {
           "number": 3,
-          "name": "Exact artifact source separate from workflow policy",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "77c42f6f129afd43ec5510eaf5ba91b46c1d8fa6aa9f2c0d8b620a0bc5622bb2"
         },
         {
           "number": 4,
-          "name": "Python 3.12",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "b8688dde49bc7a83b79318716cfcb6efe79f55f91f4fa62809167eaf318400bf"
         },
         {
           "number": 5,
-          "name": "Set runner-local source delivery path",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "43301ace430412fc712de37144960543ecaf983f5fc2e50e16892e6b1fe49ea9"
         },
         {
           "number": 6,
-          "name": "Fresh non-audit source, tag, seven CI jobs and environment policy",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "13b526a7d1f66cedc206dc55eef77e12eb51515395fab2c75d4fb19c4ddc84ff"
         },
         {
           "number": 7,
-          "name": "Download this run's validated source bundle before any image or asset upload",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "d27cb26cac5a2acbc0001214de1c98329c884c11ff7955c2f817c84437163f6e"
         },
         {
           "number": 8,
-          "name": "Maintained native Docker Buildx",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "623f6e30138940283610179a5f6c84b0ad9afb3f9323e7e19411e7a75f350a72"
         },
         {
           "number": 9,
-          "name": "Exact qualified main-run inventory, not an old head",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "dcb4766ab6cf56ba573cbd6cfb81ec9604ce45c06b2830963e7fbbf54e9484bf"
         },
         {
           "number": 10,
-          "name": "Verify native context",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "dccb6dc736607ae6aaea93696be903a53706789338eef1b33b3fb0684a564cce"
         },
         {
           "number": 11,
-          "name": "Install checksum-pinned Syft",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "1aed1b25ae7b7a70240b557880c98db4883f92aebc5aa1ad2c55b79e79144b9f"
         },
         {
           "number": 12,
-          "name": "Run the existing eight installed-source/state cases natively",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "5da68137c7c721a47e609f640bffce230945a5385d9f16493598941ee400a961"
         },
         {
           "number": 13,
-          "name": "Bind pre-push intent to tested image configs and inventories",
           "status": "completed",
-          "conclusion": "failure"
+          "conclusion": "failure",
+          "name_sha256": "a1791fa931457f0fc5728da661c010666b6c4d537ec963aa75b7a249078a60dd"
         },
         {
           "number": 14,
-          "name": "Retain release-image-intent-amd64",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "3a40327747c307a420d63afad101dc3a780c65be0fb8cc0dfe2709e753e7593f"
         },
         {
           "number": 15,
-          "name": "Short-lived workflow registry login",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "f2e46cd6d91d0002cb1fffbc1ee39f81700a7bb5ce490ffe1a617aa097376174"
         },
         {
           "number": 16,
-          "name": "Push only these attempt-specific images; observe immutable manifests",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "0ec17df6606a50a5f0cccb580bd65ae58a498453ca3df3f64dec01cd0cae4ffe"
         },
         {
           "number": 17,
-          "name": "Remove owned local fixtures and verify zero remaining resources",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "e6e6dbc56391eb9486b423eaecaf1b136cb6733782aaf258272645590140c367"
         },
         {
           "number": 18,
-          "name": "Retain only sanitized complete native handoff",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "8a7a937cf04be456eaad4ae0baa03201b3ebb29f702f0e6104eefbc6c91a1e69"
         },
         {
           "number": 19,
-          "name": "aikey provenance",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "ed998466b797ed4d783fc41fcac9242d2ef0b7997caf8fa7f045e09b10c4a939"
         },
         {
           "number": 20,
-          "name": "Retain standard bundle /home/runner/work/_temp/release-images/aikey-amd64-provenance.sigstore.json",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "eef50c7f901875c01b21d3765c3d5fe69b0fec54e5eae509b91cb10fbb5ac685"
         },
         {
           "number": 21,
-          "name": "aikey sbom",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "46af1b246b982fcc3fcbd3be2f8f612459346504e3aa4ad9eea0e4695bd04f18"
         },
         {
           "number": 22,
-          "name": "Retain standard bundle /home/runner/work/_temp/release-images/aikey-amd64-sbom.sigstore.json",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "84501c86e609af75d47c452ddbfcaf69125d2b6a256fc3480296564b9fa75787"
         },
         {
           "number": 23,
-          "name": "aiport provenance",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "7c74b46b294a5af64afb14986ce1f2e2e997b9a9a2a5cbb9a5df4589d9a44a6a"
         },
         {
           "number": 24,
-          "name": "Retain standard bundle /home/runner/work/_temp/release-images/aiport-amd64-provenance.sigstore.json",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "aa3231c5d0a6ef94d9aa2b9663ea8883639f89b8191a4eb701c7a6c958dd83de"
         },
         {
           "number": 25,
-          "name": "aiport sbom",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "80f704d6af53549d9d00013530c09738dcfed4d97b1e695e8cfa6ec3a3184fdc"
         },
         {
           "number": 26,
-          "name": "Retain standard bundle /home/runner/work/_temp/release-images/aiport-amd64-sbom.sigstore.json",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "674856581a620077f713dfca9a9a20373b72444ea0e122907fa5dbe96bfefbfa"
         },
         {
           "number": 27,
-          "name": "Retain release-images-amd64",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "3c82a091a58b827ad047ac8e48cbfd97ff7424dd871170267058fbc3478921e4"
         },
         {
           "number": 51,
-          "name": "Post Maintained native Docker Buildx",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "6a01fe3d3705ed4a0a015d52c8aac83462fbbda60f2737e8a63e2dbf6e051293"
         },
         {
           "number": 52,
-          "name": "Post Python 3.12",
           "status": "completed",
-          "conclusion": "skipped"
+          "conclusion": "skipped",
+          "name_sha256": "7ed544e4d01080b4532ca4ed641b1425cb007f5203ef88eb64d3b896c3cb5b0c"
         },
         {
           "number": 53,
-          "name": "Post Exact artifact source separate from workflow policy",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "82a00373da1e51adf12b6ae567eca8e0f90236e7e794146301d6d3d823e892ba"
         },
         {
           "number": 54,
-          "name": "Post Exact dispatch source, no persisted Git credentials",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "38f882140c79a750dd083afc6aa5a3c4e3570cd869f573c7b24fe71a2cbeef39"
         },
         {
           "number": 55,
-          "name": "Complete job",
           "status": "completed",
-          "conclusion": "success"
+          "conclusion": "success",
+          "name_sha256": "a007f8748e6073491ed6bd8677558b71fd544fc5f89608af6f65686ee6175a67"
         }
       ]
     },

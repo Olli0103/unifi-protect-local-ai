@@ -83,7 +83,11 @@ def resolve(gate, env, run):
 
 
 
-def job_graph(value, gate):
+def step_name_digest(value):
+    return hashlib.sha256(value.encode("utf-8")).hexdigest()
+
+
+def job_graph(value, gate, *, recorded=False):
     rows = value.get("jobs")
     gate.require(isinstance(rows, list) and len(rows) == 8
                  and type(value.get("total_count")) is int and value["total_count"] == len(rows),
@@ -94,10 +98,22 @@ def job_graph(value, gate):
                      and row.get("status") == "completed" and isinstance(row.get("name"), str)
                      and isinstance(row.get("steps"), list) and len(row["steps"]) <= 80,
                      "release_recovery_preflight_jobs_refused")
-        steps = [{key: step[key] for key in ("number", "name", "status", "conclusion")}
-                 for step in row["steps"]]
+        # Provider step names can include absolute runner paths. Keep only exact
+        # UTF-8 digests in the reviewed record, not build-environment strings.
+        steps = []
+        for step in row["steps"]:
+            name_key = "name_sha256" if recorded else "name"
+            gate.require(isinstance(step, dict)
+                         and (not recorded or set(step) ==
+                              {"number", "name_sha256", "status", "conclusion"})
+                         and isinstance(step.get(name_key), str)
+                         and (not recorded or gate.HASH.fullmatch(step[name_key])),
+                         "release_recovery_preflight_steps_refused")
+            steps.append({**{key: step[key] for key in ("number", "status", "conclusion")},
+                          "name_sha256": step[name_key] if recorded else
+                          step_name_digest(step[name_key])})
         gate.require(all(type(step["number"]) is int and step["number"] > 0
-                         and isinstance(step["name"], str) and step["status"] == "completed"
+                         and step["status"] == "completed"
                          for step in steps)
                      and len({step["number"] for step in steps}) == len(steps),
                      "release_recovery_preflight_steps_refused")
@@ -124,7 +140,7 @@ def reconciled_preflight(policy, revision, origin, release_id, current, gate, en
     record = gate.load(gate.read(policy / "docs/legal/recovery-prepush-reconciliation.json"))
     gate.require(set(record) == {"schema", "original_run_id", "reservation_id", "source_revision",
                                 "run_id", "policy_revision", "workflow_sha256", "jobs"}
-                 and record["schema"] == "aikey-prepush-reconciliation/1"
+                 and record["schema"] == "aikey-prepush-reconciliation/2"
                  and record["original_run_id"] == origin
                  and type(record["reservation_id"]) is int and record["reservation_id"] == release_id
                  and record["source_revision"] == revision and record["run_id"] == requested_run
@@ -139,7 +155,7 @@ def reconciled_preflight(policy, revision, origin, release_id, current, gate, en
                  "release_recovery_preflight_workflow_mismatch")
     response = gate.load(run(["gh", "api", f"repos/{gate.REPOSITORY}/actions/runs/{requested_run}/jobs?per_page=100"], cwd=policy))
     observed = job_graph(response, gate)
-    expected = job_graph({"total_count": 8, "jobs": record["jobs"]}, gate)
+    expected = job_graph({"total_count": 8, "jobs": record["jobs"]}, gate, recorded=True)
     gate.require(observed == expected, "release_recovery_preflight_graph_changed")
     names = {row["name"]: row for row in observed}
     expected_jobs = {"qualify": "success", "reserve": "success", "sources": "success",
@@ -151,12 +167,12 @@ def reconciled_preflight(policy, revision, origin, release_id, current, gate, en
     for name, row in names.items():
         if not name.startswith("images ("):
             continue
-        states = {step["name"]: step["conclusion"] for step in row["steps"]}
+        states = {step["name_sha256"]: step["conclusion"] for step in row["steps"]}
         gate.require(len(states) == len(row["steps"])
-                     and states.get("Bind pre-push intent to tested image configs and inventories") == "failure"
-                     and states.get("Short-lived workflow registry login") == "skipped"
-                     and states.get("Push only these attempt-specific images; observe immutable manifests") == "skipped"
-                     and states.get("Remove owned local fixtures and verify zero remaining resources") == "success",
+                     and states.get(step_name_digest("Bind pre-push intent to tested image configs and inventories")) == "failure"
+                     and states.get(step_name_digest("Short-lived workflow registry login")) == "skipped"
+                     and states.get(step_name_digest("Push only these attempt-specific images; observe immutable manifests")) == "skipped"
+                     and states.get(step_name_digest("Remove owned local fixtures and verify zero remaining resources")) == "success",
                      "release_recovery_preflight_effects_not_excluded")
     return {"run_id": requested_run, "workflow_revision": previous["head_sha"],
             "created_at": previous["created_at"], "updated_at": previous["updated_at"],
