@@ -119,8 +119,16 @@ def test_package_candidate_reaches_final_consumer_without_docker_or_image_artifa
         candidate.publication.checked_assets(destination, image_plan)
 
 
-def test_actual_cli_cannot_report_approval_with_pending_fields(tmp_path):
-    root = Path(__file__).resolve().parents[1]
+def test_actual_cli_cannot_report_approval_with_pending_fields(tagged_source, tmp_path):  # noqa: F811
+    root, _, _, _, _ = tagged_source
+    evidence = root / "docs/legal/release-evidence.json"
+    record = json.loads(evidence.read_text())
+    record["checks"] = {name: {"status": "needs_evidence", "reviewer": None,
+                              "evidence_ref": None} for name in community.REQUIRED}
+    evidence.write_text(json.dumps(record))
+    subprocess.run(["git", "-c", "user.name=Fictional", "-c", "user.email=fixture@example.invalid",
+                    "commit", "-am", "Fictional pending-evidence fixture"], cwd=root, check=True,
+                   capture_output=True)
     result = subprocess.run(
         [sys.executable, str(root / "tools/community_release_check.py"), "--root", str(root),
          "--profile", "package"], cwd=tmp_path, text=True, capture_output=True, timeout=15)
