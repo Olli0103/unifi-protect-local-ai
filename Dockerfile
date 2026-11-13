@@ -14,6 +14,11 @@ COPY src /app/src
 RUN pip install --no-deps -r requirements-build.lock -r requirements-runtime.lock \
     && pip install --no-deps --no-build-isolation . \
     && pip check
+ARG SOURCE_BUNDLE_URL
+COPY docs/legal/image-sources-template.md /tmp/image-sources-template.md
+COPY tools/render_image_sources.py /tmp/render_image_sources.py
+RUN python /tmp/render_image_sources.py /tmp/image-sources-template.md /usr/share/local-aikey/SOURCES.md \
+    && rm /tmp/render_image_sources.py /tmp/image-sources-template.md
 USER 10001:10001
 ENTRYPOINT ["local-aikey"]
 CMD ["check", "--config", "/state/config.json"]

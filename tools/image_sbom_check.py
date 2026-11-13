@@ -36,7 +36,8 @@ RECEIPT = 'aikey-image-inventory/2'
 LICENSE_REVIEW = 'aikey-image-license-review/2'
 LIMIT = 32 * 1024 * 1024
 NOTICE_LIMIT = 2 * 1024 * 1024
-NOTICE_GLOBS = ['/app/LICENSE', '/app/THIRD_PARTY_NOTICES.txt',
+SOURCE_NOTICE = '/usr/share/local-aikey/SOURCES.md'
+NOTICE_GLOBS = [SOURCE_NOTICE, '/app/LICENSE', '/app/THIRD_PARTY_NOTICES.txt',
                 '/usr/local/lib/python*/site-packages/local_aikey-*.dist-info/licenses/THIRD_PARTY_NOTICES.txt', '/usr/local/LICENSE', '/usr/local/lib/python*/LICENSE.txt',
                 '/usr/share/doc/**/copyright', '/usr/share/common-licenses/*'] + [
     '/usr/local/lib/python*/site-packages/**/' + name + suffix
@@ -116,7 +117,7 @@ def notice_path(path):
             or any(part in ('', '.', '..') for part in path[1:].split('/'))
             or any(ord(char) < 32 for char in path)):
         return False
-    return bool(path in ('/app/LICENSE', '/app/THIRD_PARTY_NOTICES.txt', '/usr/local/LICENSE')
+    return bool(path in (SOURCE_NOTICE, '/app/LICENSE', '/app/THIRD_PARTY_NOTICES.txt', '/usr/local/LICENSE')
                 or re.fullmatch(r'/usr/local/lib/python[0-9.]+/site-packages/'
                                 r'local_aikey-[0-9A-Za-z.+!-]+\.dist-info/licenses/THIRD_PARTY_NOTICES\.txt',path)
                 or re.fullmatch(r'/usr/local/lib/python[0-9.]+/LICENSE\.txt', path)
@@ -124,6 +125,16 @@ def notice_path(path):
                 or re.fullmatch(r'/usr/share/common-licenses/[^/]+', path)
                 or re.fullmatch(r'/usr/local/lib/python[0-9.]+/site-packages/(?:[^/]+/)*'
                                 r'(?i:licen[sc]e|notice|copying|copyright|authors)(?:\.[^/]+)?', path))
+
+
+def require_source_notice(rows):
+    validate_notices(rows)
+    matches = [row for row in rows if row['path'] == SOURCE_NOTICE]
+    require(len(matches) == 1, 'image_inventory_source_notice_missing')
+    raw = base64.b64decode(matches[0]['base64'], validate=True)
+    require(all(term in raw for term in (b'source_bundle', b'SHA-256', b'GPL', b'LGPL',
+                b'/app/THIRD_PARTY_NOTICES.txt', b'/usr/share/doc/'))
+            and b'@SOURCE_BUNDLE_URL@' not in raw, 'image_inventory_source_notice_refused')
 
 
 def validate_notices(rows):
@@ -592,6 +603,7 @@ def collect(args):
         raw = read(cdx, LIMIT)
         review = license_review(native_data, identity, native_sha256=digest(read(native, LIMIT)),
                                 sbom_sha256=digest(raw))
+        require_source_notice(review['notice_files'])
         # Publish full standard metadata only after validating both outputs.
         publish_catalog(target, raw)
         review_path = Path(args.results) / (args.profile + '-licenses.json')

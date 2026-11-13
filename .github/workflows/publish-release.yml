@@ -35,6 +35,7 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       RELEASE_TAG: ${{ inputs.tag }}
       RELEASE_PROFILE: ${{ inputs.profile }}
+      SOURCE_DELIVERY_DIR: ${{ runner.temp }}/source-delivery
     steps:
     - name: Exact dispatch source, no persisted Git credentials
       uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -69,6 +70,7 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       RELEASE_TAG: ${{ inputs.tag }}
       RELEASE_PROFILE: ${{ inputs.profile }}
+      SOURCE_DELIVERY_DIR: ${{ runner.temp }}/source-delivery
     outputs:
       release_id: ${{ steps.reserve.outputs.release_id }}
     steps:
@@ -120,8 +122,87 @@ jobs:
         path: ${{ runner.temp }}/release-reservation.json
         if-no-files-found: error
         retention-days: 14
-  packages:
+  sources:
+    if: inputs.profile == 'image'
     needs: reserve
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      actions: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RELEASE_TAG: ${{ inputs.tag }}
+      RELEASE_PROFILE: ${{ inputs.profile }}
+      SOURCE_DELIVERY_DIR: ${{ runner.temp }}/source-delivery
+    steps:
+    - name: Exact dispatch source, no persisted Git credentials
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      with:
+        ref: ${{ github.sha }}
+        fetch-depth: 0
+        persist-credentials: false
+    - name: Python 3.12
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+      with:
+        python-version: '3.12'
+    - name: Fresh non-audit source, tag, seven CI jobs and environment policy
+      id: preparation
+      shell: bash
+      run: |
+        set -euo pipefail
+        umask 077
+        python tools/release_prepare.py --tag "${RELEASE_TAG}" --publish > "${RUNNER_TEMP}/fresh-preparation.json"
+        python - <<'PYCODE'
+        import json,os
+        from pathlib import Path
+        value=json.loads((Path(os.environ['RUNNER_TEMP'])/'fresh-preparation.json').read_text())
+        rows=[row for row in value['continuous_integration'] if row['workflow']=='container-install.yml']
+        assert len(rows)==1 and type(rows[0]['run_id']) is int and rows[0]['run_id']>0
+        delivery=value['source_delivery']
+        with open(os.environ['GITHUB_OUTPUT'],'a') as f:
+            f.write('image_run='+str(rows[0]['run_id'])+'\n')
+            f.write('source_run='+str(delivery['artifact_run_id'])+'\n')
+            f.write('source_artifact='+delivery['artifact_name']+'\n')
+        PYCODE
+    - name: Download only the owner-pinned upstream source collection
+      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+      with:
+        name: ${{ steps.preparation.outputs.source_artifact }}
+        path: ${{ runner.temp }}/upstream-sources
+        run-id: ${{ steps.preparation.outputs.source_run }}
+        repository: ${{ github.repository }}
+        github-token: ${{ github.token }}
+        digest-mismatch: error
+    - name: Download exact-revision four-image qualification inputs
+      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+      with:
+        pattern: container-install-*
+        path: ${{ runner.temp }}/qualified-source-inventories
+        merge-multiple: false
+        run-id: ${{ steps.preparation.outputs.image_run }}
+        repository: ${{ github.repository }}
+        github-token: ${{ github.token }}
+        digest-mismatch: error
+    - name: Verify all original bytes and exact release-commit source inventory before delivery
+      shell: bash
+      run: |
+        set -euo pipefail
+        umask 077
+        python tools/release_sources.py --tag "${RELEASE_TAG}" --sources "${RUNNER_TEMP}/upstream-sources" --inventories "${RUNNER_TEMP}/qualified-source-inventories" --destination "${RUNNER_TEMP}/source-delivery"
+    - name: Retain only validated same-release source delivery
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+      with:
+        name: release-source-delivery
+        path: ${{ runner.temp }}/source-delivery/*
+        if-no-files-found: error
+        retention-days: 14
+  packages:
+    if: >-
+      always() && needs.reserve.result == 'success'
+      && ((inputs.profile == 'package' && needs.sources.result == 'skipped')
+      || (inputs.profile == 'image' && needs.sources.result == 'success'))
+    needs: [reserve, sources]
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     permissions:
@@ -133,6 +214,7 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       RELEASE_TAG: ${{ inputs.tag }}
       RELEASE_PROFILE: ${{ inputs.profile }}
+      SOURCE_DELIVERY_DIR: ${{ runner.temp }}/source-delivery
       RESERVATION_ID: ${{ needs.reserve.outputs.release_id }}
     steps:
     - name: Exact dispatch source, no persisted Git credentials
@@ -161,6 +243,13 @@ jobs:
         with open(os.environ['GITHUB_OUTPUT'],'a') as f:
             f.write('image_run='+str(rows[0]['run_id'])+'\n')
         PYCODE
+    - name: Download this run's validated source bundle before any image or asset upload
+      if: inputs.profile == 'image'
+      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+      with:
+        name: release-source-delivery
+        path: ${{ runner.temp }}/source-delivery
+        digest-mismatch: error
     - name: Two clean reproducible builds and locked runtime SBOM
       shell: bash
       run: |
@@ -207,7 +296,7 @@ jobs:
         retention-days: 14
   images:
     if: inputs.profile == 'image'
-    needs: reserve
+    needs: [reserve, sources]
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 35
     strategy:
@@ -228,6 +317,7 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       RELEASE_TAG: ${{ inputs.tag }}
       RELEASE_PROFILE: ${{ inputs.profile }}
+      SOURCE_DELIVERY_DIR: ${{ runner.temp }}/source-delivery
       RESERVATION_ID: ${{ needs.reserve.outputs.release_id }}
       INSTALL_ARCH: ${{ matrix.arch }}
       SOURCE_REVISION: ${{ github.sha }}
@@ -260,6 +350,13 @@ jobs:
         with open(os.environ['GITHUB_OUTPUT'],'a') as f:
             f.write('image_run='+str(rows[0]['run_id'])+'\n')
         PYCODE
+    - name: Download this run's validated source bundle before any image or asset upload
+      if: inputs.profile == 'image'
+      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+      with:
+        name: release-source-delivery
+        path: ${{ runner.temp }}/source-delivery
+        digest-mismatch: error
     - name: Maintained native Docker Buildx
       if: inputs.profile == 'image'
       uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069
@@ -430,6 +527,7 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       RELEASE_TAG: ${{ inputs.tag }}
       RELEASE_PROFILE: ${{ inputs.profile }}
+      SOURCE_DELIVERY_DIR: ${{ runner.temp }}/source-delivery
       RESERVATION_ID: ${{ needs.reserve.outputs.release_id }}
     steps:
     - name: Exact dispatch source, no persisted Git credentials
@@ -458,6 +556,13 @@ jobs:
         with open(os.environ['GITHUB_OUTPUT'],'a') as f:
             f.write('image_run='+str(rows[0]['run_id'])+'\n')
         PYCODE
+    - name: Download this run's validated source bundle before any image or asset upload
+      if: inputs.profile == 'image'
+      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+      with:
+        name: release-source-delivery
+        path: ${{ runner.temp }}/source-delivery
+        digest-mismatch: error
     - name: Maintained native Docker Buildx
       if: inputs.profile == 'image'
       uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069
@@ -601,6 +706,7 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       RELEASE_TAG: ${{ inputs.tag }}
       RELEASE_PROFILE: ${{ inputs.profile }}
+      SOURCE_DELIVERY_DIR: ${{ runner.temp }}/source-delivery
       RESERVATION_ID: ${{ needs.reserve.outputs.release_id }}
     steps:
     - name: Exact dispatch source, no persisted Git credentials
@@ -629,6 +735,13 @@ jobs:
         with open(os.environ['GITHUB_OUTPUT'],'a') as f:
             f.write('image_run='+str(rows[0]['run_id'])+'\n')
         PYCODE
+    - name: Download this run's validated source bundle before any image or asset upload
+      if: inputs.profile == 'image'
+      uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+      with:
+        name: release-source-delivery
+        path: ${{ runner.temp }}/source-delivery
+        digest-mismatch: error
     - name: Maintained native Docker Buildx
       if: inputs.profile == 'image'
       uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069

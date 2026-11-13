@@ -73,6 +73,17 @@ container-install jobs. A bot status is not an eighth workflow job or independen
 review. The current main commit and tag must agree: building an older tag while
 attesting a newer workflow commit is refused.
 
+## Image source delivery
+
+Image mode additionally requires the owner-pinned upstream source artifact and
+[the same-release source delivery chain](source-bundle-delivery.md). Both image
+names are version-bound: for alpha 0.1.0a1,
+`ghcr.io/olli0103/local-aikey-0.1.0a1` and
+`ghcr.io/olli0103/local-aiport-0.1.0a1`. Protocol identities do not change. A missing
+bundle or nonzero exact-revision source-inventory result blocks upload. The
+source index and ordered archive parts ship alongside the other assets in the
+same GitHub release and are hash-bound by the signed release manifest.
+
 ## Concrete workflow
 
 [Owner-gated signed release](../.github/workflows/publish-release.yml) has only a
@@ -101,6 +112,12 @@ publication trigger, static registry key, model download or controller action.
    layer/location IDs and fresh timestamps differ between builds. Expired or
    missing qualification artifacts must be refreshed before publication.
 4. Before registry writes, create-only intents are retained as CI metadata.
+   Complete paginated GHCR metadata must show each versioned package absent or
+   private and associated with this repository. Failed reads never mean absent.
+   New packages use GHCR's documented private default; every push is followed by
+   a positive private/repository read-back. A public destination is refused.
+   The check is not atomic with owner UI changes: do not change visibility during
+   staging or before the public source-release read-back.
    Registry tags include version, architecture/index and GitHub run ID, never
    `latest` or a reusable version-only tag. Registry read-back must identify the
    tested configuration bytes. Standard GitHub/Sigstore actions attest package,
@@ -120,17 +137,21 @@ publication trigger, static registry key, model download or controller action.
    never replaced by generated empty placeholders. Source-delivery sufficiency
    remains the reviewer's responsibility, not an assumed generic upstream link.
 6. Only then does the final `release` environment request approval. Inspect the
-   concrete candidate, immutable image references in `release.json`, hashes and
-   workflow identity first. New GHCR packages are normally private: the maintainer
-   must explicitly make the two approved packages public and associate them with
-   this source repository before approving. This is an owner UI operation, never
-   an automatic visibility/rights change. Existing public packages can expose
-   stage tags before the final GitHub release; staging approval covers that upload.
+   concrete candidate, signed immutable image references in `release.json`,
+   source-bundle parts/hashes and workflow identity. **Keep both versioned GHCR
+   packages private.** The workflow never changes registry visibility.
 7. The final job downloads that same run's digest-checked candidate, takes a
-   private byte snapshot, re-verifies signatures/source/visibility and uploads
-   create-only assets. Provider IDs, uploaded states, byte sizes and server-side
-   SHA-256 digests must all match. Only the same original draft can become public.
-   Publication notes and prerelease status are positively read back afterward.
+   private byte snapshot, re-verifies signatures/source/private image status and
+   uploads create-only assets. Provider IDs, uploaded states, byte sizes and
+   server-side SHA-256 digests must all match. Only the same original draft can
+   become public. Notes and prerelease status are positively read back afterward.
+   The success receipt means sources/packages are public, **not** images.
+8. Only after that positive public release read-back does the owner verify the
+   source assets are accessible, then manually make the two exact versioned GHCR
+   packages public. Use the signed digest references, never move them into the
+   unversioned legacy namespace. Verify anonymous pulls separately. Once a
+   versioned package is public, this pipeline refuses further staging into it;
+   use a newly reviewed version rather than weakening the private gate.
 
 The workflow uses short-lived GitHub credentials, pinned maintained actions and
 GitHub OIDC Sigstore. Final publication has no OIDC signing permission: the signed

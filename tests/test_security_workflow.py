@@ -46,9 +46,10 @@ def workflow_policy(value, *, publisher=False):
     expected = {
         "qualify": ({"contents": "read", "actions": "read"}, None, None),
         "reserve": ({"contents": "write", "actions": "read"}, "qualify", "release-stage"),
+        "sources": ({"contents": "read", "actions": "read"}, "reserve", None),
         "packages": (
             {"contents": "read", "actions": "read", "id-token": "write", "attestations": "write"},
-            "reserve",
+            ["reserve", "sources"],
             None,
         ),
         "images": (
@@ -59,7 +60,7 @@ def workflow_policy(value, *, publisher=False):
                 "id-token": "write",
                 "attestations": "write",
             },
-            "reserve",
+            ["reserve", "sources"],
             None,
         ),
         "assemble": (
@@ -87,8 +88,14 @@ def workflow_policy(value, *, publisher=False):
         assert job["permissions"] == permissions
         assert job.get("needs") == needs and job.get("environment") == environment
         assert "uses" not in job and "concurrency" not in job
-        if name == "images":
+        if name in ("images", "sources"):
             assert job["if"] == "inputs.profile == 'image'"
+        elif name == "packages":
+            assert " ".join(job["if"].split()) == (
+                "always() && needs.reserve.result == 'success' "
+                "&& ((inputs.profile == 'package' && needs.sources.result == 'skipped') "
+                "|| (inputs.profile == 'image' && needs.sources.result == 'success'))"
+            )
         elif name == "assemble":
             assert " ".join(job["if"].split()) == (
                 "always() && needs.reserve.result == 'success' && needs.packages.result == 'success' "
@@ -110,6 +117,7 @@ def workflow_policy(value, *, publisher=False):
         assert job["env"]["GH_TOKEN"] == "${{ github.token }}"
         assert job["env"]["RELEASE_TAG"] == "${{ inputs.tag }}"
         assert job["env"]["RELEASE_PROFILE"] == "${{ inputs.profile }}"
+        assert job["env"]["SOURCE_DELIVERY_DIR"] == "${{ runner.temp }}/source-delivery"
         steps = job["steps"]
         assert steps[0]["uses"].startswith("actions/checkout@")
         assert steps[0]["with"] == {
@@ -135,6 +143,7 @@ def workflow_policy(value, *, publisher=False):
                 assert "${{ inputs." not in step["run"]
             image_only = step.get("name") in {
                 "Maintained native Docker Buildx", "Short-lived workflow registry login",
+                "Download this run's validated source bundle before any image or asset upload",
                 "aikey multiarch provenance", "aiport multiarch provenance",
                 "Retain standard bundle ${{ runner.temp }}/release-candidate/aikey-index-provenance.sigstore.json",
                 "Retain standard bundle ${{ runner.temp }}/release-candidate/aiport-index-provenance.sigstore.json",
@@ -188,13 +197,17 @@ def test_security_workflow_pins_actions_and_uses_read_only_permissions(path):
         "untrusted_runner",
         "unconditional_upload",
         "cancel_previous", "unknown_profile", "implicit_image", "image_profile_bypass",
-        "assembly_failure_bypass", "registry_profile_bypass",
+        "assembly_failure_bypass", "registry_profile_bypass", "skip_sources", "source_gate_bypass",
     ],
 )
 def test_publisher_exception_refuses_authorization_graph_and_privilege_regressions(fault):
     value = deepcopy(yaml.safe_load(PUBLISHER.read_text()))
     jobs = value["jobs"]
-    if fault == "unknown_profile":
+    if fault == "skip_sources":
+        jobs["images"]["needs"] = ["reserve"]
+    elif fault == "source_gate_bypass":
+        jobs["sources"]["steps"][2]["if"] = "false"
+    elif fault == "unknown_profile":
         value["on"]["workflow_dispatch"]["inputs"]["profile"]["options"].append("unsafe")
     elif fault == "implicit_image":
         value["on"]["workflow_dispatch"]["inputs"]["profile"]["default"] = "image"

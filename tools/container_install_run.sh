@@ -50,6 +50,9 @@ if ! context="$(python "${tool}" context --repository "${SOURCE_REPOSITORY}" \
   exit 1
 fi
 results="${RUNNER_TEMP}/container-results"
+# The publisher and qualification build use the same exact versioned source record.
+# No real-looking URL is a Dockerfile default; direct builds remain unpublished.
+image_sources_url="$(python -c 'import tomllib; from pathlib import Path; v=tomllib.loads(Path("pyproject.toml").read_text())["project"]["version"]; print("https://github.com/Olli0103/unifi-protect-local-ai/releases/download/v"+v+"/release.json")')"
 for role in aikey aiport; do
   image="local-aikey-install:${INSTALL_NONCE}-${role}"
   volume="aikey-ci-${INSTALL_NONCE}-${role}"
@@ -58,7 +61,7 @@ for role in aikey aiport; do
   # Docker's maintained immutable Git context excludes ignored local
   # state. No archive extractor, build secret, QEMU or image push.
   docker buildx build --load --platform "linux/${INSTALL_ARCH}" \
-    --file "${recipe}" --tag "${image}" \
+    --file "${recipe}" --tag "${image}" --build-arg "SOURCE_BUNDLE_URL=${image_sources_url}" \
     --label "org.opencontainers.image.revision=${SOURCE_REVISION}" \
     --label "org.opencontainers.image.source=https://github.com/${SOURCE_REPOSITORY}" \
     --label "org.local-aikey.install-run=${INSTALL_NONCE}" \

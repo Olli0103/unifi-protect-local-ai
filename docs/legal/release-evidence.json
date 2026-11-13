@@ -136,5 +136,10 @@
         "evidence_ref": null
       }
     }
+  },
+  "source_delivery": {
+    "artifact_run_id": null,
+    "artifact_name": null,
+    "manifest_sha256": null
   }
 }
