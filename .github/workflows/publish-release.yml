@@ -67,7 +67,10 @@ jobs:
       id: source
       working-directory: policy
       shell: bash
-      run: python tools/release_recovery.py resolve
+      run: |
+        set -euo pipefail
+        umask 077
+        python tools/release_recovery.py resolve
     - name: Exact artifact source separate from workflow policy
       uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       with:

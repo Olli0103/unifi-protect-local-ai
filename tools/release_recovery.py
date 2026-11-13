@@ -104,9 +104,10 @@ def context(root, revision, gate, env, run, *, profile):
     names = [item.get("name") for item in values]
     gate.require(all(isinstance(name, str) for name in names)
                  and len(set(names)) == len(names)
-                 and set(names) <= {"qualify", "reserve", "sources", "packages", "images",
-                                    "images (amd64)", "images (arm64)", "assemble", "publish"}
-                 and {"qualify", "reserve"} <= set(names),
+                 and set(names) in (
+                     {"qualify", "reserve", "sources", "packages", "images", "assemble", "publish"},
+                     {"qualify", "reserve", "sources", "packages", "images (amd64)",
+                      "images (arm64)", "assemble", "publish"}),
                  "release_recovery_original_jobs_refused")
     gate.require(all(item.get("conclusion") ==
                      ("success" if item["name"] == "qualify" else
@@ -129,8 +130,20 @@ def context(root, revision, gate, env, run, *, profile):
                  and int(current) in {item["id"] for item in runs},
                  "release_recovery_history_incomplete")
     origin_time = created(original.get("created_at"), gate)
+    # created_at never changes on rerun. Require an older, terminal, single
+    # attempt whose entire observed activity ended before the original dispatch.
+    # Unknown or repeated attempts require deliberate reconciliation, not adoption.
+    def older_attempt_is_closed(item):
+        return (
+            type(item.get("run_attempt")) is int and item["run_attempt"] == 1
+            and item.get("status") == "completed"
+            and created(item.get("created_at"), gate)
+            <= created(item.get("run_started_at"), gate)
+            <= created(item.get("updated_at"), gate) < origin_time
+        )
+
     gate.require(all(item["id"] in {int(origin), int(current)}
-                     or created(item.get("created_at"), gate) < origin_time for item in runs),
+                     or older_attempt_is_closed(item) for item in runs),
                  "release_recovery_intervening_dispatch_requires_reconciliation")
     # Both the unchanged artifact source and repaired execution policy need
     # their own exact-head seven-job qualification; neither substitutes for the other.

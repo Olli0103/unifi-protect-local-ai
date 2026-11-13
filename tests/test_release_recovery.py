@@ -226,7 +226,7 @@ def test_recovery_signature_verifier_pins_actual_policy_not_old_source(tmp_path)
 
 
 @pytest.mark.parametrize("fault", ["none", "origin", "policy", "source", "current", "missing"])
-def test_signed_manifest_must_bind_exact_recovery_context(assets, fault):
+def test_signed_manifest_must_bind_exact_recovery_context(assets, fault):  # noqa: F811 -- imported fixture
     _, packet, folder, manifest = assets
     packet["workflow_run_id"] = "200"
     manifest["workflow_run_id"] = "200"
@@ -271,3 +271,73 @@ def test_workflow_keeps_policy_source_and_final_approval_separate():
                  if step.get("uses", "").startswith("actions/setup-python@"))
     resolve = next(i for i, step in enumerate(steps) if step.get("id") == "source")
     assert setup < resolve
+
+
+@pytest.mark.parametrize("missing", ["sources", "packages", "images", "assemble", "publish", "all"])
+def test_recovery_requires_positive_proof_of_every_downstream_job(records, missing):
+    policy, source, _, env, state, run = records
+    state["jobs"] = [item for item in state["jobs"]
+                     if item["name"] in {"qualify", "reserve"}
+                     or (missing != "all" and item["name"] != missing)]
+    with pytest.raises(gate.PreparationError, match="original_jobs_refused"):
+        recovery.context(policy.parent / "source", source, gate, env, run, profile="image")
+
+
+@pytest.mark.parametrize("fault", ["none", "only_amd64", "only_arm64", "placeholder_and_matrix"])
+def test_recovery_requires_both_matrix_records_or_single_skipped_placeholder(records, fault):
+    policy, source, _, env, state, run = records
+    state["jobs"] = [item for item in state["jobs"] if item["name"] != "images"]
+    for index, arch in enumerate(("amd64", "arm64")):
+        if fault == "only_amd64" and arch == "arm64":
+            continue
+        if fault == "only_arm64" and arch == "amd64":
+            continue
+        state["jobs"].append({"id": 100 + index, "name": f"images ({arch})",
+                              "status": "completed", "conclusion": "skipped"})
+    if fault == "placeholder_and_matrix":
+        state["jobs"].append({"id": 102, "name": "images", "status": "completed",
+                              "conclusion": "skipped"})
+    if fault == "none":
+        assert recovery.context(policy.parent / "source", source, gate, env, run,
+                                profile="image")["original_run_id"] == "123"
+    else:
+        with pytest.raises(gate.PreparationError, match="original_jobs_refused"):
+            recovery.context(policy.parent / "source", source, gate, env, run, profile="image")
+
+
+@pytest.mark.parametrize("fault", [
+    "none", "rerun", "late_rerun", "missing_attempt", "boolean_attempt", "active",
+    "late_completion", "same_time", "missing_start", "missing_update", "inverted_times",
+])
+def test_older_dispatch_must_be_closed_single_attempt_before_origin(records, fault):
+    policy, source, _, env, state, run = records
+    older = {"id": 99, "run_attempt": 1, "status": "completed",
+             "created_at": "2025-12-31T22:00:00Z", "run_started_at": "2025-12-31T22:01:00Z",
+             "updated_at": "2025-12-31T22:02:00Z"}
+    if fault in ("rerun", "late_rerun"):
+        older["run_attempt"] = 2
+    if fault == "late_rerun":
+        older.update(run_started_at="2026-01-01T02:00:00Z", updated_at="2026-01-01T02:01:00Z")
+    elif fault == "missing_attempt":
+        older.pop("run_attempt")
+    elif fault == "boolean_attempt":
+        older["run_attempt"] = True
+    elif fault == "active":
+        older["status"] = "in_progress"
+    elif fault == "late_completion":
+        older["updated_at"] = "2026-01-01T02:00:00Z"
+    elif fault == "same_time":
+        older["updated_at"] = state["original"]["created_at"]
+    elif fault == "missing_start":
+        older.pop("run_started_at")
+    elif fault == "missing_update":
+        older.pop("updated_at")
+    elif fault == "inverted_times":
+        older["run_started_at"] = "2025-12-31T21:00:00Z"
+    state["history"].append(older)
+    if fault == "none":
+        assert recovery.context(policy.parent / "source", source, gate, env, run,
+                                profile="image")["original_run_id"] == "123"
+    else:
+        with pytest.raises(gate.PreparationError):
+            recovery.context(policy.parent / "source", source, gate, env, run, profile="image")
