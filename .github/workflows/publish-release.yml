@@ -7,6 +7,12 @@ name: Owner-gated signed release
         description: Existing public tag matching this exact main commit and project version
         type: string
         required: true
+      profile:
+        description: Artifact scope; package publishes wheel and sdist only
+        type: choice
+        options: [package, image]
+        default: package
+        required: true
       publish:
         description: Request reviewed staging, then final candidate approval (default is read-only)
         type: boolean
@@ -28,6 +34,7 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
       RELEASE_TAG: ${{ inputs.tag }}
+      RELEASE_PROFILE: ${{ inputs.profile }}
     steps:
     - name: Exact dispatch source, no persisted Git credentials
       uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
@@ -61,6 +68,7 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
       RELEASE_TAG: ${{ inputs.tag }}
+      RELEASE_PROFILE: ${{ inputs.profile }}
     outputs:
       release_id: ${{ steps.reserve.outputs.release_id }}
     steps:
@@ -124,6 +132,7 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
       RELEASE_TAG: ${{ inputs.tag }}
+      RELEASE_PROFILE: ${{ inputs.profile }}
       RESERVATION_ID: ${{ needs.reserve.outputs.release_id }}
     steps:
     - name: Exact dispatch source, no persisted Git credentials
@@ -197,6 +206,7 @@ jobs:
         if-no-files-found: error
         retention-days: 14
   images:
+    if: inputs.profile == 'image'
     needs: reserve
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 35
@@ -217,6 +227,7 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
       RELEASE_TAG: ${{ inputs.tag }}
+      RELEASE_PROFILE: ${{ inputs.profile }}
       RESERVATION_ID: ${{ needs.reserve.outputs.release_id }}
       INSTALL_ARCH: ${{ matrix.arch }}
       SOURCE_REVISION: ${{ github.sha }}
@@ -250,6 +261,7 @@ jobs:
             f.write('image_run='+str(rows[0]['run_id'])+'\n')
         PYCODE
     - name: Maintained native Docker Buildx
+      if: inputs.profile == 'image'
       uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069
       with:
         version: v0.38.2
@@ -296,6 +308,7 @@ jobs:
         if-no-files-found: error
         retention-days: 14
     - name: Short-lived workflow registry login
+      if: inputs.profile == 'image'
       uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6
       with:
         registry: ghcr.io
@@ -397,6 +410,10 @@ jobs:
         if-no-files-found: error
         retention-days: 14
   assemble:
+    if: >-
+      always() && needs.reserve.result == 'success' && needs.packages.result == 'success'
+      && ((inputs.profile == 'package' && needs.images.result == 'skipped')
+      || (inputs.profile == 'image' && needs.images.result == 'success'))
     needs:
     - reserve
     - packages
@@ -412,6 +429,7 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
       RELEASE_TAG: ${{ inputs.tag }}
+      RELEASE_PROFILE: ${{ inputs.profile }}
       RESERVATION_ID: ${{ needs.reserve.outputs.release_id }}
     steps:
     - name: Exact dispatch source, no persisted Git credentials
@@ -441,12 +459,14 @@ jobs:
             f.write('image_run='+str(rows[0]['run_id'])+'\n')
         PYCODE
     - name: Maintained native Docker Buildx
+      if: inputs.profile == 'image'
       uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069
       with:
         version: v0.38.2
         driver: docker
         cache-binary: false
     - name: Short-lived workflow registry login
+      if: inputs.profile == 'image'
       uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6
       with:
         registry: ghcr.io
@@ -482,6 +502,7 @@ jobs:
         umask 077
         python tools/release_candidate.py push-indexes --tag "${RELEASE_TAG}" --release-id "${RESERVATION_ID}" --destination "${RUNNER_TEMP}/release-candidate"
     - name: aikey multiarch provenance
+      if: inputs.profile == 'image'
       id: aikey_index
       uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6
       with:
@@ -490,6 +511,7 @@ jobs:
         subject-name: ${{ steps.push.outputs.aikey_name }}
         subject-digest: ${{ steps.push.outputs.aikey_digest }}
     - name: Retain standard bundle ${{ runner.temp }}/release-candidate/aikey-index-provenance.sigstore.json
+      if: inputs.profile == 'image'
       env:
         BUNDLE: ${{ steps.aikey_index.outputs.bundle-path }}
       shell: bash
@@ -498,6 +520,7 @@ jobs:
         umask 077
         cp -- "${BUNDLE}" "${{ runner.temp }}/release-candidate/aikey-index-provenance.sigstore.json"
     - name: aiport multiarch provenance
+      if: inputs.profile == 'image'
       id: aiport_index
       uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6
       with:
@@ -506,6 +529,7 @@ jobs:
         subject-name: ${{ steps.push.outputs.aiport_name }}
         subject-digest: ${{ steps.push.outputs.aiport_digest }}
     - name: Retain standard bundle ${{ runner.temp }}/release-candidate/aiport-index-provenance.sigstore.json
+      if: inputs.profile == 'image'
       env:
         BUNDLE: ${{ steps.aiport_index.outputs.bundle-path }}
       shell: bash
@@ -576,6 +600,7 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
       RELEASE_TAG: ${{ inputs.tag }}
+      RELEASE_PROFILE: ${{ inputs.profile }}
       RESERVATION_ID: ${{ needs.reserve.outputs.release_id }}
     steps:
     - name: Exact dispatch source, no persisted Git credentials
@@ -605,12 +630,14 @@ jobs:
             f.write('image_run='+str(rows[0]['run_id'])+'\n')
         PYCODE
     - name: Maintained native Docker Buildx
+      if: inputs.profile == 'image'
       uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069
       with:
         version: v0.38.2
         driver: docker
         cache-binary: false
     - name: Short-lived workflow registry login
+      if: inputs.profile == 'image'
       uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6
       with:
         registry: ghcr.io

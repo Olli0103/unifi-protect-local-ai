@@ -113,7 +113,7 @@ def command(argv, *, cwd, timeout=20):
         return output.read().decode("utf-8")
 
 
-def publication(record, tag):
+def publication(record, tag, *, profile="image"):
     """A record is an attestation to review, not proof of its human truth."""
     value = record.get("publication")
     fields = {
@@ -142,6 +142,9 @@ def publication(record, tag):
         "release_destination_or_signing_unsupported",
     )
     require(value["staging_environment"] == "release-stage", "release_staging_environment_required")
+    require(profile in {"package", "image"}, "release_profile_refused")
+    if profile == "package":
+        return dict(value, images={})
     images = value["images"]
     require(
         isinstance(images, dict)
@@ -319,7 +322,8 @@ def continuous_integration(root, revision, run=command):
     return verified
 
 
-def prepare(root, tag, *, publish=False, env=None, run=command):
+def prepare(root, tag, *, publish=False, profile="image", env=None, run=command):
+    require(profile in {"package", "image"}, "release_profile_refused")
     root = Path(root).absolute()
     require(
         root.resolve() == root and isinstance(tag, str) and TAG.fullmatch(tag),
@@ -359,7 +363,7 @@ def prepare(root, tag, *, publish=False, env=None, run=command):
 
     captured = io.StringIO()
     with contextlib.redirect_stdout(captured):
-        status = gate.main(["--root", str(root)])  # Deliberately no audit-only bypass.
+        status = gate.main(["--root", str(root), "--profile", profile])  # Deliberately no audit-only bypass.
     report = load(captured.getvalue())
     require(
         status == 0
@@ -368,7 +372,7 @@ def prepare(root, tag, *, publish=False, env=None, run=command):
         and report.get("source_snapshot_sha256") == snapshot,
         "release_non_audit_evidence_gate_blocked",
     )
-    decision = publication(record, tag)
+    decision = publication(record, tag, profile=profile)
     require(
         not run(["git", "status", "--porcelain", "--untracked-files=all"], cwd=root).strip(),
         "release_source_changed_during_preparation",
@@ -402,6 +406,7 @@ def prepare(root, tag, *, publish=False, env=None, run=command):
     )
     return {
         "schema": SCHEMA,
+        "release_profile": profile,
         "source_revision": revision,
         "source_snapshot_sha256": snapshot,
         "tag": tag,
@@ -428,6 +433,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument("--tag", required=True)
+    parser.add_argument("--profile", choices=("package", "image"), default=os.environ.get("RELEASE_PROFILE", "image"))
     parser.add_argument(
         "--publish",
         action="store_true",
@@ -435,7 +441,7 @@ def main(argv=None):
     )
     args = parser.parse_args(argv)
     try:
-        value = prepare(args.root, args.tag, publish=args.publish)
+        value = prepare(args.root, args.tag, publish=args.publish, profile=args.profile)
         print(json.dumps(value, sort_keys=True))
         return 0
     except (OSError, ValueError, KeyError, TypeError, RuntimeError) as error:

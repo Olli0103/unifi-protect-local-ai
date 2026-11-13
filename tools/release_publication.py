@@ -47,7 +47,7 @@ def allowed_assets(plan):
         "package-provenance.sigstore.json",
         "package-sbom.sigstore.json",
     }
-    for profile in ("aikey", "aiport"):
+    for profile in plan["images"]:
         required.add(profile + "-index-provenance.sigstore.json")
         for arch in ("amd64", "arm64"):
             base = profile + "-" + arch
@@ -97,7 +97,8 @@ def rows(raw):
 
 
 def fresh(root, tag):
-    return gate.prepare(root, tag, publish=True)
+    return gate.prepare(root, tag, publish=True,
+                        profile=os.environ.get("RELEASE_PROFILE", "image"))
 
 
 def marker(plan):
@@ -300,7 +301,7 @@ def checked_assets(directory, plan):
         "package-provenance.sigstore.json",
         "package-sbom.sigstore.json",
     }
-    for profile in ("aikey", "aiport"):
+    for profile in plan["images"]:
         required.add(profile + "-index-provenance.sigstore.json")
         for arch in ("amd64", "arm64"):
             base = profile + "-" + arch
@@ -335,7 +336,7 @@ def checked_assets(directory, plan):
     )
     images = manifest["images"]
     require(
-        isinstance(images, dict) and set(images) == {"aikey", "aiport"},
+        isinstance(images, dict) and set(images) == set(plan["images"]),
         "release_image_manifest_refused",
     )
     for profile, image in images.items():
@@ -482,7 +483,7 @@ def verify_packages(root, plan, directory, *, run=gate.command):
                 (stage / path.name).write_bytes(gate.read(path, 64 * 1024 * 1024))
             capture = io.StringIO()
             with contextlib.redirect_stdout(capture):
-                status = community.main(["--root", str(root), "--dist", str(stage)])
+                status = community.main(["--root", str(root), "--dist", str(stage), "--profile", "package"])
             report = gate.load(capture.getvalue())
             require(
                 status == 0

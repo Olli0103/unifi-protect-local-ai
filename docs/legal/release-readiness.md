@@ -1,121 +1,74 @@
-# Community release readiness
+# Artifact-specific community release readiness
 
-The aim is a useful, independently implemented local AI processor compatible
-with UniFi Protect. This branch responds to the owner's legal first assessment
-of commit `4c71b732723ce2ccaec0a540736675789db9173d` on 30 September 2026.
-It reduces technical risks, includes the owner's selected Apache-2.0 license
-for project code and records missing evidence. It does not declare the project
-legally cleared or grant rights on behalf of unknown third-party rightsholders.
+A green automated audit is not a rights decision or permission to publish.
+The owner supplies evidence and approvals for the exact source snapshot.
+The [evidence record](release-evidence.json) uses `community-release-evidence/2`.
 
-The historical audit baseline is the reviewed main commit. Feature PR #123
-and index recovery PR #125 were incorporated during integration on
-29 October 2026. They are not covered by the historical origin/rights review.
-Current automated source/package/dependency checks are separate from that
-review; the release approval fingerprint remains unset. After changing any
-release input, refresh the dependency/content/origin review and fingerprint.
-A prior approval must not silently extend to new code or model components.
+## Required checks
 
-The [audit scope record](audit-scope.json) reports a filename and binary-header
-scan of 104 reachable base commits and 551 blobs. It found no matching
-prohibited filenames or listed binary headers. This is not a secret scan,
-protected-expression comparison or rights clearance.
+| Check | Package (wheel/sdist) | Image | Concrete completion criterion |
+| --- | --- | --- | --- |
+| `license_selection` | Required | Required | Owner confirms Apache-2.0 for the project, with the included license and notices. |
+| `development_statement` | Required | Required | Owner records development outside assigned employment duties, without employer code; unresolved employer rights remain visible. |
+| `contributor_rights` | Required | Required | Review human authors, historical contributions and AI co-author metadata, including rights to the selected license; labels alone are not proof. |
+| `code_origin` | Required | Required | WP1 and WP2 accepted, including historical research/history review and zero unaccounted retained interface facts. Scoped source mapping is not itself a rights attestation. |
+| `interoperability_scope` | Required | Required | WP1 accepted: necessity, analyzed minimum, missing public information and permitted disclosure recorded. |
+| `owner_risk_decision` | Required | Required | Owner records the E1–E11 decision and answers/resolves the concrete outstanding rights/access questions. No blanket lawyer approval is manufactured. |
+| `image_licenses` | Not required | Required | WP3 accepted: exact image digests, licenses/notices, corresponding-source and delivery chain, with current-revision `source_inventory_check` exit 0. Candidate matching alone is not complete-source approval. |
 
-## What this change establishes
+Every effective check is still `needs_evidence`. A `verified` entry needs a
+nonblank reviewer and retained-evidence reference. A matching
+`reviewed_snapshot_sha256`, active nonempty LICENSE and clean source inputs
+remain mandatory. Any tracked input change invalidates the fingerprint.
+An agent must not fill the owner's declarations.
 
-- `diagnostic_resume_until` is rejected and tokenless adoption-state creation
-  is removed. Existing saved controller-bound adoption and management-token
-  adoption retain their synthetic tests. This branch changes no deployed state.
-- Source and package checks reject firmware-like binaries, model checkpoints,
-  private keys, state, research extracts and camera media. The existing full-history
-  Gitleaks workflow remains a separate secret check.
-- An evidence record distinguishes pending legal and ownership work from
-  engineering results. A green automated audit cannot close human review gates.
-- The public title is Local AI processor, with UniFi Protect as a compatibility
-  description. No manufacturer affiliation or clean-room certification is claimed.
+## Schema migration and nonblocking records
 
-## Required evidence before release
+The tested `migrate_evidence` function preserves the old schema-1 record under
+`legacy_evidence` for traceability but resets all effective checks, publication
+approval and snapshot. Historical approvals are not new approvals.
 
-| Gate | Evidence needed | Current state |
-| --- | --- | --- |
-| Code origin | File/component origin map, review for copied or translated protected expression, notices for third-party code | `needs_evidence` |
-| Firmware authorization | Authorized user's access basis for each firmware/controller artifact, applicable terms and acquisition date | `needs_evidence` |
-| Interoperability scope | Missing public information, necessity, minimum analyzed parts and permitted disclosure for each finding | `needs_evidence` |
-| Contributor rights | All contributors' rights and consent to the chosen license, including historical contributions | `needs_evidence` |
-| Employer rights | Owner confirms development outside assigned duties without employer code; agreement-specific questions remain for the legal review | Owner statement recorded |
-| Project license | Owner-selected Apache-2.0 text and package metadata included; contributor/origin review remains separate | Included; no release clearance |
-| AI Port adoption | Separate test identity, generated keys, regular administrator token, pinned reconnect and rejection cases on an unmodified controller | `needs_evidence` |
-| Dependencies | Exact resolved distributions, licenses, source and notice obligations for core and extras | `needs_evidence` |
-| Images | Exact digest, base/OS packages, FFmpeg build flags, applicable license and corresponding source/notice delivery | `needs_evidence` |
-| Models | Each checkpoint's version, hash, origin, weights license and conditions separate from its runtime code | `needs_evidence` |
-| History | Full commit-history material/origin review, beyond a current-tree scan and Gitleaks | `needs_evidence` |
-| Legal review | Targeted review of firmware rights, interoperability, EULA, adoption and trademark presentation | `needs_evidence` |
+- History review is included in `code_origin`.
+- Dependency redistribution obligations are included in `image_licenses`.
+  The source-only package declares dependencies in
+  [pyproject metadata](../../pyproject.toml) and the
+  [runtime lock](../../requirements-runtime.lock); it does not bundle them.
+- `firmware_authorization` becomes nonblocking `research_record`. This does not
+  authorize new firmware access or erase historical rights questions.
+- `legal_review` becomes the concrete `owner_risk_decision`.
+- AI Port fresh adoption is a functionality/known-limitation record, not a
+  distribution-rights gate. See [compatibility limits](../compatibility.md).
+- Model license approval is not a package gate because no weights ship in these
+  artifacts. Existing prohibited-suffix and binary-content checks still reject
+  bundled weights, firmware, private keys, private state and camera media.
 
-Only evidence-backed entries may move to `verified` in
-[release-evidence.json](release-evidence.json), with a reviewer and a content-free reference to the retained record. Keep purchase records, employment
-agreements, permissions and other private proof outside the repository. An
-agent must not certify facts it cannot know or sign an owner's attestation.
+Private purchase/access/employment records stay outside the repository.
+The [provenance record](provenance.md), [licensing](licensing.md) and
+[third-party distribution](third-party-distribution.md) remain review inputs.
 
-## Checks
+## Commands and publication scope
 
 ```sh
-python tools/community_release_check.py --audit-only
-python -m build
-python tools/community_release_check.py --audit-only --dist dist
-python tools/community_release_check.py --dist dist
+python tools/community_release_check.py --audit-only --profile package
+python tools/community_release_check.py --profile package --dist dist
+python tools/community_release_check.py --profile image
 ```
 
-The first two audits are automated content/structure checks. CI runs these and
-regression tests; passing them does not approve publication. The final command
-is intentionally blocked until the required evidence and an active `LICENSE`
-are recorded. The source includes the owner-selected Apache license, but other
-required evidence remains missing. Its source fingerprint must match the approved source inputs. A change
-to tracked inputs invalidates the fingerprint. This records review of a
-specific tree; it cannot prove the truth or legal sufficiency of attestations.
+Audit-only always reports `release_approved: false`. The default CLI profile
+is conservatively `image`; specify the artifact explicitly.
+Package mode requires only the six checks above plus the source snapshot
+and structural/content checks; pending image evidence does not block it.
 
-The [owner-gated publishing workflow](../releasing.md) requires this final
-non-audit check and actual maintainer staging approval before package/image
-upload or signing. A second protected environment reviews the complete signed
-candidate before public GitHub release. The publication decision remains pending;
-adding the workflow does not grant rights or establish a completed release.
-The separate [native Linux image installation checks](../container-clean-install.md)
-build and exercise local ephemeral images without registry/image publication.
-Their sanitized metadata artifacts are not signed release artifacts, native
-Protect acceptance, redistribution clearance or a replacement for these gates.
-The [exact-image inventory path](../image-inventory.md) now supplies OS/FFmpeg,
-Python and bundled-binary metadata with immutable image/source bindings. Unknown
-licenses remain visible; generating these inventories does not verify the
-`image_licenses` or any other human evidence entry.
-The full-history secret scan has four distinct exact-fingerprint exceptions in
-`.gitleaksignore`: one synthetic loopback credential sentinel from historical
-commit `0f519e4`, and normalization-format whitelist constants plus their
-parametrized test in `67aa5e8`, and an English documentation enumeration in
-`841408e` (plate camera evidence line 32). These exact source/test/prose shapes
-were reviewed and
-Gitleaks 8.30.1 reports no remaining HEAD-history findings. These exceptions
-do not exclude whole files, disable rules or permit current/future credentials.
+The [owner-gated workflow](../releasing.md) has a required `profile` input.
+`package` builds, signs and verifies wheel/sdist plus package metadata, with
+no image jobs, registry login, image attestations or Docker reads/writes.
+`image` additionally requires image clearance and both native architectures.
+Both modes retain all seven prerequisite CI jobs, exact public-tag/source
+bindings, fresh non-audit gates, protected staging/final environments,
+standard signature verification and provider asset-digest readback.
+The package consumer explicitly uses `package`; image publication uses fresh
+`image` preparation. Neither mode is dispatched by this change.
 
-These checks do not restrict GitHub's existing source visibility or prevent
-someone distributing a local copy. Inspect the history separately; deleting a
-file at HEAD does not remove it from earlier commits. Do not rewrite history
-or discard evidence as part of this PR.
-
-## Owner review packet
-
-Complete [provenance](provenance.md), [third-party distribution](third-party-distribution.md)
-and [licensing](licensing.md). Have the qualified reviewer assess the release
-snapshot and retained private evidence. In particular, ask for analysis of
-UrhG §§ 69a, 69d, 69e, 69f and 69g, the applicable EULA and terms, rights under
-§ 69b, and trademark presentation under MarkenG § 23. This checklist is an
-engineering response to the owner's assessment, not a new legal opinion.
-
-Primary references checked on 30 September 2026:
-
-- [German Copyright Act](https://www.gesetze-im-internet.de/urhg/), especially
-  [§ 69e](https://www.gesetze-im-internet.de/urhg/__69e.html) and
-  [§ 69b](https://www.gesetze-im-internet.de/urhg/__69b.html).
-- [Ubiquiti EULA](https://www.ui.com/eula/), especially II(b). Determine the
-  terms actually accepted at acquisition/use; the currently published text
-  does not prove historical incorporation or enforceability.
-- [FFmpeg legal guidance](https://ffmpeg.org/legal.html). Determine obligations
-  from the exact build rather than assigning every FFmpeg binary the same license.
-- [Apache-2.0 text](https://www.apache.org/licenses/LICENSE-2.0.txt).
+First distribute wheel/sdist after owner acceptance; image publication follows
+WP3 and the separate owner image decision. No tag, upload or signature is
+created by implementing or testing these paths.
