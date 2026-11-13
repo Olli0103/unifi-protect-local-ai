@@ -263,3 +263,73 @@ def test_part_growth_during_captured_descriptor_read_is_bounded_before_write(fix
     with pytest.raises(ValueError, match="part_growth_refused"):
         sources.validate(root, target, plan)
     assert reads == 1  # Refuse the first oversized chunk, never drain a growing input.
+
+
+@pytest.mark.parametrize("kind", [tarfile.XHDTYPE, tarfile.XGLTYPE,
+                                  tarfile.GNUTYPE_LONGNAME, tarfile.GNUTYPE_LONGLINK])
+def test_control_header_size_is_rejected_before_tarfile_reads_payload(fixture, monkeypatch, kind):
+    root, _, _, target, plan = fixture
+    target.mkdir()
+    header = tarfile.TarInfo("sources/control")
+    header.type, header.size = kind, 2 * sources.TOTAL_LIMIT
+    raw = header.tobuf(format=tarfile.GNU_FORMAT) + bytes(1024)
+    name = sources.NAME + ".part001"
+    (target / name).write_bytes(raw)
+    info = sources.file_info(target / name)
+    value = {"schema": sources.SCHEMA, "revision": plan["source_revision"],
+             "manifest_sha256": plan["source_delivery"]["manifest_sha256"],
+             "sha256": info["sha256"], "parts": [dict(name=name, **info)]}
+    (target / "source-bundle.json").write_text(json.dumps(value, indent=2) + "\n")
+    def parser_must_not_run(*args, **kwargs):
+        raise AssertionError("tarfile parser reached before raw-header refusal")
+    monkeypatch.setattr(sources.tarfile, "open", parser_must_not_run)
+    with pytest.raises(ValueError, match="tar_member_refused"):
+        sources.validate(root, target, plan)
+
+
+@pytest.mark.parametrize("fault", ["large_control", "nested_control", "sparse", "duplicate_pax",
+                                   "bad_length", "negative_size", "trailing", "missing_end"])
+def test_raw_tar_controls_are_bounded_and_canonical(tmp_path, fault):
+    import io
+    stream = io.BytesIO()
+    info = tarfile.TarInfo("sources/safe")
+    info.size = 1
+    if fault == "sparse":
+        info.pax_headers = {"GNU.sparse.size": str(2 * sources.TOTAL_LIMIT)}
+    with tarfile.open(fileobj=stream, mode="w", format=tarfile.PAX_FORMAT) as archive:
+        archive.addfile(info, io.BytesIO(b"x"))
+    raw = stream.getvalue()
+    if fault in ("large_control", "nested_control", "duplicate_pax", "bad_length"):
+        payload = {"large_control": b"x" * (sources.PAX_LIMIT + 1),
+                   "nested_control": b"13 path=safe1\n",
+                   "duplicate_pax": b"13 path=safe1\n13 path=safe1\n",
+                   "bad_length": b"999 path=safe\n"}[fault]
+        extension = tarfile.TarInfo("././@PaxHeader")
+        extension.type, extension.size = tarfile.XHDTYPE, len(payload)
+        control = extension.tobuf(format=tarfile.USTAR_FORMAT)
+        control += payload + bytes((-len(payload)) % 512)
+        raw = control + (control if fault == "nested_control" else b"") + raw
+    elif fault == "negative_size":
+        info.size = -1
+        raw = info.tobuf(format=tarfile.GNU_FORMAT) + bytes(1024)
+    elif fault == "trailing":
+        raw += b"canary" + bytes(506)
+    else:
+        raw = raw[:1024]
+    path = tmp_path / "malformed.tar"
+    path.write_bytes(raw)
+    with pytest.raises((ValueError, tarfile.TarError), match="refused|header"):
+        sources.preflight_tar(path)
+
+
+def test_bounded_pax_long_paths_from_real_producer_remain_supported(tmp_path):
+    import io
+    path = tmp_path / "long.tar"
+    name = "sources/" + "/".join(["long-name" * 6] * 8)
+    with tarfile.open(path, "w", format=tarfile.PAX_FORMAT) as archive:
+        info = tarfile.TarInfo(name)
+        info.size = 1
+        archive.addfile(info, io.BytesIO(b"x"))
+    sources.preflight_tar(path)
+    with tarfile.open(path, "r:") as archive:
+        assert archive.getnames() == [name]

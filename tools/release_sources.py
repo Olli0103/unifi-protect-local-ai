@@ -20,6 +20,7 @@ SCHEMA = "aikey-source-bundle/1"
 PART_LIMIT = 2 * 1024**3 - 1024**2  # Below the GitHub per-asset ceiling.
 TOTAL_LIMIT = 8 * 1024**3
 FILE_LIMIT = 12000
+PAX_LIMIT = 16 * 1024  # Producer emits only bounded path/size/mtime extensions.
 NAME = "corresponding-source.tar"
 INVENTORY_FILES = ("image-inventory.json", "summary.json",
                    "aikey-sbom.cdx.json", "aiport-sbom.cdx.json",
@@ -147,6 +148,69 @@ def bundle_record(value, plan):
             "parts": [{**part, "url": base + part["name"]} for part in value["parts"]]}
 
 
+def checked_pax(raw):
+    """Validate control records before tarfile can interpret sparse/long metadata."""
+    seen, offset = set(), 0
+    while offset < len(raw):
+        space = raw.find(b" ", offset)
+        require(0 < space - offset <= 6 and raw[offset:space].isdigit(),
+                "source_delivery_tar_member_refused")
+        length = int(raw[offset:space])
+        end = offset + length
+        require(space + 1 < end <= len(raw) and raw[end - 1:end] == b"\n",
+                "source_delivery_tar_member_refused")
+        key, separator, value = raw[space + 1:end - 1].partition(b"=")
+        require(separator and key in (b"path", b"size", b"mtime") and key not in seen,
+                "source_delivery_tar_member_refused")
+        if key == b"path":
+            require(0 < len(value) <= 4096 and b"\0" not in value,
+                    "source_delivery_tar_member_refused")
+            value.decode("utf-8", errors="strict")
+        elif key == b"size":
+            require(0 < len(value) <= 20 and value.isdigit() and int(value) <= TOTAL_LIMIT,
+                    "source_delivery_tar_member_refused")
+        else:
+            number = value.lstrip(b"-")
+            require(0 < len(value) <= 32 and number.count(b".") <= 1
+                    and all(piece.isdigit() for piece in number.split(b".")),
+                    "source_delivery_tar_member_refused")
+        seen.add(key)
+        offset = end
+
+
+def preflight_tar(path):
+    """Bound raw headers before tarfile's eager control-record parser runs."""
+    with checked_file(path) as stream:
+        size = os.fstat(stream.fileno()).st_size
+        require(size >= 1024 and size % 512 == 0, "source_delivery_tar_member_refused")
+        records, pending = 0, False
+        while stream.tell() < size:
+            header = stream.read(512)
+            if header == bytes(512):
+                require(not pending and size - stream.tell() >= 512,
+                        "source_delivery_tar_member_refused")
+                while raw := stream.read(1024**2):
+                    require(not any(raw), "source_delivery_tar_member_refused")
+                return
+            item = tarfile.TarInfo.frombuf(header, "utf-8", "strict")
+            records += 1
+            padded = (item.size + 511) // 512 * 512
+            require(records <= 2 * FILE_LIMIT and 0 <= item.size <= TOTAL_LIMIT
+                    and padded <= size - stream.tell()
+                    and item.type in (tarfile.REGTYPE, tarfile.AREGTYPE, tarfile.XHDTYPE),
+                    "source_delivery_tar_member_refused")
+            if item.type == tarfile.XHDTYPE:
+                require(not pending and 0 < item.size <= PAX_LIMIT,
+                        "source_delivery_tar_member_refused")
+                checked_pax(stream.read(item.size))
+                stream.seek(padded - item.size, os.SEEK_CUR)
+                pending = True
+            else:
+                stream.seek(padded, os.SEEK_CUR)
+                pending = False
+        require(False, "source_delivery_tar_member_refused")
+
+
 def validate(root, directory, plan):
     """Reconstruct only bounded regular files, then rerun the actual inventory checker."""
     directory = Path(directory)
@@ -171,6 +235,7 @@ def validate(root, directory, plan):
                     require(copied == part["bytes"] and part_digest.hexdigest() == part["sha256"],
                             "source_delivery_digest_mismatch")
         require(digest.hexdigest() == value["sha256"], "source_delivery_digest_mismatch")
+        preflight_tar(archive)
         unpacked = stage / "unpacked"
         unpacked.mkdir(mode=0o700)
         seen, total = set(), 0
