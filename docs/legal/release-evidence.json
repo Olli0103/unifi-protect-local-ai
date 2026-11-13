@@ -1,61 +1,61 @@
 {
   "schema": "community-release-evidence/2",
-  "reviewed_snapshot_sha256": null,
+  "reviewed_snapshot_sha256": "ad5ac45a4c12e863241e93f3f1a9fdd422b58a8ddd25f1e3e7b4d152db4499cd",
   "publication": {
-    "status": "needs_evidence",
-    "reviewer": null,
-    "evidence_ref": null,
-    "tag": null,
-    "package_destination": null,
+    "status": "verified",
+    "reviewer": "Olli0103",
+    "evidence_ref": "Owner staging/test-only confirmation 2026-11-13 sha256:268165786a517933cd1893008759c37cc9461e5d3892ab0102644bf3e9bb98ef. Private staging only; final candidate publication and image visibility reserved.",
+    "tag": "v0.1.0a1",
+    "package_destination": "github-release",
     "images": {
-      "aikey": null,
-      "aiport": null
+      "aikey": "ghcr.io/olli0103/local-aikey-0.1.0a1",
+      "aiport": "ghcr.io/olli0103/local-aiport-0.1.0a1"
     },
-    "signing_method": null,
-    "github_environment": null,
-    "staging_environment": null
+    "signing_method": "github_oidc_sigstore",
+    "github_environment": "release",
+    "staging_environment": "release-stage"
   },
   "checks": {
     "code_origin": {
-      "status": "needs_evidence",
-      "reviewer": null,
-      "evidence_ref": null
+      "status": "verified",
+      "reviewer": "Olli0103",
+      "evidence_ref": "Retained owner preparation decision 2026-11-13 SHA-256 5734beef9e2919981b60c20593f23e5cd7c9f1691dc4aecfa860c28885c94950. Owner accepted WP1/WP2 interface and history review as technical basis; scoped public/own-installation mapping with zero unaccounted retained interface facts; no clean-room/legal guarantee. Exact test-only source transition explicitly accepted by owner; retained confirmation SHA-256 268165786a517933cd1893008759c37cc9461e5d3892ab0102644bf3e9bb98ef."
     },
     "contributor_rights": {
-      "status": "needs_evidence",
-      "reviewer": null,
-      "evidence_ref": null
+      "status": "verified",
+      "reviewer": "Olli0103",
+      "evidence_ref": "Retained owner preparation decision 2026-11-13 SHA-256 5734beef9e2919981b60c20593f23e5cd7c9f1691dc4aecfa860c28885c94950. Owner accepted contribution/origin review and bounded no-known-additional-contributions statement; Git attribution is not treated as proof of ownership. Exact test-only source transition explicitly accepted by owner; retained confirmation SHA-256 268165786a517933cd1893008759c37cc9461e5d3892ab0102644bf3e9bb98ef."
     },
     "development_statement": {
-      "status": "needs_evidence",
-      "reviewer": null,
-      "evidence_ref": null
+      "status": "verified",
+      "reviewer": "Olli0103",
+      "evidence_ref": "Retained owner preparation decision 2026-11-13 SHA-256 5734beef9e2919981b60c20593f23e5cd7c9f1691dc4aecfa860c28885c94950. Owner reaffirmed private development outside assigned employment tasks without employer code; bounded knowledge of agreements, not a universal legal finding. Exact test-only source transition explicitly accepted by owner; retained confirmation SHA-256 268165786a517933cd1893008759c37cc9461e5d3892ab0102644bf3e9bb98ef."
     },
     "image_licenses": {
-      "status": "needs_evidence",
-      "reviewer": null,
-      "evidence_ref": null
+      "status": "verified",
+      "reviewer": "Olli0103",
+      "evidence_ref": "Retained owner preparation decision 2026-11-13 SHA-256 5734beef9e2919981b60c20593f23e5cd7c9f1691dc4aecfa860c28885c94950. Owner approved exact unchanged upstream manifest e97fc8ea5f02166fe9d7280c7b16dc5f3ceed911077ddb191c7e5cea7d38bdb8; 778 archive members/872 project files and all4 native subjects checked at approved source1250df1; delivery tools still require fresh exact-commit inventories before staging. Exact test-only source transition explicitly accepted by owner; retained confirmation SHA-256 268165786a517933cd1893008759c37cc9461e5d3892ab0102644bf3e9bb98ef."
     },
     "interoperability_scope": {
-      "status": "needs_evidence",
-      "reviewer": null,
-      "evidence_ref": null
+      "status": "verified",
+      "reviewer": "Olli0103",
+      "evidence_ref": "Retained owner preparation decision 2026-11-13 SHA-256 5734beef9e2919981b60c20593f23e5cd7c9f1691dc4aecfa860c28885c94950. Owner accepted documented bounded interface mappings and E1-E11 handling, retained honest provenance and prohibited further AI-Key/AI-Port firmware analysis; no historical access permission invented. Exact test-only source transition explicitly accepted by owner; retained confirmation SHA-256 268165786a517933cd1893008759c37cc9461e5d3892ab0102644bf3e9bb98ef."
     },
     "license_selection": {
-      "status": "needs_evidence",
-      "reviewer": null,
-      "evidence_ref": null
+      "status": "verified",
+      "reviewer": "Olli0103",
+      "evidence_ref": "Retained owner preparation decision 2026-11-13 SHA-256 5734beef9e2919981b60c20593f23e5cd7c9f1691dc4aecfa860c28885c94950. Owner reaffirmed Apache-2.0; included LICENSE and package metadata reviewed. Exact test-only source transition explicitly accepted by owner; retained confirmation SHA-256 268165786a517933cd1893008759c37cc9461e5d3892ab0102644bf3e9bb98ef."
     },
     "owner_risk_decision": {
-      "status": "needs_evidence",
-      "reviewer": null,
-      "evidence_ref": null
+      "status": "verified",
+      "reviewer": "Olli0103",
+      "evidence_ref": "Retained owner preparation decision 2026-11-13 SHA-256 5734beef9e2919981b60c20593f23e5cd7c9f1691dc4aecfa860c28885c94950. Owner made the exact-candidate preparation risk decision after retained evidence and 19 answers; final signed-candidate publication decision remains reserved. Exact test-only source transition explicitly accepted by owner; retained confirmation SHA-256 268165786a517933cd1893008759c37cc9461e5d3892ab0102644bf3e9bb98ef."
     }
   },
   "research_record": {
     "status": "needs_evidence",
-    "reviewer": null,
-    "evidence_ref": null
+    "reviewer": "Olli0103",
+    "evidence_ref": "Bounded retained owner answers: public historical downloads, no additional terms or permission known; not proof of specific historical access rights. Nonblocking record retained; no further firmware analysis authorized."
   },
   "legacy_evidence": {
     "schema": "community-release-evidence/1",
@@ -138,8 +138,8 @@
     }
   },
   "source_delivery": {
-    "artifact_run_id": null,
-    "artifact_name": null,
-    "manifest_sha256": null
+    "artifact_run_id": 43394238336,
+    "artifact_name": "approved-upstream-sources-e97fc8ea",
+    "manifest_sha256": "e97fc8ea5f02166fe9d7280c7b16dc5f3ceed911077ddb191c7e5cea7d38bdb8"
   }
 }
