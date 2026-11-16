@@ -59,14 +59,15 @@ def output(values):
 
 def docker(argv, root, *, mutate=False, timeout=60):
     require(argv[:1] == ["docker"], "release_docker_command_refused")
-    with tempfile.TemporaryFile(dir=Path(root).parent) as capture:
+    with (tempfile.TemporaryFile(dir=Path(root).parent) as capture,
+          tempfile.TemporaryFile(dir=Path(root).parent) as errors):
         try:
             result = subprocess.run(
                 argv,
                 cwd=root,
                 stdin=subprocess.DEVNULL,
                 stdout=subprocess.DEVNULL if mutate else capture,
-                stderr=subprocess.DEVNULL,
+                stderr=errors,
                 timeout=timeout,
                 check=False,
             )
@@ -76,12 +77,19 @@ def docker(argv, root, *, mutate=False, timeout=60):
                 if mutate
                 else "release_registry_observation_unavailable"
             ) from None
-        require(
-            result.returncode == 0,
-            "release_registry_write_uncertain"
-            if mutate
-            else "release_registry_observation_unavailable",
-        )
+        if result.returncode != 0:
+            # Provider bodies never leave this boundary. Preserve only a fixed
+            # diagnostic class so auth, absence and transport are distinguishable.
+            errors.seek(0)
+            message = errors.read(8192).lower()
+            suffix = ("_auth_refused" if any(x in message for x in
+                       (b"unauthorized", b"denied", b"forbidden", b"401", b"403")) else
+                      "_not_found" if any(x in message for x in
+                       (b"manifest unknown", b"not found", b"404")) else "")
+            raise publication.PublicationError(
+                ("release_registry_write_uncertain" if mutate else
+                 "release_registry_observation_unavailable") + suffix)
+
         require(capture.tell() <= 128 * 1024, "release_registry_output_limit")
         capture.seek(0)
         return capture.read()
@@ -95,6 +103,7 @@ def tagged(plan, profile, architecture=None):
     return (
         plan["images"][profile]
         + ":"
+        + (profile + "-" if gate.private_registry_module().layout(plan, gate) else "")
         + plan["version"]
         + ("-" + architecture if architecture else "-index")
         + "-run"
@@ -107,7 +116,7 @@ def observed_tag(root, reference, *, run=docker):
     require(
         re.fullmatch(
             r"ghcr\.io/olli0103/[a-z0-9][a-z0-9._-]{0,100}:"
-            r"[0-9]+\.[0-9]+\.[0-9]+(?:(?:a|rc)[1-9][0-9]*)?-(?:amd64|arm64|index)-run[1-9][0-9]*",
+            r"(?:aikey-|aiport-)?[0-9]+\.[0-9]+\.[0-9]+(?:(?:a|rc)[1-9][0-9]*)?-(?:amd64|arm64|index)-run[1-9][0-9]*",
             reference,
         ),
         "release_candidate_reference_refused",
@@ -336,23 +345,24 @@ def push_images(root, plan, intent_path, architecture, results, destination, *, 
         )
         acknowledged = True
         try:
-            run(["docker", "image", "push", item["reference"]], root, mutate=True, timeout=1200)
-        except publication.PublicationError:
-            acknowledged = False
-        # Positive config-byte identity is required even after an acknowledged
-        # push. A lost response is observed once, never retried.
-        manifest_digest, manifest = observed_tag(root, item["reference"], run=run)
-        require(
-            manifest.get("schemaVersion") == 2
-            and isinstance(manifest.get("config"), dict)
-            and manifest["config"].get("digest") == item["configuration_digest"],
-            "release_pushed_configuration_unverified",
-        )
-        publication.private_images(root, dict(plan, images={profile: plan["images"][profile]}),
-                                   run=metadata_run)
-        # Remove only our newly added local registry tag. The original owned
-        # install tag remains for the existing cleanup/finalization contract.
-        run(["docker", "image", "rm", item["reference"]], root, mutate=True)
+            try:
+                run(["docker", "image", "push", item["reference"]], root, mutate=True, timeout=1200)
+            except publication.PublicationError:
+                acknowledged = False
+            # Observe once, including after a lost acknowledgement. No retry.
+            manifest_digest, manifest = observed_tag(root, item["reference"], run=run)
+            require(
+                manifest.get("schemaVersion") == 2
+                and isinstance(manifest.get("config"), dict)
+                and manifest["config"].get("digest") == item["configuration_digest"],
+                "release_pushed_configuration_unverified",
+            )
+            publication.private_images(root, dict(plan, images={profile: plan["images"][profile]}),
+                                       run=metadata_run)
+        finally:
+            # A failed registry observation must not strand our local alias.
+            # This removes a local tag only; no registry version is deleted.
+            run(["docker", "image", "rm", item["reference"]], root, mutate=True)
         profiles[profile] = {**item, "digest": manifest_digest, "write_acknowledged": acknowledged}
     publication.private_images(root, plan, run=metadata_run)
     value = {
