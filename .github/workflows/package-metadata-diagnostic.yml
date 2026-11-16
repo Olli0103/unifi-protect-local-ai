@@ -1,0 +1,24 @@
+name: Read-only private package diagnosis
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    if: github.repository == 'Olli0103/unifi-protect-local-ai' && github.ref == 'refs/heads/main' && github.actor == 'Olli0103' && github.triggering_actor == 'Olli0103' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+    - name: Exact diagnostic policy without persisted credentials
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      with:
+        ref: ${{ github.sha }}
+        persist-credentials: false
+    - name: Python 3.12
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97
+      with:
+        python-version: '3.12'
+    - name: Diagnose only fixed owner metadata GETs; no release or registry writes
+      env:
+        RELEASE_PACKAGES_READ_TOKEN: ${{ secrets.RELEASE_PACKAGES_READ_TOKEN }}
+      run: python tools/release_package_diagnostic.py
