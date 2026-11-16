@@ -856,8 +856,10 @@ def package_metadata(argv, *, cwd):
     The workflow token still owns repository reads and registry writes. Never
     fall back to it when the owner package catalogue cannot be observed.
     """
-    require(argv == ["gh", "api", "--paginate", "--slurp",
-                     f"users/{gate.OWNER}/packages?package_type=container&per_page=100"],
+    require(argv in (["gh", "api", "--paginate", "--slurp",
+                      f"users/{gate.OWNER}/packages?package_type=container&per_page=100"],
+                     ["gh", "api", "--paginate", "--slurp",
+                      f"users/{gate.OWNER}/packages/container/local-aikey-0.1.0a1/versions?per_page=100"]),
             "release_package_metadata_command_refused")
     token = os.environ.get("RELEASE_PACKAGES_READ_TOKEN", "")
     require(token and len(token) <= 4096 and not any(char.isspace() for char in token),
@@ -914,8 +916,12 @@ def private_images(root, plan, *, run=gate.command):
                     for item in packages)
             and len({item["name"] for item in packages}) == len(packages),
             "release_package_listing_refused")
+    private = gate.private_registry_module()
+    registry = private.layout(plan, gate)
     for profile, image in plan["images"].items():
-        require(image == f"ghcr.io/olli0103/local-{profile}-{plan['version']}",
+        require(profile in {"aikey", "aiport"}
+                and image == (registry["destination"] if registry else
+                              f"ghcr.io/olli0103/local-{profile}-{plan['version']}"),
                 "release_image_destinations_refused")
         name = image.rsplit("/", 1)[1]
         found = [item for item in packages if item["name"] == name]
@@ -926,6 +932,7 @@ def private_images(root, plan, *, run=gate.command):
                 and isinstance(value.get("repository"), dict)
                 and value["repository"].get("full_name") == gate.REPOSITORY,
                 "release_image_not_private_or_repository_unverified")
+    private.private_versions(root, plan, gate, run)
 
 
 def asset_rows(root, release_id, *, run=gate.command):

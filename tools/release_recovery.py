@@ -180,6 +180,17 @@ def reconciled_preflight(policy, revision, origin, release_id, current, gate, en
     if not requested_run:
         return None
     requested_run = identifier(requested_run, gate)
+    private = gate.private_registry_module()
+    if requested_run == private.INCIDENT_RUN:
+        prior_env = dict(env, RELEASE_RECOVERY_PREFLIGHT_RUN="43483598001")
+        previous = reconciled_preflight(policy, revision, origin, release_id, current,
+                                       gate, prior_env, run)
+        import types
+        result = private.context(policy, revision, origin, release_id, current, gate, run,
+                                 types.SimpleNamespace(**globals()))
+        result["preceding_preflights"] = previous.get("preceding_preflights", []) + [
+            {key: value for key, value in previous.items() if key != "preceding_preflights"}]
+        return result
     raw = gate.read(policy / "docs/legal/recovery-prepush-reconciliation.json")
     record = gate.load(raw)
     if record.get("run_id") == requested_run:
@@ -319,6 +330,15 @@ def context(root, revision, gate, env, run, *, profile):
     }
     if preflight is not None:
         result["reconciled_preflight"] = preflight
+        private = gate.private_registry_module()
+        if preflight["run_id"] == private.INCIDENT_RUN:
+            result["private_registry"] = {
+                "schema": "aikey-private-registry-recovery/1",
+                "incident_run_id": private.INCIDENT_RUN, "destination": private.DESTINATION,
+                "tag_layout": "profile-version-architecture-run",
+                "old_tag": private.OLD_TAG, "old_digest": private.OLD_DIGEST,
+                "old_cleanup": "failed-not-reused",
+                "public_phase": "occurred-downloads-not-excluded"}
     return result
 
 

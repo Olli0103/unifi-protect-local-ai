@@ -113,6 +113,14 @@ def command(argv, *, cwd, timeout=20):
         return output.read().decode("utf-8")
 
 
+def private_registry_module():
+    spec = importlib.util.spec_from_file_location(
+        "paired_private_registry_recovery", Path(__file__).with_name("release_private_recovery.py"))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def publication(record, tag, *, profile="image"):
     """A record is an attestation to review, not proof of its human truth."""
     value = record.get("publication")
@@ -455,6 +463,9 @@ def prepare(root, tag, *, publish=False, profile="image", env=None, run=command)
 
     if recovery is not None:
         result["recovery"] = recovery
+        registry = private_registry_module().layout(result, types.SimpleNamespace(**globals()))
+        if registry is not None and result["images"]:
+            result["images"] = {profile: registry["destination"] for profile in result["images"]}
     return result
 
 def main(argv=None):
