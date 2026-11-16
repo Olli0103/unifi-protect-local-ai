@@ -14,11 +14,12 @@ private = gate.private_registry_module()
 ROOT = Path(__file__).resolve().parents[1]
 CATALOGUE = ["gh", "api", "--paginate", "--slurp",
              "user/packages?package_type=container&per_page=100"]
+DIRECT = ["gh", "api", "user/packages/container/local-aikey-0.1.0a1"]
 VERSIONS = ["gh", "api", "--paginate", "--slurp",
             "user/packages/container/local-aikey-0.1.0a1/versions?per_page=100"]
 
 
-@pytest.mark.parametrize("argv", [CATALOGUE, VERSIONS])
+@pytest.mark.parametrize("argv", [CATALOGUE, VERSIONS, DIRECT])
 def test_owner_namespace_is_selected_only_after_exact_owner_identity(tmp_path, monkeypatch, argv):
     monkeypatch.setenv("RELEASE_PACKAGES_READ_TOKEN", "FICTIONAL_OWNER_READER")
     calls = []
@@ -53,14 +54,14 @@ def test_private_shared_package_is_not_looked_up_in_public_namespace(tmp_path):
     calls = []
     def run(argv, **kwargs):
         calls.append(argv)
-        if argv == CATALOGUE:
-            return json.dumps([[{"name": "local-aikey-0.1.0a1", "package_type": "container",
-                                  "visibility": "private", "repository": {"full_name": gate.REPOSITORY}}]])
+        if argv == DIRECT:
+            return json.dumps({"name": "local-aikey-0.1.0a1", "package_type": "container",
+                                  "visibility": "private", "repository": {"full_name": gate.REPOSITORY}})
         if argv == VERSIONS:
             return json.dumps([[version()]])
         return "[[]]"  # A public-namespace success does not observe this private package.
     publication.private_images(tmp_path, packet(), run=run)
-    assert calls == [CATALOGUE, VERSIONS]
+    assert calls == [DIRECT, VERSIONS]
 
 
 STEP_NAMES = (
@@ -80,17 +81,21 @@ STEP_NAMES = (
     "changed_step", "step_number", "probe_success", "reserve_started", "hidden_steps",
     "effects_relabelled", "wrong_source", "wrong_origin", "wrong_release", "current_reused",
 ])
-def test_exact_early_failure_never_hides_downstream_effects(tmp_path, fault):
-    record = json.loads((ROOT / "docs/legal/recovery-private-owner-read.json").read_text())
+@pytest.mark.parametrize("followup", [False, True])
+def test_exact_early_failure_never_hides_downstream_effects(tmp_path, fault, followup):
+    run_id = private.OWNER_READ_FOLLOWUP_RUN if followup else private.OWNER_READ_RUN
+    policy_revision = private.OWNER_READ_FOLLOWUP_POLICY if followup else private.OWNER_READ_POLICY
+    filename = "recovery-private-owner-followup.json" if followup else "recovery-private-owner-read.json"
+    record = json.loads((ROOT / "docs/legal" / filename).read_text())
     jobs = copy.deepcopy(record["record"]["jobs"])
     names = {hashlib.sha256(name.encode()).hexdigest(): name for name in STEP_NAMES}
     for row in jobs:
         for step in row["steps"]:
             step["name"] = names[step.pop("name_sha256")]
     person = {"login": gate.OWNER, "id": gate.OWNER_ID, "type": "User"}
-    observed = {"id": int(private.OWNER_READ_RUN), "event": "workflow_dispatch",
+    observed = {"id": int(run_id), "event": "workflow_dispatch",
                 "path": ".github/workflows/publish-release.yml", "head_branch": "main",
-                "head_sha": private.OWNER_READ_POLICY, "status": "completed", "conclusion": "failure",
+                "head_sha": policy_revision, "status": "completed", "conclusion": "failure",
                 "run_attempt": 1, "actor": person, "triggering_actor": copy.deepcopy(person),
                 "repository": {"full_name": gate.REPOSITORY},
                 "created_at": "2026-01-01T00:00:00Z", "updated_at": "2026-01-01T00:01:00Z"}
@@ -145,10 +150,10 @@ def test_exact_early_failure_never_hides_downstream_effects(tmp_path, fault):
     elif fault == "wrong_release":
         release = 123
     elif fault == "current_reused":
-        current = private.OWNER_READ_RUN
+        current = run_id
     proxy = SimpleNamespace(**vars(gate))
     proxy.read = lambda path: (json.dumps(record).encode()
-                               if path.name == "recovery-private-owner-read.json" else previous)
+                               if path.name == filename else previous)
     calls = []
     def run(argv, **kwargs):
         calls.append(argv)
@@ -157,9 +162,9 @@ def test_exact_early_failure_never_hides_downstream_effects(tmp_path, fault):
         return json.dumps({"total_count": count, "jobs": jobs}
                           if "/jobs?" in argv[-1] else observed)
     if fault == "none":
-        result = private.owner_read_context(tmp_path, source, origin, release, current, proxy, run, recovery)
-        assert result["run_id"] == private.OWNER_READ_RUN
+        result = private.owner_read_context(tmp_path, source, origin, release, current, proxy, run, recovery, followup=followup)
+        assert result["run_id"] == run_id
     else:
         with pytest.raises(ValueError):
-            private.owner_read_context(tmp_path, source, origin, release, current, proxy, run, recovery)
+            private.owner_read_context(tmp_path, source, origin, release, current, proxy, run, recovery, followup=followup)
     assert all(c[0] == "git" or c[:2] == ["gh", "api"] for c in calls)

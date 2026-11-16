@@ -126,7 +126,8 @@ def test_one_existing_package_qualifies_both_profiles_but_public_missing_never_d
         calls = []
         def run(argv, **kwargs):
             calls.append(argv)
-            return json.dumps([[version()]] if "/versions?" in argv[-1] else [packages])
+            return json.dumps([[version()]] if "/versions?" in argv[-1] else
+                              packages[0] if packages else {})
         if fault == "none":
             candidate.publication.private_images(tmp_path, plan, run=run)
             assert len(calls) == 2

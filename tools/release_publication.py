@@ -859,7 +859,8 @@ def package_metadata(argv, *, cwd):
     require(argv in (["gh", "api", "--paginate", "--slurp",
                       "user/packages?package_type=container&per_page=100"],
                      ["gh", "api", "--paginate", "--slurp",
-                      "user/packages/container/local-aikey-0.1.0a1/versions?per_page=100"]),
+                      "user/packages/container/local-aikey-0.1.0a1/versions?per_page=100"],
+                     ["gh", "api", "user/packages/container/local-aikey-0.1.0a1"]),
             "release_package_metadata_command_refused")
     token = os.environ.get("RELEASE_PACKAGES_READ_TOKEN", "")
     require(token and len(token) <= 4096 and not any(char.isspace() for char in token),
@@ -904,20 +905,30 @@ def private_images(root, plan, *, run=gate.command):
         return
     if run is gate.command:
         run = package_metadata
-    pages = rows(run([
-        "gh", "api", "--paginate", "--slurp",
-        "user/packages?package_type=container&per_page=100",
-    ], cwd=root))
-    require(pages and all(isinstance(page, list) for page in pages),
-            "release_package_listing_incomplete")
-    packages = [item for page in pages for item in page]
-    require(len(packages) <= 1024
-            and all(isinstance(item, dict) and isinstance(item.get("name"), str)
-                    for item in packages)
-            and len({item["name"] for item in packages}) == len(packages),
-            "release_package_listing_refused")
     private = gate.private_registry_module()
     registry = private.layout(plan, gate)
+    if registry:
+        # GitHub may omit a private package from every namespace listing while
+        # its exact authenticated object and version catalogue remain readable.
+        value = gate.load(run([
+            "gh", "api", "user/packages/container/local-aikey-0.1.0a1",
+        ], cwd=root))
+        require(isinstance(value, dict) and isinstance(value.get("name"), str),
+                "release_private_image_response_refused")
+        packages = [value]
+    else:
+        pages = rows(run([
+            "gh", "api", "--paginate", "--slurp",
+            "user/packages?package_type=container&per_page=100",
+        ], cwd=root))
+        require(pages and all(isinstance(page, list) for page in pages),
+                "release_package_listing_incomplete")
+        packages = [item for page in pages for item in page]
+        require(len(packages) <= 1024
+                and all(isinstance(item, dict) and isinstance(item.get("name"), str)
+                        for item in packages)
+                and len({item["name"] for item in packages}) == len(packages),
+                "release_package_listing_refused")
     for profile, image in plan["images"].items():
         require(profile in {"aikey", "aiport"}
                 and image == (registry["destination"] if registry else

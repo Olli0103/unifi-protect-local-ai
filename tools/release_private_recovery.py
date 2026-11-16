@@ -14,6 +14,8 @@ import re
 INCIDENT_RUN = "43865727276"
 OWNER_READ_RUN = "43887790289"
 OWNER_READ_POLICY = "52689906c7910d9b71284ed40e3333d6db7c5799"
+OWNER_READ_FOLLOWUP_RUN = "43897076903"
+OWNER_READ_FOLLOWUP_POLICY = "117ababec8f5dcd5ed8e6732c7ac7cdaa0aba5ca"
 ORIGIN_RUN = "43402688428"
 SOURCE = "a3da9c21715dade37fbe3a25529fa85fd17dc430"
 POLICY = "e646efad5e9da4db7874ac79c6cbf58ed106b7b1"
@@ -40,7 +42,7 @@ def layout(plan, gate):
                  and plan.get("workflow_run_id") == recovery.get("workflow_run_id")
                  and isinstance(plan.get("workflow_run_id"), str)
                  and re.fullmatch("[1-9][0-9]{0,19}", plan["workflow_run_id"])
-                 and plan["workflow_run_id"] not in {INCIDENT_RUN, ORIGIN_RUN, OWNER_READ_RUN}
+                 and plan["workflow_run_id"] not in {INCIDENT_RUN, ORIGIN_RUN, OWNER_READ_RUN, OWNER_READ_FOLLOWUP_RUN}
                  and plan.get("tag") == "v0.1.0a1" and plan.get("version") == "0.1.0a1",
                  "release_private_recovery_layout_refused")
     return dict(expected)
@@ -55,7 +57,7 @@ def context(policy, revision, origin, release_id, current, gate, run, recovery):
                  and record["schema"] == "aikey-private-registry-incident/1"
                  and record["previous_record_sha256"] == hashlib.sha256(previous_raw).hexdigest()
                  and revision == SOURCE and origin == ORIGIN_RUN and release_id == 444049704
-                 and current not in {INCIDENT_RUN, ORIGIN_RUN, OWNER_READ_RUN},
+                 and current not in {INCIDENT_RUN, ORIGIN_RUN, OWNER_READ_RUN, OWNER_READ_FOLLOWUP_RUN},
                  "release_private_recovery_record_refused")
     facts = record["record"]
     gate.require(set(facts) == {"run_id", "policy_revision", "workflow_sha256", "jobs"}
@@ -110,31 +112,37 @@ def context(policy, revision, origin, release_id, current, gate, run, recovery):
             "jobs_sha256": hashlib.sha256(json.dumps(jobs, sort_keys=True).encode()).hexdigest()}
 
 
-def owner_read_context(policy, revision, origin, release_id, current, gate, run, recovery):
+def owner_read_context(policy, revision, origin, release_id, current, gate, run, recovery,
+                       *, followup=False):
     """Admit only the exact read-only qualifier failure after the incident."""
-    raw = gate.read(policy / "docs/legal/recovery-private-owner-read.json")
+    run_id = OWNER_READ_FOLLOWUP_RUN if followup else OWNER_READ_RUN
+    policy_revision = OWNER_READ_FOLLOWUP_POLICY if followup else OWNER_READ_POLICY
+    filename = "recovery-private-owner-followup.json" if followup else "recovery-private-owner-read.json"
+    previous_name = "recovery-private-owner-read.json" if followup else "recovery-private-registry.json"
+    schema = "aikey-private-owner-read-followup/1" if followup else "aikey-private-owner-read-reconciliation/1"
+    raw = gate.read(policy / "docs/legal" / filename)
     record = gate.load(raw)
-    previous = gate.read(policy / "docs/legal/recovery-private-registry.json")
+    previous = gate.read(policy / "docs/legal" / previous_name)
     gate.require(set(record) == {"schema", "previous_record_sha256", "record", "effects"}
-                 and record["schema"] == "aikey-private-owner-read-reconciliation/1"
+                 and record["schema"] == schema
                  and record["previous_record_sha256"] == hashlib.sha256(previous).hexdigest()
                  and revision == SOURCE and origin == ORIGIN_RUN and release_id == 444049704
-                 and current not in {INCIDENT_RUN, ORIGIN_RUN, OWNER_READ_RUN},
+                 and current not in {INCIDENT_RUN, ORIGIN_RUN, OWNER_READ_RUN, OWNER_READ_FOLLOWUP_RUN},
                  "release_owner_read_record_refused")
     facts = record["record"]
     gate.require(set(facts) == {"run_id", "policy_revision", "workflow_sha256", "jobs"}
-                 and facts["run_id"] == OWNER_READ_RUN
-                 and facts["policy_revision"] == OWNER_READ_POLICY,
+                 and facts["run_id"] == run_id
+                 and facts["policy_revision"] == policy_revision,
                  "release_owner_read_record_refused")
-    observed = recovery.original_run(policy, OWNER_READ_RUN, gate, run)
-    gate.require(observed["head_sha"] == OWNER_READ_POLICY,
+    observed = recovery.original_run(policy, run_id, gate, run)
+    gate.require(observed["head_sha"] == policy_revision,
                  "release_owner_read_policy_refused")
-    workflow = run(["git", "show", OWNER_READ_POLICY + ":.github/workflows/publish-release.yml"],
+    workflow = run(["git", "show", policy_revision + ":.github/workflows/publish-release.yml"],
                    cwd=policy)
     gate.require(hashlib.sha256(workflow.encode()).hexdigest() == facts["workflow_sha256"],
                  "release_owner_read_workflow_refused")
     api = gate.load(run(["gh", "api",
-                         f"repos/{gate.REPOSITORY}/actions/runs/{OWNER_READ_RUN}/jobs?per_page=100"],
+                         f"repos/{gate.REPOSITORY}/actions/runs/{run_id}/jobs?per_page=100"],
                         cwd=policy))
     jobs = recovery.job_graph(api, gate, early=True)
     gate.require(jobs == recovery.job_graph({"total_count": 7, "jobs": facts["jobs"]},
@@ -161,7 +169,7 @@ def owner_read_context(policy, revision, origin, release_id, current, gate, run,
         "new_stage_approval": False, "release_uploaded_assets": 0,
         "registry_write_jobs_started": False, "previous_incident_unchanged": True},
         "release_owner_read_effects_refused")
-    return {"run_id": OWNER_READ_RUN, "workflow_revision": OWNER_READ_POLICY,
+    return {"run_id": run_id, "workflow_revision": policy_revision,
             "created_at": observed["created_at"], "updated_at": observed["updated_at"],
             "jobs_sha256": hashlib.sha256(json.dumps(jobs, sort_keys=True).encode()).hexdigest()}
 
