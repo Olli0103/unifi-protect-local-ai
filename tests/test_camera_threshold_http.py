@@ -215,3 +215,35 @@ async def test_lost_save_acknowledgement_is_uncertain_without_automatic_retry(tm
     finally:
         await client.close()
         await server.close()
+
+
+async def test_actual_journal_io_failure_is_redacted_and_spends_confirmation(tmp_path, monkeypatch):
+    import errno
+    from aikey import aiport_config_store as module
+    site, server, client, _, _, _ = await ready(tmp_path)
+    store = site.aiports["aiport"]
+    original, attempts = module.atomic_private, []
+    def fail_journal(destination, content):
+        if destination == store._threshold_journal:
+            attempts.append(True)
+            raise OSError(errno.EIO, "fictional private journal path")
+        return original(destination, content)
+    monkeypatch.setattr(module, "atomic_private", fail_journal)
+    try:
+        fields = await preview(site, client)
+        response = await client.post("/camera-thresholds/apply", data=fields,
+                                    headers={"Origin": site.origin}, allow_redirects=False)
+        body = await response.text()
+        assert response.status == 503 and "outcome uncertain" in body
+        assert "fictional private" not in body and "Traceback" not in body
+        assert attempts == [True]
+        assert list(json.loads(store.path.read_text())["live_pool_detector"]["camera_thresholds"].values()) == [.375]
+        assert not store.camera_threshold_undo_status()["available"]
+        committed = store.path.read_bytes()
+        replay = await client.post("/camera-thresholds/apply", data=fields,
+                                  headers={"Origin": site.origin}, allow_redirects=False)
+        assert replay.status == 409 and attempts == [True]
+        assert store.path.read_bytes() == committed
+    finally:
+        await client.close()
+        await server.close()
