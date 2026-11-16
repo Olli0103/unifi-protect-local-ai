@@ -3,7 +3,10 @@
 The project is an independent experimental local AI processor compatible with
 UniFi Protect. A signed package is **not** native feature parity, a quality
 approval, an independent-installation result or a sustained-operation result.
-There is no completed signed public release established by this document.
+The first signed experimental [alpha 0.1.0a1](alpha-release.md) was published
+on 16 November 2026. Its source/packages are public; its signed container images
+remain private. The dated alpha record names the exact delivered subjects and
+successful workflow; this procedure does not imply a stable/support guarantee.
 
 ## Versions, compatibility and support
 
@@ -50,10 +53,12 @@ owner decisions for the exact alpha snapshot are described in the dated
 engineering-generated rights attestations or model/firmware permissions.
 
 The `publication` object in [release-evidence.json](legal/release-evidence.json)
-was pending before the 2026-11-13 owner decisions. It now records `verified`
-private-staging authorization for the named alpha snapshot, with final candidate
-publication and public image visibility explicitly reserved. This field is not
-a receipt of publication or permission to approve the final `release` environment.
+was pending before the 2026-11-13 owner decisions. It records `verified`
+private-staging authorization for the named alpha snapshot, not the later final
+publication decision. On 16 November the owner separately approved `release`
+for run 43920818331, which published original release 444049704 successfully.
+Public image visibility remains reserved. The old evidence field is not edited
+to retroactively grant approval to a new source tree.
 Only the maintainer may record a substantiated decision covering:
 
 - Exact existing public tag, matching `pyproject.toml` and the dispatched main
@@ -86,15 +91,31 @@ attesting a newer workflow commit is refused.
 ## Image source delivery
 
 Image mode additionally requires the owner-pinned upstream source artifact and
-[the same-release source delivery chain](source-bundle-delivery.md). Both image
-names are version-bound: for alpha 0.1.0a1,
-`ghcr.io/olli0103/local-aikey-0.1.0a1` and
-`ghcr.io/olli0103/local-aiport-0.1.0a1`. Protocol identities do not change. A missing
-bundle or nonzero exact-revision source-inventory result blocks upload. The
+[the same-release source delivery chain](source-bundle-delivery.md). Registry
+destinations are version-bound. The original layout proposed separate
+`local-aikey-0.1.0a1` and `local-aiport-0.1.0a1` packages; the delivered alpha's
+[bounded recovery](legal/private-registry-recovery.md) instead uses the existing
+private `ghcr.io/olli0103/local-aikey-0.1.0a1` package for both profiles, with
+separate profile/architecture/index tags and immutable digests. Use the actual
+signed manifest, not an inferred second package. Protocol identities do not
+change. A missing bundle or nonzero exact-revision source-inventory result blocks upload. The
 source index and ordered archive parts ship alongside the other assets in the
 same GitHub release and are hash-bound by the signed release manifest.
 
-## Observed alpha attempt (2026-11-13)
+## Published alpha (2026-11-16)
+
+[Run 43920818331](https://github.com/Olli0103/unifi-protect-local-ai/actions/runs/43920818331)
+completed successfully with source `a3da9c21715dade37fbe3a25529fa85fd17dc430`
+and policy `18f0ebd695ceccae861daed8c02aff1eba1aed9c`. The native AMD64/ARM64
+checks, cleanup, signature chain and actual final candidate consumer passed.
+After the owner's final approval, the same original draft `444049704` became
+[public prerelease v0.1.0a1](https://github.com/Olli0103/unifi-protect-local-ai/releases/tag/v0.1.0a1)
+at 18:29:24 UTC with all 25 asset states, sizes and provider digests verified.
+See [the alpha record](alpha-release.md) for the manifest hash and image subjects.
+Images remain private; no anonymous-pull success or hardware acceptance follows.
+Earlier failures below are historical, not the current release state.
+
+## Original alpha attempt (2026-11-13; historical)
 
 Tag `v0.1.0a1` points to `a3da9c21715dade37fbe3a25529fa85fd17dc430`.
 Its seven prerequisite main-CI jobs passed, and a current internal source bundle
@@ -105,12 +126,14 @@ All downstream source/package/image/assembly/publication jobs were skipped:
 there is no signed candidate, no registry push by this run and no uploaded
 release assets (GitHub's automatic source-archive links are not such assets).
 The exact reservation refusal was not retained; its root cause is undetermined.
+These statements describe that failed run, not the successful 16 November recovery.
 
-Preserve that draft, run identity and tag; do not redispatch, rerun attempt 2,
-delete/recreate the draft or move the tag as a workaround. Deliberate recovery
+Preserve the original release/run identity and tag; do not redispatch, rerun
+attempt 2, delete/recreate the release or move the tag as a workaround. Recovery
 requires review of the retained failure and any changed release source. The
-final `release` approval and public image visibility remain owner gates, not
-steps already authorized by staging. See the
+final `release` approval was a separate owner gate, completed only for the
+successful recovery; public image visibility remains a separate decision. See
+the
 [alpha distribution record](legal/alpha-distribution-0.1.0a1.md) for evidence
 references and the distinction between prepared and delivered sources.
 
@@ -138,12 +161,13 @@ independently compared with that tagged source. This does not transfer source
 approval to the policy checkout or ship changed policy files in the alpha.
 Final `release` approval and public image visibility remain separate owner gates.
 Refusal JSON is logged with fixed codes and retained even after reservation fails.
-An implemented recovery path is not evidence of an actually signed candidate.
+An implemented recovery path alone is not evidence of an actually signed
+candidate. The successful run above supplies that evidence for this alpha only.
 
 ## Concrete workflow
 
-The following is the workflow contract, not a claim that every step completed
-in the observed alpha attempt.
+The following is the reusable workflow contract. The dated alpha record identifies
+which execution completed; the original failed run did not complete these steps.
 
 [Owner-gated signed release](../.github/workflows/publish-release.yml) has only a
 manual `workflow_dispatch` trigger, restricted again in the gate to the owner,
@@ -171,10 +195,13 @@ publication trigger, static registry key, model download or controller action.
    layer/location IDs and fresh timestamps differ between builds. Expired or
    missing qualification artifacts must be refreshed before publication.
 4. Before registry writes, create-only intents are retained as CI metadata.
-   Complete paginated GHCR metadata must show each versioned package absent or
-   private and associated with this repository. Failed reads never mean absent.
-   New packages use GHCR's documented private default; every push is followed by
-   a positive private/repository read-back. A public destination is refused.
+   Owner-authenticated GHCR metadata must show every destination already exists,
+   is positively private and is associated with this repository. Namespace lists
+   may omit a readable private package: the bounded alpha recovery validates its
+   fixed direct object plus the complete version catalogue. Failed/empty reads
+   never establish privacy or authorize package creation. No bootstrap or
+   private-after-push fallback is allowed; each push is followed by a positive
+   private/repository read-back. A public destination is refused.
    The check is not atomic with owner UI changes: do not change visibility during
    staging or before the public source-release read-back.
    Registry tags include version, architecture/index and GitHub run ID, never
@@ -184,8 +211,10 @@ publication trigger, static registry key, model download or controller action.
 5. The assembly job checks upstream bundles, shipped package source, exact
    image/configuration digests and cleanup proofs, creates two dual-native
    indices, and retains the **complete** candidate before release upload.
-   `release-candidate` normally contains 22 files: two distributions, package and four
-   image SBOMs, standard signature bundles, `SHA256SUMS`, and `release.json`.
+   Its exact asset set comes from `release.json`, not a fixed file-count guess.
+   The delivered image alpha contains 25 files, including two distributions,
+   package and four image SBOMs, signature bundles, corresponding source, notices,
+   `source-bundle.json`, `SHA256SUMS`, and `release.json`.
    The workflow summary exposes hashes, including the manifest's own hash.
    The manifest binds every normal asset; the root provenance covers both the
    manifest and checksum file without circular hashing. Verified SBOM predicates
@@ -197,8 +226,9 @@ publication trigger, static registry key, model download or controller action.
    remains the reviewer's responsibility, not an assumed generic upstream link.
 6. Only then does the final `release` environment request approval. Inspect the
    concrete candidate, signed immutable image references in `release.json`,
-   source-bundle parts/hashes and workflow identity. **Keep both versioned GHCR
-   packages private.** The workflow never changes registry visibility.
+   source-bundle parts/hashes and workflow identity. **Keep every versioned GHCR
+   destination private.** For this alpha both profiles share one package. The
+   workflow never changes registry visibility.
 7. The final job downloads that same run's digest-checked candidate, takes a
    private byte snapshot, re-verifies signatures/source/private image status and
    uploads create-only assets. Provider IDs, uploaded states, byte sizes and
@@ -206,10 +236,13 @@ publication trigger, static registry key, model download or controller action.
    become public. Notes and prerelease status are positively read back afterward.
    The success receipt means sources/packages are public, **not** images.
 8. Only after that positive public release read-back does the owner verify the
-   source assets are accessible, then manually make the two exact versioned GHCR
-   packages public. Use the signed digest references, never move them into the
-   unversioned legacy namespace. Verify anonymous pulls separately. Once a
-   versioned package is public, this pipeline refuses further staging into it;
+   source assets are accessible and separately decide whether to make the exact
+   versioned GHCR destination(s) public. This has **not** occurred for the alpha.
+   Visibility is package-wide: its shared package includes both profiles and the
+   retained incident version, so the decision must cover that complete catalogue,
+   not just one image tag. Use signed digest references, never move them into an
+   unversioned namespace. Verify anonymous pulls separately. Once a versioned
+   package is public, this pipeline refuses further staging into it;
    use a newly reviewed version rather than weakening the private gate.
 
 The workflow uses short-lived GitHub credentials, pinned maintained actions and
@@ -224,7 +257,13 @@ an observed application cleanup result.
 
 Obtain the public tag's full commit and `release.json` from the completed release.
 Do not trust a tag spelling, an unsigned checksum file or a green workflow alone.
-For example, substituting the actual approved commit:
+For a normal release the executing policy and artifact source are the same
+approved commit. For the recovered 0.1.0a1 alpha they differ: use policy
+`18f0ebd695ceccae861daed8c02aff1eba1aed9c` for **both** `--source-digest` and
+`--signer-digest` below, and independently check artifact source
+`a3da9c21715dade37fbe3a25529fa85fd17dc430` through the signed manifest's recovery
+binding and shipped source. Do not substitute the older artifact-source SHA for
+the executing policy's attestation identity. Set `ACTUAL_FULL_COMMIT` accordingly:
 
 ```sh
 gh attestation verify release.json \
@@ -266,7 +305,9 @@ Current upgrade/recovery source contracts are described in
 prior publicly supported release or proof of native Mac/NAS power-loss recovery.
 The exact-snapshot rights/source preparation decisions recorded above are no
 longer blanket missing-evidence items. Actual signed-candidate qualification and
-the final public-release decision remain outstanding. Those decisions do not
+the final public-release decision completed for run 43920818331; public container
+visibility, anonymous pulls and broader acceptance remain separate. Those
+decisions do not
 establish a legal guarantee, new firmware/model permissions, general native
 pairing, quality or long-running/independent-installation acceptance. Report
 failures through the project's existing issue tracker with sanitized metadata,

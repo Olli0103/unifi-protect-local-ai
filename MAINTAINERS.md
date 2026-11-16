@@ -15,7 +15,9 @@ Deployments and publishing are distinct from merging source.
 
 ## Supported versions
 
-This is experimental pre-alpha software. There is no stable release line or
+The first signed experimental alpha is
+[0.1.0a1](https://github.com/Olli0103/unifi-protect-local-ai/releases/tag/v0.1.0a1),
+published on 16 November 2026. There is no stable release line or
 LTS/security-support promise yet. `main` is the integration baseline; bug reports
 must include the exact commit and Protect version. A feature branch is not a
 supported deployment just because its tests pass.
@@ -25,11 +27,28 @@ Compatibility is feature- and version-specific: use the
 the verified 7.3.74 inventory contract is not approval of every Protect feature
 on that version. Unknown contracts remain disabled or `needs_evidence`.
 
-Until a signed release is approved, no tag, package or image should be described
-as production-ready. Future releases use semantic versions, a changelog, exact
+A signed alpha is not production-readiness approval. The
+[alpha record](docs/alpha-release.md) names its verified source/package assets
+and still-private images. Future releases require a changelog, exact
 source/artifact digests, SBOM/provenance and a documented rollback path. A
 breaking change to identity, configuration or index formats requires an explicit
 migration; never silently regenerate an adopted identity.
+
+## Release documentation maintenance
+
+After a completed publication, read back the original release ID, tag, source,
+prerelease state, complete asset set/digests and terminal workflow result. Update
+README, the dated changelog, deployment entry points, release scope and
+rights/source-delivery status together. Record package publication separately
+from registry visibility and anonymous-pull verification; a passing candidate
+or green CI is not public availability. Preserve failed attempts and their
+cleanup outcomes as dated history.
+
+Keep post-release documentation under `Unreleased` until its own release. Never
+move an existing tag, edit signed assets or rebind an older reviewed fingerprint
+to make documentation part of an already published source. Keep native/platform,
+quality and independent-installation gaps visible; do not close issues merely
+because a signed prerelease exists.
 
 ## Triage
 

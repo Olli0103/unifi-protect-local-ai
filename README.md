@@ -10,10 +10,17 @@ or endorsed by Ubiquiti. No vendor firmware or model weights are included.
 
 ## Status and compatibility
 
-This is development software, currently version `0.1.0a1` in source. **There is no
-published stable release, supported release line or official prebuilt project
-image yet.** Build from a reviewed source revision; do not assume a registry tag
-or PyPI package with a similar name belongs to this project.
+The first signed experimental alpha, [**0.1.0a1**](https://github.com/Olli0103/unifi-protect-local-ai/releases/tag/v0.1.0a1),
+was published on **16 November 2026**. Its 25 release assets include the wheel,
+source distribution, corresponding-source archive, notices, inventories,
+checksums and Sigstore bundles. Read the [alpha delivery and verification record](docs/alpha-release.md)
+for the exact source, manifest hash and image references.
+
+**There is no stable release or supported release line.** The native AMD64/ARM64
+AI Key and AI Port images are built and signed, but remain **private**: this is
+not an anonymously pullable container release. Use the source-build deployment
+paths below unless you have authorized registry access. No PyPI publication is
+provided; do not assume a similarly named package belongs to this project.
 
 Native observations cover selected Protect 7.3.x versions, including 7.3.74,
 with different results per feature and profile. They do not establish support
@@ -34,7 +41,9 @@ recording control are not implemented.
 
 ## Install and deploy
 
-Start with the [deployment guide](docs/deployment.md). It covers source selection,
+Start with the [deployment guide](docs/deployment.md). Verify downloaded alpha
+assets using the [release procedure](docs/releasing.md#verify-before-installation).
+The deployment guide covers source selection,
 requirements, a non-container AI Key installation, trust, adoption, verification,
 updates and rollback. It also links the Docker, AI Port and Apple-specific paths.
 

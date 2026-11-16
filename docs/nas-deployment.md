@@ -4,7 +4,9 @@ This is a source-build recipe for a Linux server or NAS with Docker Engine and
 Compose 2.20+. It is not specific to a NAS vendor. It deploys one AI Key, not AI
 Port instances. For Ports, use [their network/Compose guide](aiport-nas-compose.md).
 Read [deployment requirements](deployment.md) and [compatibility limits](compatibility.md)
-first. No stable release or official prebuilt project image is available.
+first. The [signed alpha source/packages](alpha-release.md) are published, but
+there is no stable release and the built project images remain private. This
+recipe builds from reviewed source rather than assuming an anonymous image pull.
 
 For a **fresh Key without editing JSON**, use the separate
 [first-run Compose recipe](nas-first-run.md). It prepares a new child directory

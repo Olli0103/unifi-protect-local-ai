@@ -33,9 +33,13 @@ are not established and no further firmware analysis is authorized.
 
 The `publication` entry is also `verified`, but its retained decision authorizes
 **private staging only**, not final candidate publication or public image
-visibility. The attempted staging failed after creating a private draft; no
-signed candidate or completed public release resulted. See the dated
-[alpha distribution status](alpha-distribution-0.1.0a1.md).
+visibility. The original 13 November attempt failed after creating a private
+draft. A deliberate recovery subsequently produced the signed candidate, and
+the owner separately approved the final `release` environment on 16 November:
+run 43920818331 published the same original release 444049704 with verified
+assets. Images remain private. See the dated
+[alpha distribution status](alpha-distribution-0.1.0a1.md); these later results
+do not rewrite the old source-preparation authorization.
 
 A `verified` entry needs a nonblank reviewer and retained-evidence reference.
 A matching `reviewed_snapshot_sha256`, active nonempty LICENSE and clean source
@@ -96,5 +100,5 @@ The package consumer explicitly uses `package`; image publication uses fresh
 Distribution still requires the final owner decision on the actual signed
 candidate. The recorded source/image preparation decisions do not substitute
 for that gate. Documenting or testing these paths creates no tag, upload or
-signature; the dated alpha status separately records the actual tag and failed
-private-staging attempt.
+signature; the dated alpha status separately records the original failed
+staging, successful signed recovery and subsequent owner-approved publication.

@@ -66,24 +66,52 @@ current image mapping. These are under retained case
 [Staging run 43402688428](https://github.com/Olli0103/unifi-protect-local-ai/actions/runs/43402688428)
 failed in [reserve job 131809304672](https://github.com/Olli0103/unifi-protect-local-ai/actions/runs/43402688428/job/131809304672).
 The exact machine-readable refusal was redirected into an ephemeral runner file
-and not retained. Its root cause is **undetermined**. Current draft fields
+and not retained. Its root cause is **undetermined**. Historical draft fields
 passing a local production-validator fixture do not prove the earlier API
 response or successful reservation. Case `unifi-staging-20261113` retains
 `STATUS.md`, `CONTINUATION.json`, `failed-reservation-reconciliation.json`, the
 original draft readback and the full failed-job log.
 
+## Signed recovery and public source/package delivery (2026-11-16)
+
+The preceding section describes the original 13 November attempt, not current
+release availability. [Run 43920818331](https://github.com/Olli0103/unifi-protect-local-ai/actions/runs/43920818331)
+completed on 16 November with unchanged artifact source/tag `a3da9c2` / `v0.1.0a1`
+and executing policy `18f0ebd695ceccae861daed8c02aff1eba1aed9c`. It reused the
+positively identified original draft `444049704`, without moving the tag,
+deleting/recreating the release or adopting failed-run images.
+
+- Fresh native Linux AMD64/ARM64 jobs passed all eight installed-source/state
+  cases per architecture, with successful cleanup, inventories and signatures.
+- Assembly verified upstream subjects, created separate AI Key/AI Port indices,
+  signed the root candidate and passed the actual final consumer against it.
+- The owner approved final environment `release`. The original release became
+  [public prerelease v0.1.0a1](https://github.com/Olli0103/unifi-protect-local-ai/releases/tag/v0.1.0a1)
+  at **18:29:24 UTC**, with 25 uploaded assets and exact size/provider-digest
+  readbacks. The corresponding-source part and original notices are now release
+  assets, not merely a prepared internal bundle.
+- The delivered corresponding-source archive is the unchanged 1,343,856,640-byte
+  subject/SHA-256 recorded above. The signed `release.json` SHA-256 is
+  `0d7b28aaef155c43277d5129a9fe40369ff58213dc7ab63941f63111e6333eb3`.
+  [The alpha record](../alpha-release.md) identifies image digests and checksums.
+- Container images remain **private**, with two separate profile indices in one
+  existing package under [bounded registry recovery](private-registry-recovery.md).
+  No public visibility change or anonymous-pull verification occurred.
+
+The registry incident in run `43865727276` remains a real earlier public phase;
+downloads cannot be excluded. Its native cleanups failed, and those failures
+remain failures. Its retained version is unchanged; new images/signatures and
+cleanup evidence come only from fresh run 43920818331. Neither successful
+recovery nor publication erases that incident.
+
 ## Remaining gates and successor-source boundary
 
-- Review a deliberate recovery against the original failed run, draft and source
-  identity. Do not redispatch, rerun attempt 2, delete/recreate the draft or move
-  the existing tag to make the attempt appear clean.
-- Qualify an actual complete signed candidate, including its exact image
-  subjects, source/notice delivery chain and provider readbacks. The internal
-  bundle and prerequisite CI do not establish those missing staging results.
-- Obtain the owner's final decision on that concrete candidate before approving
-  `release` or making the source/package release public. Keep the versioned GHCR
-  packages private until positive public source-release readback and the separate
-  owner visibility decision; verify anonymous image pulls separately.
+- Keep the versioned GHCR destination private until a separate owner visibility
+  decision. Visibility affects the entire shared package, including its retained
+  incident version; verify anonymous pulls only after an authorized change.
+- Preserve the successful release, immutable assets and original source tag.
+  No attempt-2 rerun, duplicate publication or cleanup of historical evidence is
+  authorized by this documentation update.
 - Treat these documentation corrections as a new source input, not a retroactive
   edit of the tagged alpha. They invalidate the old fingerprint for a tree that
   includes them. Preserve the existing evidence record and tag; any successor

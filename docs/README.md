@@ -2,6 +2,7 @@
 
 ## Start here
 
+- [Published alpha 0.1.0a1](alpha-release.md): exact release/source/manifest, verified delivery and still-private container images.
 - [Deployment from source](deployment.md): requirements, first connection, adoption, verification and updates.
 - [Compatibility and limitations](compatibility.md): what the project has and has not established.
 - [Synthetic interface preview](synthetic-demo.md): inspect fictional data without a controller or models.

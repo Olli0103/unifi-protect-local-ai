@@ -99,7 +99,7 @@ Diagnostic bundles use a field allowlist. Do not export raw configuration, envir
 
 The security workflow runs the full test suite, static checks, a package build, a locked-runtime dependency audit, a validated CycloneDX SBOM and a full-history secret scan. Third-party actions use immutable commit SHAs with read-only repository permissions. Malformed media, oversized responses, redirect attempts, credentialed URLs and cross-client credential leakage require negative tests.
 
-Private security reporting is defined in SECURITY.md (#11). Model-file hashes and bounded loaders have source/fixture checks; they do not clear distribution rights or quality. Signed public update/release verification remains #16, redistribution/origin clearance #4, and complete platform/restore/endurance qualification #24. None is claimed complete by this security foundation.
+Private security reporting is defined in SECURITY.md (#11). Model-file hashes and bounded loaders have source/fixture checks; they do not clear distribution rights or quality. The [signed alpha publication record](alpha-release.md) now establishes one verified release and candidate consumer; it does not complete every update criterion under #16. Redistribution/origin scope under #4 and complete platform/restore/endurance qualification under #24 retain their own acceptance boundaries. None is closed by this security foundation.
 
 ## Face-enhancement route boundaries (#3 review of #23, 27 Sep 2026)
 

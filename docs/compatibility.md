@@ -2,7 +2,8 @@
 
 The project uses private, version-dependent Protect protocols. It is experimental
 source, not a supported replacement for all AI Key or AI Port functions. The
-package version `0.1.0` is not a stable release or a compatibility guarantee.
+published [alpha `0.1.0a1`](alpha-release.md) is not a stable release or a
+compatibility guarantee.
 
 ## Read evidence by feature and version
 

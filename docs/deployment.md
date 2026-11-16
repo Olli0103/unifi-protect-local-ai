@@ -1,9 +1,14 @@
 # Deployment from source
 
-This guide describes the current development source, version `0.1.0`. No signed
-stable release or official project image has been published. Choose a reviewed
-commit and retain its exact SHA with your deployment. Do not install an unrelated
-package or pull a similarly named image as a substitute.
+This guide is a source-build path. The signed experimental
+[0.1.0a1 alpha](alpha-release.md) was published on 16 November 2026 with source
+and Python package assets; it is not a stable release. Its signed AI Key/AI Port
+images remain private, so these instructions do not assume an anonymous image
+pull. Choose a reviewed commit and retain its exact SHA with your deployment.
+For the published alpha use tag `v0.1.0a1`, source
+`a3da9c21715dade37fbe3a25529fa85fd17dc430`, and verify downloaded assets using
+[the signature procedure](releasing.md#verify-before-installation).
+Do not install an unrelated PyPI package or similarly named registry image.
 
 ## Choose a deployment
 
