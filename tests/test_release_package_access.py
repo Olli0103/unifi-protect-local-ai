@@ -15,7 +15,7 @@ from test_release_recovery import prepush_records, records, recovery, gate  # no
 
 
 ARGV = ['gh', 'api', '--paginate', '--slurp',
-        f'users/{publication.gate.OWNER}/packages?package_type=container&per_page=100']
+        'user/packages?package_type=container&per_page=100']
 TOKEN = 'FICTIONAL_PACKAGE_READ_CANARY'
 
 

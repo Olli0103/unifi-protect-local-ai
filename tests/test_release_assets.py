@@ -477,7 +477,7 @@ class CandidateProvider:
             return json.dumps([[self.release]])
         if argv[-1].endswith("/assets?per_page=100"):
             return json.dumps([self.remote_assets])
-        assert argv[-1] == f"users/{publication.gate.OWNER}/packages?package_type=container&per_page=100"
+        assert argv[-1] == "user/packages?package_type=container&per_page=100"
         return json.dumps([[{
             "name": image.rsplit("/", 1)[1],
             "package_type": "container",

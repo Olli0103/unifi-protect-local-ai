@@ -206,7 +206,7 @@ def test_private_staging_requires_complete_unambiguous_provider_observation(tmp_
 
     def run(argv, **kwargs):
         assert argv == ["gh", "api", "--paginate", "--slurp",
-                        f"users/{publication.gate.OWNER}/packages?package_type=container&per_page=100"]
+                        "user/packages?package_type=container&per_page=100"]
         if fault == "failed":
             raise publication.gate.PreparationError("release_metadata_unavailable")
         return json.dumps([packages[:1], packages[1:]] if fault != "bad_page" else [{}])
