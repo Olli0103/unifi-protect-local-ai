@@ -26,7 +26,7 @@ sys.path.pop(0)
 
 def private_metadata(argv, **kwargs):
     assert argv == ["gh", "api", "--paginate", "--slurp",
-                    f"users/{candidate.gate.OWNER}/packages?package_type=container&per_page=100"]
+                    "user/packages?package_type=container&per_page=100"]
     return json.dumps([[{"name": image.rsplit("/", 1)[1], "package_type": "container",
                         "visibility": "private",
                         "repository": {"full_name": candidate.gate.REPOSITORY}}

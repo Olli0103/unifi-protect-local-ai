@@ -87,9 +87,10 @@ def step_name_digest(value):
     return hashlib.sha256(value.encode("utf-8")).hexdigest()
 
 
-def job_graph(value, gate, *, recorded=False):
+def job_graph(value, gate, *, recorded=False, early=False):
+    count = 7 if early else 8
     rows = value.get("jobs")
-    gate.require(isinstance(rows, list) and len(rows) == 8
+    gate.require(isinstance(rows, list) and len(rows) == count
                  and type(value.get("total_count")) is int and value["total_count"] == len(rows),
                  "release_recovery_preflight_jobs_incomplete")
     result = []
@@ -119,8 +120,8 @@ def job_graph(value, gate, *, recorded=False):
                      "release_recovery_preflight_steps_refused")
         result.append({**{key: row[key] for key in ("id", "name", "status", "conclusion")},
                        "steps": steps})
-    gate.require(len({row["id"] for row in result}) == 8
-                 and len({row["name"] for row in result}) == 8,
+    gate.require(len({row["id"] for row in result}) == count
+                 and len({row["name"] for row in result}) == count,
                  "release_recovery_preflight_jobs_refused")
     return sorted(result, key=lambda row: row["id"])
 
@@ -181,6 +182,16 @@ def reconciled_preflight(policy, revision, origin, release_id, current, gate, en
         return None
     requested_run = identifier(requested_run, gate)
     private = gate.private_registry_module()
+    if requested_run == private.OWNER_READ_RUN:
+        prior_env = dict(env, RELEASE_RECOVERY_PREFLIGHT_RUN=private.INCIDENT_RUN)
+        previous = reconciled_preflight(policy, revision, origin, release_id, current,
+                                       gate, prior_env, run)
+        import types
+        result = private.owner_read_context(policy, revision, origin, release_id, current,
+                                            gate, run, types.SimpleNamespace(**globals()))
+        result["preceding_preflights"] = previous.get("preceding_preflights", []) + [
+            {key: value for key, value in previous.items() if key != "preceding_preflights"}]
+        return result
     if requested_run == private.INCIDENT_RUN:
         prior_env = dict(env, RELEASE_RECOVERY_PREFLIGHT_RUN="43483598001")
         previous = reconciled_preflight(policy, revision, origin, release_id, current,
@@ -331,7 +342,7 @@ def context(root, revision, gate, env, run, *, profile):
     if preflight is not None:
         result["reconciled_preflight"] = preflight
         private = gate.private_registry_module()
-        if preflight["run_id"] == private.INCIDENT_RUN:
+        if preflight["run_id"] in {private.INCIDENT_RUN, private.OWNER_READ_RUN}:
             result["private_registry"] = {
                 "schema": "aikey-private-registry-recovery/1",
                 "incident_run_id": private.INCIDENT_RUN, "destination": private.DESTINATION,

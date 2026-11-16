@@ -12,6 +12,8 @@ import json
 import re
 
 INCIDENT_RUN = "43865727276"
+OWNER_READ_RUN = "43887790289"
+OWNER_READ_POLICY = "52689906c7910d9b71284ed40e3333d6db7c5799"
 ORIGIN_RUN = "43402688428"
 SOURCE = "a3da9c21715dade37fbe3a25529fa85fd17dc430"
 POLICY = "e646efad5e9da4db7874ac79c6cbf58ed106b7b1"
@@ -38,7 +40,7 @@ def layout(plan, gate):
                  and plan.get("workflow_run_id") == recovery.get("workflow_run_id")
                  and isinstance(plan.get("workflow_run_id"), str)
                  and re.fullmatch("[1-9][0-9]{0,19}", plan["workflow_run_id"])
-                 and plan["workflow_run_id"] not in {INCIDENT_RUN, ORIGIN_RUN}
+                 and plan["workflow_run_id"] not in {INCIDENT_RUN, ORIGIN_RUN, OWNER_READ_RUN}
                  and plan.get("tag") == "v0.1.0a1" and plan.get("version") == "0.1.0a1",
                  "release_private_recovery_layout_refused")
     return dict(expected)
@@ -53,7 +55,7 @@ def context(policy, revision, origin, release_id, current, gate, run, recovery):
                  and record["schema"] == "aikey-private-registry-incident/1"
                  and record["previous_record_sha256"] == hashlib.sha256(previous_raw).hexdigest()
                  and revision == SOURCE and origin == ORIGIN_RUN and release_id == 444049704
-                 and current not in {INCIDENT_RUN, ORIGIN_RUN},
+                 and current not in {INCIDENT_RUN, ORIGIN_RUN, OWNER_READ_RUN},
                  "release_private_recovery_record_refused")
     facts = record["record"]
     gate.require(set(facts) == {"run_id", "policy_revision", "workflow_sha256", "jobs"}
@@ -108,6 +110,62 @@ def context(policy, revision, origin, release_id, current, gate, run, recovery):
             "jobs_sha256": hashlib.sha256(json.dumps(jobs, sort_keys=True).encode()).hexdigest()}
 
 
+def owner_read_context(policy, revision, origin, release_id, current, gate, run, recovery):
+    """Admit only the exact read-only qualifier failure after the incident."""
+    raw = gate.read(policy / "docs/legal/recovery-private-owner-read.json")
+    record = gate.load(raw)
+    previous = gate.read(policy / "docs/legal/recovery-private-registry.json")
+    gate.require(set(record) == {"schema", "previous_record_sha256", "record", "effects"}
+                 and record["schema"] == "aikey-private-owner-read-reconciliation/1"
+                 and record["previous_record_sha256"] == hashlib.sha256(previous).hexdigest()
+                 and revision == SOURCE and origin == ORIGIN_RUN and release_id == 444049704
+                 and current not in {INCIDENT_RUN, ORIGIN_RUN, OWNER_READ_RUN},
+                 "release_owner_read_record_refused")
+    facts = record["record"]
+    gate.require(set(facts) == {"run_id", "policy_revision", "workflow_sha256", "jobs"}
+                 and facts["run_id"] == OWNER_READ_RUN
+                 and facts["policy_revision"] == OWNER_READ_POLICY,
+                 "release_owner_read_record_refused")
+    observed = recovery.original_run(policy, OWNER_READ_RUN, gate, run)
+    gate.require(observed["head_sha"] == OWNER_READ_POLICY,
+                 "release_owner_read_policy_refused")
+    workflow = run(["git", "show", OWNER_READ_POLICY + ":.github/workflows/publish-release.yml"],
+                   cwd=policy)
+    gate.require(hashlib.sha256(workflow.encode()).hexdigest() == facts["workflow_sha256"],
+                 "release_owner_read_workflow_refused")
+    api = gate.load(run(["gh", "api",
+                         f"repos/{gate.REPOSITORY}/actions/runs/{OWNER_READ_RUN}/jobs?per_page=100"],
+                        cwd=policy))
+    jobs = recovery.job_graph(api, gate, early=True)
+    gate.require(jobs == recovery.job_graph({"total_count": 7, "jobs": facts["jobs"]},
+                                            gate, recorded=True, early=True),
+                 "release_owner_read_graph_changed")
+    expected = {"qualify": "failure", "reserve": "skipped", "sources": "skipped",
+                "packages": "skipped", "images": "skipped", "assemble": "skipped",
+                "publish": "skipped"}
+    gate.require({row["name"]: row["conclusion"] for row in jobs} == expected,
+                 "release_owner_read_graph_refused")
+    for row in jobs:
+        if row["name"] != "qualify":
+            gate.require(not row["steps"], "release_owner_read_downstream_refused")
+            continue
+        states = {step["name_sha256"]: step["conclusion"] for step in row["steps"]}
+        gate.require(len(states) == len(row["steps"])
+                     and states.get(recovery.step_name_digest(
+                         "Read-only readiness; publishing is opt-in")) == "success"
+                     and states.get(recovery.step_name_digest(
+                         "Verify package catalogue access before any staging or native build")) == "failure",
+                     "release_owner_read_boundary_refused")
+    gate.require(record["effects"] == {
+        "qualify_failed_before_staging": True, "downstream_jobs_skipped": 6,
+        "new_stage_approval": False, "release_uploaded_assets": 0,
+        "registry_write_jobs_started": False, "previous_incident_unchanged": True},
+        "release_owner_read_effects_refused")
+    return {"run_id": OWNER_READ_RUN, "workflow_revision": OWNER_READ_POLICY,
+            "created_at": observed["created_at"], "updated_at": observed["updated_at"],
+            "jobs_sha256": hashlib.sha256(json.dumps(jobs, sort_keys=True).encode()).hexdigest()}
+
+
 def private_versions(root, plan, gate, run):
     """Keep the known old version immutable; reject unreviewed registry versions.
 
@@ -117,7 +175,7 @@ def private_versions(root, plan, gate, run):
     if layout(plan, gate) is None:
         return
     pages = gate.load('{"pages":' + run(["gh", "api", "--paginate", "--slurp",
-                           f"users/{gate.OWNER}/packages/container/local-aikey-0.1.0a1/versions?per_page=100"],
+                           "user/packages/container/local-aikey-0.1.0a1/versions?per_page=100"],
                           cwd=root) + '}')["pages"]
     gate.require(isinstance(pages, list) and pages and all(isinstance(x, list) for x in pages),
                  "release_private_recovery_versions_incomplete")

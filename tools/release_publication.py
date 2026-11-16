@@ -851,15 +851,15 @@ def verify_signatures(root, plan, directory, manifest, *, run=gate.command, insp
 
 
 def package_metadata(argv, *, cwd):
-    """Use a separate read:packages credential only for this fixed GET.
+    """Use owner-authenticated namespace GETs, never public user package routes.
 
     The workflow token still owns repository reads and registry writes. Never
     fall back to it when the owner package catalogue cannot be observed.
     """
     require(argv in (["gh", "api", "--paginate", "--slurp",
-                      f"users/{gate.OWNER}/packages?package_type=container&per_page=100"],
+                      "user/packages?package_type=container&per_page=100"],
                      ["gh", "api", "--paginate", "--slurp",
-                      f"users/{gate.OWNER}/packages/container/local-aikey-0.1.0a1/versions?per_page=100"]),
+                      "user/packages/container/local-aikey-0.1.0a1/versions?per_page=100"]),
             "release_package_metadata_command_refused")
     token = os.environ.get("RELEASE_PACKAGES_READ_TOKEN", "")
     require(token and len(token) <= 4096 and not any(char.isspace() for char in token),
@@ -906,7 +906,7 @@ def private_images(root, plan, *, run=gate.command):
         run = package_metadata
     pages = rows(run([
         "gh", "api", "--paginate", "--slurp",
-        f"users/{gate.OWNER}/packages?package_type=container&per_page=100",
+        "user/packages?package_type=container&per_page=100",
     ], cwd=root))
     require(pages and all(isinstance(page, list) for page in pages),
             "release_package_listing_incomplete")
