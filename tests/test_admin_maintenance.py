@@ -144,9 +144,17 @@ pathlib.Path(v["isolated_target"]).write_text("completed-once-after-owner-loss")
         assert not stdout and not stderr
         with pytest.raises(module.MaintenanceError, match="maintenance_worker_busy"):
             module.work_once(host, bridge)
-        while not (tmp_path / "restored.json").exists() and time.monotonic() < deadline:
+        # Existence is not completion: write_text creates an empty file first.
+        restored = None
+        while time.monotonic() < deadline:
+            try:
+                restored = (tmp_path / "restored.json").read_text()
+            except FileNotFoundError:
+                restored = None
+            if restored == "completed-once-after-owner-loss":
+                break
             time.sleep(.01)
-        assert (tmp_path / "restored.json").read_text() == "completed-once-after-owner-loss"
+        assert restored == "completed-once-after-owner-loss"
         # Wait only for the inherited lease to close, never launch another runbook.
         while time.monotonic() < deadline:
             try:

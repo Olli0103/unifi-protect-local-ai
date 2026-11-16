@@ -1,0 +1,72 @@
+{
+  "at": "2026-11-16T16:29:57.756963+00:00",
+  "run_id": 43907939181,
+  "job_id": 133441735101,
+  "head": "1a07f4e8c6ca376334ea9af8a4b9f835ed2703b2",
+  "terminal_conclusion": "success report-produced-only",
+  "raw_log_bytes": 19204,
+  "raw_log_sha256": "2d5bd31380a693f51596d752417b03ebdc78ca9010f34f101c3c981e8a665309",
+  "report": {
+    "mutated": false,
+    "owner_verified": true,
+    "release_ready": false,
+    "requests": {
+      "named_default": {
+        "complete_first_page": true,
+        "has_next": false,
+        "read_packages_scope": true,
+        "rows": 0,
+        "scopes_header_present": true,
+        "status": 200,
+        "target": null,
+        "target_matches": 0
+      },
+      "owner": {
+        "has_next": false,
+        "read_packages_scope": true,
+        "scopes_header_present": true,
+        "status": 200
+      },
+      "owner_default": {
+        "complete_first_page": true,
+        "has_next": false,
+        "read_packages_scope": true,
+        "rows": 0,
+        "scopes_header_present": true,
+        "status": 200,
+        "target": null,
+        "target_matches": 0
+      },
+      "owner_private": {
+        "complete_first_page": true,
+        "has_next": false,
+        "read_packages_scope": true,
+        "rows": 0,
+        "scopes_header_present": true,
+        "status": 200,
+        "target": null,
+        "target_matches": 0
+      },
+      "package": {
+        "container_type_matches": true,
+        "has_next": false,
+        "read_packages_scope": true,
+        "repository_matches": true,
+        "scopes_header_present": true,
+        "status": 200,
+        "target_name_matches": true,
+        "visibility": "private"
+      },
+      "versions": {
+        "complete_first_page": true,
+        "has_next": false,
+        "known_incident_id_present": true,
+        "read_packages_scope": true,
+        "rows": 1,
+        "scopes_header_present": true,
+        "status": 200
+      }
+    },
+    "schema": "aikey-package-diagnostic/1"
+  }
+}

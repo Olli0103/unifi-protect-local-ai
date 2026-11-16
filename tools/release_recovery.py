@@ -182,6 +182,17 @@ def reconciled_preflight(policy, revision, origin, release_id, current, gate, en
         return None
     requested_run = identifier(requested_run, gate)
     private = gate.private_registry_module()
+    if requested_run == private.OWNER_READ_FOLLOWUP_RUN:
+        prior_env = dict(env, RELEASE_RECOVERY_PREFLIGHT_RUN=private.OWNER_READ_RUN)
+        previous = reconciled_preflight(policy, revision, origin, release_id, current,
+                                       gate, prior_env, run)
+        import types
+        result = private.owner_read_context(policy, revision, origin, release_id, current,
+                                            gate, run, types.SimpleNamespace(**globals()),
+                                            followup=True)
+        result["preceding_preflights"] = previous.get("preceding_preflights", []) + [
+            {key: value for key, value in previous.items() if key != "preceding_preflights"}]
+        return result
     if requested_run == private.OWNER_READ_RUN:
         prior_env = dict(env, RELEASE_RECOVERY_PREFLIGHT_RUN=private.INCIDENT_RUN)
         previous = reconciled_preflight(policy, revision, origin, release_id, current,
@@ -342,7 +353,8 @@ def context(root, revision, gate, env, run, *, profile):
     if preflight is not None:
         result["reconciled_preflight"] = preflight
         private = gate.private_registry_module()
-        if preflight["run_id"] in {private.INCIDENT_RUN, private.OWNER_READ_RUN}:
+        if preflight["run_id"] in {private.INCIDENT_RUN, private.OWNER_READ_RUN,
+                                   private.OWNER_READ_FOLLOWUP_RUN}:
             result["private_registry"] = {
                 "schema": "aikey-private-registry-recovery/1",
                 "incident_run_id": private.INCIDENT_RUN, "destination": private.DESTINATION,

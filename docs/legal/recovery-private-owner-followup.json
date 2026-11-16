@@ -1,0 +1,141 @@
+{
+  "schema": "aikey-private-owner-read-followup/1",
+  "previous_record_sha256": "ef3ad1651d787eff937c5fea1a011bfc8288435dc419ca3cc949bfc298753926",
+  "record": {
+    "run_id": "43897076903",
+    "policy_revision": "117ababec8f5dcd5ed8e6732c7ac7cdaa0aba5ca",
+    "workflow_sha256": "37b68aa46691f3617b59bd605cf330d92af6bf7f807e018244db2ba9c7ac13bd",
+    "jobs": [
+      {
+        "id": 133403482995,
+        "name": "qualify",
+        "status": "completed",
+        "conclusion": "failure",
+        "steps": [
+          {
+            "number": 1,
+            "status": "completed",
+            "conclusion": "success",
+            "name_sha256": "0f18368152a8d471ade424813fb96bbe7d7b2074d20d611502ff922956e5e521"
+          },
+          {
+            "number": 2,
+            "status": "completed",
+            "conclusion": "success",
+            "name_sha256": "ce1cffb26b22e599e1b329aa5b0253224a5d00353cf9514f1287cb44c024ce9a"
+          },
+          {
+            "number": 3,
+            "status": "completed",
+            "conclusion": "success",
+            "name_sha256": "b8688dde49bc7a83b79318716cfcb6efe79f55f91f4fa62809167eaf318400bf"
+          },
+          {
+            "number": 4,
+            "status": "completed",
+            "conclusion": "success",
+            "name_sha256": "0f80d0122424291e26fe6b09caaafd9f6586f171190eeba88bbb5f95397b3c59"
+          },
+          {
+            "number": 5,
+            "status": "completed",
+            "conclusion": "success",
+            "name_sha256": "77c42f6f129afd43ec5510eaf5ba91b46c1d8fa6aa9f2c0d8b620a0bc5622bb2"
+          },
+          {
+            "number": 6,
+            "status": "completed",
+            "conclusion": "success",
+            "name_sha256": "43301ace430412fc712de37144960543ecaf983f5fc2e50e16892e6b1fe49ea9"
+          },
+          {
+            "number": 7,
+            "status": "completed",
+            "conclusion": "success",
+            "name_sha256": "1207f69499ffbe36127b8a3d61465add1a221aaf53bacc90b3547d2e7abf47ae"
+          },
+          {
+            "number": 8,
+            "status": "completed",
+            "conclusion": "failure",
+            "name_sha256": "df2e3b79282e526c5d1bb3542d6677b701b189f825ccb65c3be13e7ebbc0b998"
+          },
+          {
+            "number": 14,
+            "status": "completed",
+            "conclusion": "success",
+            "name_sha256": "82a00373da1e51adf12b6ae567eca8e0f90236e7e794146301d6d3d823e892ba"
+          },
+          {
+            "number": 15,
+            "status": "completed",
+            "conclusion": "skipped",
+            "name_sha256": "7ed544e4d01080b4532ca4ed641b1425cb007f5203ef88eb64d3b896c3cb5b0c"
+          },
+          {
+            "number": 16,
+            "status": "completed",
+            "conclusion": "success",
+            "name_sha256": "38f882140c79a750dd083afc6aa5a3c4e3570cd869f573c7b24fe71a2cbeef39"
+          },
+          {
+            "number": 17,
+            "status": "completed",
+            "conclusion": "success",
+            "name_sha256": "a007f8748e6073491ed6bd8677558b71fd544fc5f89608af6f65686ee6175a67"
+          }
+        ]
+      },
+      {
+        "id": 133403853595,
+        "name": "reserve",
+        "status": "completed",
+        "conclusion": "skipped",
+        "steps": []
+      },
+      {
+        "id": 133403854568,
+        "name": "sources",
+        "status": "completed",
+        "conclusion": "skipped",
+        "steps": []
+      },
+      {
+        "id": 133403855311,
+        "name": "packages",
+        "status": "completed",
+        "conclusion": "skipped",
+        "steps": []
+      },
+      {
+        "id": 133403855324,
+        "name": "images",
+        "status": "completed",
+        "conclusion": "skipped",
+        "steps": []
+      },
+      {
+        "id": 133403856417,
+        "name": "assemble",
+        "status": "completed",
+        "conclusion": "skipped",
+        "steps": []
+      },
+      {
+        "id": 133403858593,
+        "name": "publish",
+        "status": "completed",
+        "conclusion": "skipped",
+        "steps": []
+      }
+    ]
+  },
+  "effects": {
+    "qualify_failed_before_staging": true,
+    "downstream_jobs_skipped": 6,
+    "new_stage_approval": false,
+    "release_uploaded_assets": 0,
+    "registry_write_jobs_started": false,
+    "previous_incident_unchanged": true
+  }
+}
