@@ -1,9 +1,43 @@
-# First alpha delivery scope
+# Alpha 0.1.0a1: delivery, verification and limits
 
-The requested first alpha is **0.1.0a1** (`v0.1.0a1`). This document is a
-release specification, not proof that its tag, images or release already exist.
-Use the repository's [actual Releases](https://github.com/Olli0103/unifi-protect-local-ai/releases)
-and the signed `release.json` for availability and exact immutable references.
+**Published on 16 November 2026:**
+[GitHub prerelease v0.1.0a1](https://github.com/Olli0103/unifi-protect-local-ai/releases/tag/v0.1.0a1).
+[Run 43920818331](https://github.com/Olli0103/unifi-protect-local-ai/actions/runs/43920818331)
+completed successfully after the owner's final `release` approval. The original
+release ID is `444049704`; 25 uploaded assets have matching provider SHA-256
+readbacks. This is an experimental alpha, not a stable/support guarantee.
+
+## Exact published subjects
+
+- Artifact source/tag: `a3da9c21715dade37fbe3a25529fa85fd17dc430` / `v0.1.0a1`.
+- Executing recovery policy: `18f0ebd695ceccae861daed8c02aff1eba1aed9c`.
+  The signed manifest binds this policy and run to the unchanged artifact source.
+- [`release.json`](https://github.com/Olli0103/unifi-protect-local-ai/releases/download/v0.1.0a1/release.json)
+  SHA-256: `0d7b28aaef155c43277d5129a9fe40369ff58213dc7ab63941f63111e6333eb3`.
+- [`SHA256SUMS`](https://github.com/Olli0103/unifi-protect-local-ai/releases/download/v0.1.0a1/SHA256SUMS)
+  SHA-256: `06f794bf929bf80579fe1aebfcb1e6b9c2ba8450bee2e20fc357fdadad289658`.
+  It lists 22 normal assets; `release.json` also binds that checksum file, and
+  root Sigstore provenance binds the manifest/checksums without circular hashing.
+- Native AMD64/ARM64 installed-source/state cases, cleanup, upstream/root
+  signatures and the actual final consumer against this candidate passed.
+  These results do not substitute for native Protect or independent-user tests.
+
+**Container images remain private.** Successful source/package publication did
+not change GHCR visibility and does not prove anonymous pulls. The exact signed
+multiarchitecture subjects are:
+
+| Profile | Immutable reference, requiring authorized registry access |
+| --- | --- |
+| AI Key | `ghcr.io/olli0103/local-aikey-0.1.0a1@sha256:8fd0700e189859354c5f80c7a5dbebbdf7d554825adfdc31901ac543ed9224e8` |
+| AI Port | `ghcr.io/olli0103/local-aikey-0.1.0a1@sha256:eb09a6ac4a58c194e427f40066fada3568859c0b32b6aa57e27aa811634422a9` |
+
+Both indices cover `linux/amd64` and `linux/arm64`. Separate profile identities
+share this existing versioned package under the
+[bounded private-registry recovery](legal/private-registry-recovery.md); do not
+substitute a guessed `local-aiport-0.1.0a1` package or a mutable tag.
+Use the signed manifest and [verification procedure](releasing.md#verify-before-installation),
+not this table alone, before installation. Post-release documentation is not
+retroactively part of the tagged alpha source.
 
 ## Deliverables
 
@@ -16,12 +50,11 @@ and the signed `release.json` for availability and exact immutable references.
   architecture; Apple Container on supported Apple Silicon uses the **same
   Linux ARM64** image, not an unrelated macOS image or Apple VM state archive.
 
-Proposed registry packages are
-`ghcr.io/olli0103/local-aikey-0.1.0a1` and
-`ghcr.io/olli0103/local-aiport-0.1.0a1`. These names are not existing
-image/digest promises. The publisher creates attempt-specific tags such as
-`0.1.0a1-arm64-runRUN_ID` and `0.1.0a1-index-runRUN_ID`, never a mutable `latest`.
-Installation must use the verified profile/index digest from `release.json`.
+For this recovery, profile-specific tags are
+`<profile>-0.1.0a1-<amd64|arm64|index>-run43920818331` in the shared package
+above, never a mutable `latest`. Other release layouts must follow their own
+verified manifest. Installation must use the verified profile/index digest from
+`release.json`, not the name of a CI artifact.
 
 ## Excluded from this alpha
 
@@ -53,8 +86,10 @@ this alpha qualification. Search has known unrelated-query false positives.
 1. Obtain the release's signed manifest and verify its source/digest/provenance
    through the [release verification procedure](releasing.md#verify-before-installation).
 2. Copy the immutable AI Key or AI Port image reference from that verified
-   manifest. With `IMAGE` set to that actual reference, fetch using
-   `docker pull "$IMAGE"` or `container image pull "$IMAGE"` respectively.
+   manifest. The images are private: an anonymous pull is not expected to work.
+   With authorized registry access and `IMAGE` set to that actual reference,
+   fetch using `docker pull "$IMAGE"` or `container image pull "$IMAGE"`
+   respectively. Without that access, use the [source-build guide](deployment.md).
 3. Follow [Linux/NAS deployment](aiport-nas-compose.md) or the
    [Apple host actor procedure](aiport-apple-reconcile.md). Preserve private
    state separately; do not use example addresses, share identities or copy
@@ -64,13 +99,16 @@ this alpha qualification. Search has known unrelated-query false positives.
    privileges embedded in the image. The alpha does not automatically migrate
    the existing production installation.
 
-## Release prerequisites remain explicit
+## Release decisions and remaining gates
 
-The owner's alpha publication request is recorded; it is not a new copyright,
-firmware-rights or independent legal attestation. The
+The owner's final approval and actual publication are now recorded above.
+They are not a new copyright, firmware-rights or independent legal attestation.
+Public container visibility remains a separate owner decision, followed by
+anonymous pull verification; neither occurred in this release workflow. The
 [issue #4 distribution review](legal/alpha-distribution-0.1.0a1.md) separates
 retained technical evidence from missing review. The existing non-audit release
 gate, exact source fingerprint, current-main seven-job CI, protected environments,
 standard signatures and final provider readback all continue to apply to alphas.
-A failed gate produces no public release; no empty alpha or example digest is
-presented as an installable artifact.
+Earlier failed attempts remain in the distribution record; the successful
+recovery does not turn their failures or missing cleanup into passing evidence.
+The existing tag, signed assets and reviewed source fingerprint are unchanged.

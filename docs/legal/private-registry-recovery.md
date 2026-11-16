@@ -15,6 +15,17 @@ Both protection environments and both seven-job source/policy qualifications
 remain mandatory. The final public-release environment is not approved by this
 repair, and no package visibility change occurs in the pipeline.
 
+## Observed completed recovery (2026-11-16)
+
+[Run 43920818331](https://github.com/Olli0103/unifi-protect-local-ai/actions/runs/43920818331)
+built fresh native images, completed cleanup/signature/consumer checks and,
+after separate final owner approval, published the original source/package
+release. [The alpha record](../alpha-release.md) identifies the exact signed
+subjects. **The shared registry package remains private.** The successful
+publication is not an anonymous-pull result or permission to change visibility.
+The finite reviewed history and earlier failures remain retained; this is not a
+standing authorization for another attempt.
+
 ## Incident retained, not erased
 
 Run 43865727276 created a real AI-Key registry version. The package was observed
