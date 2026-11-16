@@ -84,7 +84,8 @@ def test_default_privacy_observation_routes_only_catalogue_to_separate_token(tmp
     calls = []
     monkeypatch.setattr(publication, 'package_metadata',
                         lambda argv, **kwargs: calls.append(argv) or '[[]]')
-    publication.private_images(tmp_path, plan(), allow_missing=True)
+    with pytest.raises(publication.PublicationError, match='release_private_image_missing'):
+        publication.private_images(tmp_path, plan())
     assert calls == [ARGV]
     publication.private_images(tmp_path, dict(plan(), images={}))
     assert calls == [ARGV]
@@ -207,3 +208,24 @@ def test_package_reader_requires_actual_owner_before_catalogue(tmp_path, monkeyp
     with pytest.raises(publication.PublicationError, match='owner_required'):
         publication.package_metadata(ARGV, cwd=tmp_path)
     assert len(calls) == 1
+
+
+@pytest.mark.parametrize('present', [[], ['aikey'], ['aiport'], ['aikey', 'aiport']])
+def test_early_package_probe_requires_preexisting_private_destinations(
+        tmp_path, monkeypatch, capsys, present):
+    packet = plan()
+    monkeypatch.setattr(publication.gate, 'prepare', lambda *a, **kw: packet)
+    rows = [{'name': packet['images'][profile].rsplit('/', 1)[1],
+             'package_type': 'container', 'visibility': 'private',
+             'repository': {'full_name': publication.gate.REPOSITORY}} for profile in present]
+    calls = []
+    monkeypatch.setattr(publication, 'package_metadata',
+                        lambda argv, **kw: calls.append(argv) or json.dumps([rows]))
+    result = publication.main(['package-access', '--root', str(tmp_path), '--tag', packet['tag']])
+    response = json.loads(capsys.readouterr().out)
+    assert calls == [ARGV] and list(tmp_path.iterdir()) == []
+    if len(present) == 2:
+        assert result == 0 and response == {
+            'schema': 'aikey-package-access/1', 'verified': True, 'mutated': False}
+    else:
+        assert result == 2 and response['error'] == 'release_private_image_missing'

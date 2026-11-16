@@ -216,11 +216,6 @@ def test_private_staging_requires_complete_unambiguous_provider_observation(tmp_
     else:
         with pytest.raises(ValueError):
             publication.private_images(tmp_path, packet, run=run)
-        if fault == "missing":
-            publication.private_images(tmp_path, packet, run=run, allow_missing=True)
-        else:
-            with pytest.raises(ValueError):
-                publication.private_images(tmp_path, packet, run=run, allow_missing=True)
 
 
 def test_empty_package_profile_does_not_query_registry(tmp_path):

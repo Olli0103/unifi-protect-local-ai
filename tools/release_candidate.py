@@ -308,7 +308,7 @@ def read_intent(path, plan, architecture):
 def push_images(root, plan, intent_path, architecture, results, destination, *, run=docker, metadata_run=gate.command):
     intent = read_intent(intent_path, plan, architecture)
     require(not Path(destination).exists(), "release_image_attempt_already_recorded")
-    publication.private_images(root, plan, run=metadata_run, allow_missing=True)
+    publication.private_images(root, plan, run=metadata_run)
     profiles = {}
     for profile, item in intent["profiles"].items():
         raw = gate.read(Path(results) / (profile + "-sbom.cdx.json"), 32 * 1024 * 1024)
@@ -328,7 +328,7 @@ def push_images(root, plan, intent_path, architecture, results, destination, *, 
         {"schema": "aikey-release-registry-started/1", **identity(plan, architecture=architecture)},
     )
     for profile, item in intent["profiles"].items():
-        publication.private_images(root, plan, run=metadata_run, allow_missing=True)
+        publication.private_images(root, plan, run=metadata_run)
         run(
             ["docker", "image", "tag", item["configuration_digest"], item["reference"]],
             root,
