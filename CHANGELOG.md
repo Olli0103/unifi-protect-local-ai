@@ -5,6 +5,11 @@ Use the repository's Releases and its signed manifest for actual availability.
 
 ## Unreleased
 
+- Preserve AI Port configuration-operation I/O errors after successful lock
+  acquisition instead of misreporting them as an unavailable lock. Actual lock
+  setup failures remain redacted; exclusion, pending-operation guards and
+  descriptor cleanup are unchanged. See the [isolated Linux disk-full check](docs/evidence/config-lock-enospc-20261116.md).
+
 - Update README, deployment/release guides and maintenance records to distinguish
   the published alpha source/packages from private container images. These are
   post-release documentation changes, not changes to the existing alpha tag.

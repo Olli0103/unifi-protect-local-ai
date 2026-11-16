@@ -1,5 +1,6 @@
 """Existing-camera score policy only: no inference, enrollment or provider changes."""
 
+import errno
 import json
 import socket
 
@@ -151,12 +152,14 @@ def test_journal_failure_keeps_commit_and_reports_failure(tmp_path, monkeypatch)
     from aikey import aiport_config_store as module
     store, path = ready(tmp_path)
     original = module.atomic_private
+    failure = OSError(errno.EIO, "fictional lost journal write")
     def fail_journal(destination, content):
         if destination == store._threshold_journal:
-            raise OSError("fictional lost journal write")
+            raise failure
         return original(destination, content)
     monkeypatch.setattr(module, "atomic_private", fail_journal)
-    with pytest.raises(AiPortConfigurationError):
+    with pytest.raises(OSError) as raised:
         store.apply_camera_thresholds(store.snapshot().revision, {CAMERAS[0]: .4})
+    assert raised.value is failure and raised.value.errno == errno.EIO
     assert json.loads(path.read_text())["live_pool_detector"]["camera_thresholds"] == {CAMERAS[0]: .4}
     assert not store.camera_threshold_undo_status()["available"]

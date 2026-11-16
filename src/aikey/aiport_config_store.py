@@ -878,6 +878,7 @@ class AiPortConfigurationStore:
     @contextmanager
     def _locked(self, *, allow_device_pending: bool = False, allow_host_pending: bool = False) -> Iterator[None]:
         descriptor = -1
+        body_started = False
         try:
             descriptor = os.open(self.lock_path, os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW,
                                  0o600)
@@ -901,8 +902,12 @@ class AiPortConfigurationStore:
                         check_writable(self.path)
                     except HostActivationError:
                         raise AiPortUnsafePolicyChange('Pending host activation needs original host reconciliation') from None
+                body_started = True
                 yield
         except OSError as exc:
+            # A protected operation failure is not a lock-acquisition failure.
+            if body_started:
+                raise
             raise AiPortConfigurationError("aiport_config_lock_unavailable") from exc
         finally:
             if descriptor >= 0:
