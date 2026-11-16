@@ -83,3 +83,9 @@ filesystem ENOSPC, power-loss recovery, native Port creation/adoption, new
 camera-slot scaling/removal, external billing reconciliation or sustained
 operation. Those original acceptance gaps remain open. Existing alpha tags,
 release assets/signatures and private container visibility are unchanged.
+
+## Separate Mac filesystem follow-up
+
+A later [isolated Mac APFS check](mac-apfs-enospc-20261116.md) exercises actual
+allocation failure with synthetic Apple runtime inputs. It is a separate record,
+not a reinterpretation of this Linux run or native Mac container acceptance.
