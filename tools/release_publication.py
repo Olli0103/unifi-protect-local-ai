@@ -891,12 +891,12 @@ def _package_command(argv, *, cwd, token):
         return output.read().decode("utf-8")
 
 
-def private_images(root, plan, *, run=gate.command, allow_missing=False):
+def private_images(root, plan, *, run=gate.command):
     """Observe all pages; never infer absence from failed metadata transport.
 
-    New GHCR packages default to private. Existing public packages are not
-    staging destinations. Visibility remains an owner UI operation after the
-    positively verified source/package release, not an automated mutation.
+    Require every destination to exist and be positively private before any
+    registry write. Absence cannot establish the visibility of a future package.
+    Never create a package or change its visibility at this boundary.
     """
     if not plan["images"]:
         return
@@ -919,8 +919,6 @@ def private_images(root, plan, *, run=gate.command, allow_missing=False):
                 "release_image_destinations_refused")
         name = image.rsplit("/", 1)[1]
         found = [item for item in packages if item["name"] == name]
-        if not found and allow_missing:
-            continue
         require(len(found) == 1, "release_private_image_missing")
         value = found[0]
         require(value.get("package_type") == "container"
@@ -1124,7 +1122,7 @@ def main(argv=None):
                 if args.command in {"reserve", "package-access"} else fresh(root, args.tag))
         if args.command == "package-access":
             require(args.assets is None and args.release_id is None, "release_assets_option_refused")
-            private_images(root, plan, allow_missing=True)
+            private_images(root, plan)
             result = {"schema": "aikey-package-access/1", "verified": True, "mutated": False}
         elif args.command == "reserve":
             require(

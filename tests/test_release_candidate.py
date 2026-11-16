@@ -309,7 +309,7 @@ def test_registry_push_ack_is_not_authority_and_is_never_retried(native_attempt,
     destination = root.parent / "staged.json"
     if fault == "stale_intent":
         packet["workflow_run_id"] = "124"
-    if fault in ("none", "lost_ack", "new_packages"):
+    if fault in ("none", "lost_ack"):
         result = candidate.push_images(
             root, packet, intent_path, "amd64", results, destination, run=docker, metadata_run=metadata
         )
@@ -329,7 +329,7 @@ def test_registry_push_ack_is_not_authority_and_is_never_retried(native_attempt,
             )
         assert not destination.exists()
         assert len([argv for argv in calls if argv[:3] == ["docker", "image", "push"]]) == (
-            0 if fault in ("stale_intent", "public_before") else 1
+            0 if fault in ("stale_intent", "public_before", "new_packages") else 1
         )
 
 
@@ -730,3 +730,38 @@ def test_package_producer_retains_signer_required_cyclonedx_serial_number():
     assert '--output-reproducible' not in command
     assert '--sv 1.6 --of JSON' in command
     assert 'release_check.py\" compare' in script
+
+
+@pytest.mark.parametrize('present', [[], ['aikey'], ['aiport']])
+@pytest.mark.parametrize('disappear_after_validation', [False, True])
+def test_missing_destination_refuses_before_local_tag_or_registry_push(
+        native_attempt, present, disappear_after_validation):
+    root, packet, results, _, _, inspect = native_attempt
+    intent = root.parent / 'private-only-intent.json'
+    candidate.image_intent(root, packet, results, 'amd64', intent,
+                           qualified=results.parent / 'qualified', run=inspect)
+    calls = []
+    reads = []
+
+    def metadata(argv, **kwargs):
+        reads.append(argv)
+        rows = json.loads(private_metadata(argv, **kwargs))
+        if not disappear_after_validation or len(reads) > 1:
+            rows[0] = [row for row in rows[0] if row['name'] in {
+                packet['images'][profile].rsplit('/', 1)[1] for profile in present}]
+        return json.dumps(rows)
+
+    def docker(argv, root, **kwargs):
+        calls.append(argv)
+        assert not kwargs.get('mutate'), 'missing package reached a write'
+        return inspect(argv, root)
+
+    target = root.parent / 'private-only-staged.json'
+    with pytest.raises(candidate.publication.PublicationError,
+                       match='release_private_image_missing'):
+        candidate.push_images(root, packet, intent, 'amd64', results, target,
+                              run=docker, metadata_run=metadata)
+    assert not target.exists()
+    assert not any(call[:3] in (['docker', 'image', 'tag'], ['docker', 'image', 'push'])
+                   for call in calls)
+    assert intent.with_suffix('.started.json').exists() is disappear_after_validation
