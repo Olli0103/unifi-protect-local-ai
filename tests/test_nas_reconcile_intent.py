@@ -87,6 +87,51 @@ def test_failed_health_stops_only_observed_id_and_records_uncertainty(tmp_path, 
     assert host_activation.read(states[2]/'config.json')['phase'] == ('prepared' if fail_stop else 'settled')
 
 
+@pytest.mark.parametrize('replacement', [False, True])
+def test_rolled_back_slot_reuses_only_its_verified_stopped_container(tmp_path, replacement):
+    manifest, states, directory, docker, args = setup(tmp_path, fail_health=True)
+
+    stopped = False
+
+    def inspect_stopped_endpoint(argv, timeout):
+        nonlocal stopped
+        output = docker(argv, timeout)
+        if argv[:2] == ['docker', 'stop']:
+            stopped = True
+        if (stopped and not docker.started and argv[:2] == ['docker', 'inspect']
+                and argv[3] == '{{json .NetworkSettings.Networks}}'):
+            networks = json.loads(output)
+            for endpoint in networks.values():
+                endpoint.update(IPAddress='', MacAddress='')
+            return json.dumps(networks)
+        return output
+
+    args['run'] = inspect_stopped_endpoint
+    with pytest.raises(ReconcileError, match='health check'):
+        execute(tmp_path/'unused.json', manifest, states, **args)
+    assert read(directory)['phase'] == 'rolled_back'
+    assert host_activation.read(states[2]/'config.json')['phase'] == 'settled'
+
+    docker.fail_health = False
+    docker.calls.clear()
+    if replacement:
+        def inspect_replacement(argv, timeout):
+            output = inspect_stopped_endpoint(argv, timeout)
+            return output.replace('a'*12, 'b'*12) if 'ps' in argv else output
+
+        args['run'] = inspect_replacement
+        with pytest.raises(ReconcileError, match='IP or MAC'):
+            execute(tmp_path/'unused.json', manifest, states, **args)
+        assert not any('start' in call for call in docker.calls)
+    else:
+        result = execute(tmp_path/'unused.json', manifest, states, **args)
+        assert result['started'] == ['aiport_slot_2']
+        assert [call for call in docker.calls if 'start' in call] == [
+            ['docker', 'start', 'a'*12],
+        ]
+    assert not any('create' in call or 'stop' in call for call in docker.calls)
+
+
 def test_stale_inventory_prevents_any_daemon_command(tmp_path):
     manifest, states, directory, docker, args = setup(tmp_path)
     def refuse():
