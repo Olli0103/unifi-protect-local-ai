@@ -29,6 +29,7 @@ from pathlib import Path
 import re
 
 from .aiport_ingest import IngressError, normalize_mac
+from .aiport_stream_membership import passive_slot, replace_streams
 from .config import atomic_private
 
 
@@ -65,16 +66,21 @@ def diff_slots(slots: dict[str, dict], protect_aiports: object,
     """Compare deployed slot configs (label -> config) with Protect state."""
     cameras = {}
     for row in _rows(protect_cameras, "cameras"):
-        if not isinstance(row.get("id"), str) or not _CAMERA_ID.fullmatch(row["id"]):
+        if not isinstance(row.get("id"), str) or not _CAMERA_ID.fullmatch(row["id"]) or row["id"] in cameras:
             raise SlotDiffError("Invalid Protect camera ID")
         cameras[row["id"]] = row
     by_mac = {_mac(row.get("mac")): row for row in cameras.values()}
-    ports = {_mac(row.get("mac")): row for row in _rows(protect_aiports, "aiports")}
+    port_rows = _rows(protect_aiports, "aiports")
+    ports = {_mac(row.get("mac")): row for row in port_rows}
+    if len(by_mac) != len(cameras) or len(ports) != len(port_rows):
+        raise SlotDiffError("Ambiguous camera or AI Port identity")
     paired_anywhere: set[str] = set()
     for port in ports.values():
         ids = port.get("pairedCameras")
         if not isinstance(ids, list) or any(not isinstance(i, str) for i in ids):
             raise SlotDiffError("Invalid AI Port pairing list")
+        if len(set(ids)) != len(ids) or paired_anywhere.intersection(ids):
+            raise SlotDiffError("Ambiguous AI Port camera pairing")
         paired_anywhere.update(ids)
 
     actions: list[dict] = []
@@ -82,17 +88,19 @@ def diff_slots(slots: dict[str, dict], protect_aiports: object,
     seen_ports: set[str] = set()
     for label in sorted(slots):
         config = slots[label]
-        if not isinstance(config, dict) or not isinstance(config.get("paired_streams"), list):
+        if not isinstance(config, dict) or not (isinstance(config.get("paired_streams"), list) or passive_slot(config)):
             raise SlotDiffError("Slot config needs paired_streams")
         port_mac = _mac(config.get("mac"))
         allow = {_mac(stream.get("camera_mac")): stream
-                 for stream in config["paired_streams"]}
+                 for stream in config.get("paired_streams", [])}
+        if port_mac in seen_ports or len(allow) != len(config.get("paired_streams", [])):
+            raise SlotDiffError("Ambiguous local slot or camera identity")
+        seen_ports.add(port_mac)
         port = ports.get(port_mac)
         if port is None:
             report[label] = {"state": "missing_ai_port"}
             actions.append({"action": "missing_ai_port", "slot": label})
             continue
-        seen_ports.add(port_mac)
         paired = {}
         for camera_id in port["pairedCameras"]:
             camera = cameras.get(camera_id)
@@ -141,20 +149,26 @@ def apply_allowlist(slots: dict[str, dict], diff: dict, *,
     """Return slot configs with only safe allowlist actions applied."""
     allowed = SAFE_ACTIONS | (REVIEW_ACTIONS if include_review else frozenset())
     result = deepcopy(slots)
+    edited = {}
     for action in diff["actions"]:
         if action["action"] not in allowed:
             continue
-        streams = result[action["slot"]]["paired_streams"]
+        label = action["slot"]
+        streams = edited.setdefault(label, list(result[label].get("paired_streams", [])))
         if action["action"] == "remove_from_allowlist":
             streams[:] = [stream for stream in streams
                           if _mac(stream.get("camera_mac")) != action["_mac"]]
         elif not isinstance(action.get("_source_ip"), str):
             raise SlotDiffError("A paired camera has no Protect host to allowlist")
         else:
+            if passive_slot(result[label]):
+                raise SlotDiffError("Review the retired slot's stream policy before adding a camera")
             template = streams[0] if streams else {}
             streams.append({"camera_mac": action["_mac"],
                             "source_ip": action["_source_ip"],
                             "ffmpeg_path": template.get("ffmpeg_path", "/usr/bin/ffmpeg")})
+    for label, streams in edited.items():
+        replace_streams(result[label], streams)
     return result
 
 

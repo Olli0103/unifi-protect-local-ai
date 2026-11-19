@@ -15,6 +15,7 @@ import re
 import stat
 
 from .aiport_candidate import CandidateError, _private_file, load_config
+from .aiport_deployment import retained_empty_slot
 from .aiport_instance_state import InstanceStateError, provision_slot
 from .config import atomic_private
 
@@ -192,9 +193,11 @@ def build_nas_compose(plan: dict, state_dirs: dict[int, Path], *,
                 or item.get("management_tcp") != 443
                 or item.get("source_kind") not in {"protect", "onvif"}
                 or not isinstance(item.get("camera_ids"), list)
-                or not item["camera_ids"]):
+                or not (item["camera_ids"] or retained_empty_slot(item))):
             raise NasComposeError("Invalid AI Port plan slot")
         raw_address = item.get("host_ip")
+        if not item["camera_ids"] and index in state_dirs:
+            raise NasComposeError("A retained empty slot cannot be selected for deployment")
         if item["source_kind"] == "onvif":
             continue            # planned only: no ONVIF ingest yet (#28)
         if raw_address is None and index not in state_dirs:

@@ -343,9 +343,10 @@ async def test_rollout_page_shows_the_diff_and_applies_only_local_allowlist(
     paired = {"2A1122334455", "2A1122334456"}
 
     def health(state_dir, port):   # Protect paired the two configured cameras
+        from test_aiport_rollout import bound_health
         config = json.loads((Path(state_dir) / "config.json").read_text())
-        return {"pool_cameras": [{"policy_enabled": s["camera_mac"] in paired}
-                                 for s in config["paired_streams"]]}
+        return bound_health(config, [{"policy_enabled": s["camera_mac"] in paired}
+                                     for s in config["paired_streams"]])
 
     monkeypatch.setattr("aikey.aiport_rollout.read_slot_health", health)
     cameras = [("2A1122334455", "Camera A"), ("2A1122334456", "Camera C")]
@@ -414,8 +415,9 @@ async def test_rollout_page_shows_the_exact_compose_service_before_apply(tmp_pat
     key_config, port_config = fixture(tmp_path)
 
     def health(state_dir, port):
+        from test_aiport_rollout import bound_health
         config = json.loads((Path(state_dir) / "config.json").read_text())
-        return {"pool_cameras": [{"policy_enabled": True} for _ in config["paired_streams"]]}
+        return bound_health(config, [{"policy_enabled": True} for _ in config["paired_streams"]])
 
     monkeypatch.setattr("aikey.aiport_rollout.read_slot_health", health)
     cameras = [("2A1122334455", "Camera A"), ("2A1122334456", "Camera C"), ("2A1122334457", "Keller")]

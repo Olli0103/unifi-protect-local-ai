@@ -48,6 +48,8 @@ from .aiport_compose_slots import (
     slot_service,
 )
 from .aiport_ingest import IngressError, normalize_mac
+from .aiport_stream_membership import passive_slot, replace_streams, restrict_detector
+from .camera_bindings import SCHEMA as BINDING_SCHEMA, binding_revision
 from .aiport_instance_state import InstanceStateError, provision_slot
 from .file_lock import acquire as acquire_file_lock
 from .config import atomic_private
@@ -105,7 +107,10 @@ def eligible_cameras(report: dict) -> dict[str, dict]:
         g3_g5 = isinstance(model, str) and _G3_G5_MODEL.match(model) is not None
         if not (legacy or g3_g5):
             continue
-        result[_mac(row.get("mac"))] = {
+        camera = _mac(row.get("mac"))
+        if camera in result:
+            raise RolloutError("Duplicate camera identity in inventory")
+        result[camera] = {
             "name": row["name"] if isinstance(row.get("name"), str) else "unnamed",
             "online": row.get("state") == "CONNECTED", "weight": _weight(row),
             # "model": the model's evidenced main-lens stream; "fallback": a guess.
@@ -140,13 +145,18 @@ def read_slot_health(state_dir: Path, port: int, *, timeout: float = 5.0) -> dic
 
 def observe_slot(config: dict, health: dict | None) -> dict:
     """Allowlist of one slot and, if reachable, what Protect paired to it."""
+    if passive_slot(config):
+        return {"allowlist": [], "paired": None, "points": {}}
     if not isinstance(config, dict) or not isinstance(config.get("paired_streams"), list):
         raise RolloutError("Slot config needs paired_streams")
     allowlist = [_mac(stream.get("camera_mac")) for stream in config["paired_streams"]]
     paired, points = None, {}
     if isinstance(health, dict) and isinstance(health.get("pool_cameras"), list):
         rows = health["pool_cameras"]
-        if len(rows) == len(allowlist):
+        if (len(rows) == len(allowlist) and health.get("pool_binding_schema") == BINDING_SCHEMA
+                and health.get("pool_binding_revision") == binding_revision(config.get("mac"), allowlist)
+                and all(isinstance(r, dict) and type(r.get("policy_enabled")) is bool
+                        and type(r.get("stream_active")) is bool for r in rows)):
             paired = {mac for mac, row in zip(allowlist, rows)
                       if isinstance(row, dict)
                       and (row.get("policy_enabled") is True or row.get("stream_active") is True)}
@@ -179,13 +189,16 @@ def plan_rollout(report: dict, slots: dict[str, dict], *,
     if new_slot_target not in _TARGETS or not _LABEL.fullmatch(new_slot_prefix + "1"):
         raise RolloutError("Invalid new-slot policy")
     eligible = eligible_cameras(report)
+    present = {_mac(row["mac"]) for row in report["cameras"] if isinstance(row, dict) and "mac" in row}
     for label, slot in slots.items():
         if not _LABEL.fullmatch(label) or slot.get("target") not in _TARGETS:
             raise RolloutError("Invalid slot label or target")
     paired_where = {}
     for label, slot in sorted(slots.items()):
         for mac in slot["paired"] or ():
-            paired_where.setdefault(mac, label)
+            if mac in paired_where:
+                raise RolloutError("Camera pairing is ambiguous across slots")
+            paired_where[mac] = label
     def name(mac: str) -> str:
         return eligible[mac]["name"] if mac in eligible else "unknown camera"
 
@@ -219,10 +232,10 @@ def plan_rollout(report: dict, slots: dict[str, dict], *,
                 remove.append(mac)           # Protect paired it to another slot
             elif mac in eligible and eligible[mac]["online"]:
                 awaiting.append(mac)         # reserved here, not yet paired
-            elif mac in eligible:
-                keep.append(mac)             # offline: keep, never churn
+            elif mac in present:
+                keep.append(mac)             # Offline or reclassified in Protect, still the same camera.
             else:
-                remove.append(mac)           # gone from Protect or out of scope
+                remove.append(mac)           # Absent from inventory and no longer observed as paired.
         members = keep + awaiting + unknown
         assigned.update(members)
         result[label] = {"target": slot["target"], "host_ip": slot.get("host_ip"),
@@ -263,6 +276,7 @@ def plan_rollout(report: dict, slots: dict[str, dict], *,
     for mac in pending:
         target = next((label for label in sorted(result)
                        if result[label]["observed"]
+                       and (result[label]["keep"] or result[label]["awaiting_pairing"])
                        and result[label]["load"] + weight(mac) <= 1
                        and len(result[label]["keep"]) + len(result[label]["awaiting_pairing"])
                        + len(result[label]["add"]) < _MAX_CAMERAS_PER_SLOT), None)
@@ -312,7 +326,8 @@ def plan_rollout(report: dict, slots: dict[str, dict], *,
         # A new slot is justified only if its cameras do not fit an existing
         # slot at the smallest reservation, or their weight is evidenced.
         unverified = [mac for mac in slot["add"] if basis(mac) == "fallback" and any(
-            result[label]["observed"] and result[label]["load"] + _MIN_WEIGHT <= 1
+            result[label]["observed"] and (result[label]["keep"] or result[label]["awaiting_pairing"])
+            and result[label]["load"] + _MIN_WEIGHT <= 1
             and len(result[label]["keep"]) + len(result[label]["awaiting_pairing"])
             + len(result[label]["add"]) < _MAX_CAMERAS_PER_SLOT for label in result)]
         slot["capacity_basis"] = "unverified" if unverified else "evidenced"
@@ -373,8 +388,12 @@ def plan_rollout(report: dict, slots: dict[str, dict], *,
             "_names": {mac: name(mac) for mac in known},
             "compose_sha256": (hashlib.sha256(compose["text"].encode()).hexdigest()
                                if compose is not None else None)}
+    # Display names can coincide, and cameras missing from inventory all have the same display name.
+    bindings = {label: [slots[label].get("mac"), slots[label]["allowlist"], dict(slot, load=str(slot["load"]))]
+                for label, slot in result.items()}
+    new_identities = [(s["label"], s["mac"], s["host_ip"], s["add"]) for s in new_slots]
     plan["revision"] = hashlib.sha256(json.dumps(
-        public(plan), sort_keys=True).encode()).hexdigest()
+        [public(plan), bindings, new_identities], sort_keys=True).encode()).hexdigest()
     return plan
 
 
@@ -385,6 +404,8 @@ def _template_problem(slots: dict, label: str | None) -> str | None:
     template = slots.get(label)
     if template is None:
         return "template_unknown"
+    if not template["allowlist"]:
+        return "template_has_no_stream_pool"
     if template.get("config_drift"):
         return "template_config_drift"
     if template.get("target") == "nas" and not template.get("deployed_config_known"):
@@ -475,24 +496,32 @@ def apply_rollout(plan: dict, slot_dirs: dict[str, Path], *, new_slot_parent: Pa
     write = atomic_private if writer is None else writer
     template = json.loads((slot_dirs[template_label] / "config.json").read_text())
     for label, slot in sorted(plan["slots"].items()):
-        removes = {a["_mac"] for a in plan["actions"]
-                   if a["kind"] == "remove_from_allowlist" and a["slot"] == label}
-        if not (removes or slot["add"]):
+        edits = [a for a in plan["actions"] if a.get("slot") == label and a["automated"]]
+        removes = {a["_mac"] for a in edits if a["kind"] == "remove_from_allowlist"}
+        additions = [a["_mac"] for a in edits if a["kind"] == "add_to_allowlist"]
+        if not (removes or additions):
             continue
         path = slot_dirs[label] / "config.json"
         config = json.loads(path.read_text())
-        streams = [s for s in config["paired_streams"] if _mac(s["camera_mac"]) not in removes]
+        if passive_slot(config):
+            if additions:
+                raise RolloutError("Review the retired slot's stream policy before adding a camera")
+            continue  # A retry after removing the last camera already has the intended state.
+        original = config["paired_streams"]
+        streams = [s for s in original if _mac(s["camera_mac"]) not in removes]
         present = {_mac(s["camera_mac"]) for s in streams}
-        for mac in slot["add"]:
+        for mac in additions:
             if mac not in present:
                 streams.append({"camera_mac": mac, "source_ip": config["controller_ip"],
                                 "ffmpeg_path": "/usr/bin/ffmpeg"})
-        if not 1 <= len(streams) <= _MAX_CAMERAS_PER_SLOT:
-            raise RolloutError("A slot must keep one to five allowlisted cameras")
+        if streams == original:
+            continue
+        if len(streams) > _MAX_CAMERAS_PER_SLOT:
+            raise RolloutError("A slot can have at most five allowlisted cameras")
         backup = path.with_name("config.json.before-rollout")
         if not backup.exists():
             write(backup, path.read_bytes())
-        config["paired_streams"] = streams
+        replace_streams(config, streams)
         write(path, json.dumps(config, separators=(",", ":")).encode())
         changed.append(label)
     for slot in plan["new_slots"]:
@@ -582,13 +611,7 @@ def _cloned_detector(detector: dict, cameras: list[str]) -> dict:
     plates would otherwise produce a slot that cannot start.
     """
     clone = deepcopy(detector)
-    if "plate_cameras" in clone:
-        mine = {_mac(mac) for mac in cameras}
-        kept = [mac for mac in clone["plate_cameras"] if _mac(mac) in mine]
-        if kept:
-            clone["plate_cameras"] = kept
-        else:
-            del clone["plate_cameras"]
+    restrict_detector(clone, {_mac(mac) for mac in cameras})
     return clone
 
 
