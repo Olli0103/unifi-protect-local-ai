@@ -64,7 +64,9 @@ issuing attempt, written with its requested transition before the RPC. Reconcili
 exact attempt; an earlier successful retry cannot settle a later unknown one.
 Entering recovery again without reissuing the command does not change that
 binding. Old journals without this field can infer attempt 1 only when exactly
-one recovery attempt has occurred. A repeated legacy request is ambiguous and
+one recovery attempt has occurred. This inferred binding is retained atomically
+with the next attempt increment, even if no command is reissued before another
+interruption. A repeated legacy request with no retained issuer is ambiguous and
 remains fenced for explicit host-owner reconciliation; do not delete its journal
 or reuse an older receipt to force recovery. Older host tools without support
 for the additional journal field may refuse these journals; do not downgrade

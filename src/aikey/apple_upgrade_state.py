@@ -306,6 +306,12 @@ def begin_recovery(directory, value, bound):
         raise UpgradeStateError('upgrade_recovery_budget_exhausted')
     if value['recovery_from'] is None:
         value['recovery_from'] = value['phase']
+    if value['recovery_attempts'] == 1:
+        # Admission proved the sole legacy issuer; retain it atomically with
+        # the increment even if this recovery never issues another RPC.
+        for row in value['recovery_actions']:
+            if row['action'] in RECOVERY_COMMANDS and row['state'] == 'requested':
+                value.setdefault('recovery_command_attempts', {}).setdefault(row['action'], 1)
     value['recovery_attempts'] += 1
     value['failure'] = value['failure'] or 'interrupted_or_unsettled'
     value['phase'] = 'rolling_back'

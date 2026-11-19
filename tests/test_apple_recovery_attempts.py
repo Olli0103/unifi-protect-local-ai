@@ -98,7 +98,8 @@ def test_exact_current_terminal_or_no_spawn_receipt_allows_reconciliation(tmp_pa
     assert journal.read(tmp_path)["failure"] == pending["failure"]
 
 
-def test_bound_request_survives_a_later_attempt_cut_before_observation(tmp_path, monkeypatch):
+@pytest.mark.parametrize("legacy", [False, True])
+def test_bound_request_survives_a_later_attempt_cut_before_observation(tmp_path, monkeypatch, legacy):
     host = _interrupted_candidate(tmp_path)
 
     def effect(argv, context):
@@ -112,6 +113,11 @@ def test_bound_request_survives_a_later_attempt_cut_before_observation(tmp_path,
     with pytest.raises(KeyboardInterrupt):
         recover(tmp_path, "aiport-mac", ready=lambda: True, run=host)
     del host.with_effect
+    if legacy:
+        import json
+        value = journal.pending(tmp_path)
+        value.pop("recovery_command_attempts")
+        (tmp_path / journal.FILE).write_text(json.dumps(value))
     record = journal.recovery_step
 
     def cut(directory, value, action, state, bound):
