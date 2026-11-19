@@ -37,13 +37,18 @@ def _settled_commands(directory, value):
             if row['state'] != 'requested' or action not in {
                     'stop_old', 'run_new', 'stop_new', 'delete_new', 'restart_old'}:
                 continue
-            names = ([f'recover_{action}_{attempt}' for attempt in range(1, value['recovery_attempts'] + 1)]
-                     if recovering else [action])
-            receipt = None
-            for name in names:
-                found = read_effect(directory, _context(value, name, _argv(value, action)))
-                if found is not None:
-                    receipt = found
+            if recovering:
+                attempt = value.get('recovery_command_attempts', {}).get(action)
+                if attempt is None:
+                    # Legacy rows did not retain which retry issued the request.
+                    # Only a single recovery entry has an unambiguous issuer.
+                    if value['recovery_attempts'] != 1:
+                        return False
+                    attempt = 1
+                name = f'recover_{action}_{attempt}'
+            else:
+                name = action
+            receipt = read_effect(directory, _context(value, name, _argv(value, action)))
             if receipt is None or receipt['spawned'] and (receipt['exit_code'] != 0 or receipt['error'] is not None):
                 return False
     return True
