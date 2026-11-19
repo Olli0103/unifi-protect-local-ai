@@ -56,5 +56,17 @@ work. Do not widen scope merely because an unrelated native trial passed.
 Record the exact source SHA/image digest, Protect version, profile, host runtime,
 model identity and test outcome. Use synthetic identifiers in public reports.
 Separate config saved, process loaded, callback accepted and native result saved.
-Retain failures as well as successes. Use the repository's compatibility issue
-form and follow [contributing privacy rules](../CONTRIBUTING.md).
+Retain failures as well as successes. Submit a [compatibility report](https://github.com/Olli0103/unifi-protect-local-ai/issues/new?template=compatibility_report.yml)
+using the [contributing privacy rules](../CONTRIBUTING.md).
+
+The [community alpha trial](https://github.com/Olli0103/unifi-protect-local-ai/issues/27)
+calls for two independent installations. For each one, record [installation and
+update](deployment.md), the [recovery procedure](uninstall-restore.md) you tried,
+and whether a [saved caption](planning/owner-acceptance-gates.md#descriptions-and-summaries)
+was visible on its original event after reloading Protect. Keep retries on the
+same report so maintainers can count distinct installations.
+
+You can report a partial trial. For example, if an update stops before Protect
+connects, select `Blocked` and `no readback available`, describe where it
+stopped, and mark unattempted steps `not run`. For a synthetic run, enter
+`no controller` and select `fixture-tested only`.
