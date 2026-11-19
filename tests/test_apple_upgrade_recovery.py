@@ -130,9 +130,8 @@ def test_explicit_recovery_of_failed_compensation_preserves_original_failure(tmp
     assert ['start', OLD] not in host.calls
 
 
-def test_recovery_after_interruption_at_readiness_removes_only_owned_candidate(tmp_path):
-    from aikey import apple_upgrade_state as journal
-    from aikey.apple_upgrade_recovery import recover
+@pytest.fixture
+def interrupted_candidate(tmp_path):
     host = Host([_entry()])
     sup.pin(tmp_path, 'aiport-mac', OLD, run=host)
     planned = up.plan(tmp_path, 'aiport-mac', NEW, NEW_IMAGE, run=host)
@@ -140,6 +139,17 @@ def test_recovery_after_interruption_at_readiness_removes_only_owned_candidate(t
         raise KeyboardInterrupt()
     with pytest.raises(KeyboardInterrupt):
         up.swap(tmp_path, planned, idle=lambda: True, ready=interrupted, run=host)
+    return host
+
+
+@pytest.mark.parametrize('already_stopped', [False, True])
+def test_recovery_after_interruption_at_readiness_removes_only_owned_candidate(
+        tmp_path, interrupted_candidate, already_stopped):
+    from aikey import apple_upgrade_state as journal
+    from aikey.apple_upgrade_recovery import recover
+    host = interrupted_candidate
+    if already_stopped:
+        host.entries[NEW]['status']['state'] = 'stopped'
     original = journal.read(tmp_path)
     assert original['actions'][-1] == {'action': 'ready_new', 'state': 'requested'}
     assert recover(tmp_path, 'aiport-mac', ready=lambda: True, run=host) == 'recovered_old'
@@ -149,8 +159,51 @@ def test_recovery_after_interruption_at_readiness_removes_only_owned_candidate(t
     assert value['failure'] == 'interrupted_or_unsettled'
     assert value['reconciliation']['guest_state_restored'] is False
     assert all(row['state'] == 'observed' for row in value['recovery_actions'])
+    assert ('stop_new' in {row['action'] for row in value['recovery_actions']}) == (not already_stopped)
     assert NEW not in host.entries and host.entries[OLD]['status']['state'] == 'running'
     assert recover(tmp_path, 'aiport-mac', ready=lambda: True, run=host) == 'no_pending_upgrade'
+
+
+@pytest.mark.parametrize('evidence', ['acknowledged', 'terminal_receipt', 'missing_receipt'])
+def test_resume_after_candidate_stop(tmp_path, interrupted_candidate, monkeypatch, evidence):
+    from aikey import apple_upgrade_state as journal
+    from aikey.apple_upgrade_recovery import recover, _context
+    from aikey.host_runtime_command import publish_effect
+
+    host = interrupted_candidate
+    record = journal.recovery_step
+
+    def cut_after_stop(directory, value, action, state, bound):
+        if (action, state) != ('stop_new', 'acknowledged'):
+            return record(directory, value, action, state, bound)
+        assert host.calls[-1] == ['stop', NEW]
+        if evidence == 'acknowledged':
+            record(directory, value, action, state, bound)
+        elif evidence == 'terminal_receipt':
+            context = _context(value, 'recover_stop_new_1', [up.CONTAINER, 'stop', NEW])
+            publish_effect(bound.root_fd, context, {'spawned': True, 'command_terminal': True,
+                                                    'exit_code': 0, 'error': None})
+        raise KeyboardInterrupt('synthetic cut before observing the stop')
+
+    with monkeypatch.context() as patch:
+        patch.setattr(journal, 'recovery_step', cut_after_stop)
+        with pytest.raises(KeyboardInterrupt):
+            recover(tmp_path, 'aiport-mac', ready=lambda: True, run=host)
+
+    before = journal.pending(tmp_path)
+    assert host.entries[NEW]['status']['state'] == 'stopped'
+    host.calls.clear()
+    result = recover(tmp_path, 'aiport-mac', ready=lambda: True, run=host)
+    if evidence == 'missing_receipt':
+        assert result == 'recovery_command_unsettled'
+        assert host.calls == [] and journal.pending(tmp_path) == before
+        return
+    assert result == 'recovered_old'
+    assert [call for call in host.calls if call[0] in {'stop', 'delete', 'start', 'run'}] == [
+        ['delete', NEW], ['start', OLD]]
+    assert journal.pending(tmp_path) is None
+    assert {'action': 'stop_new', 'state': 'observed'} in journal.read(tmp_path)['recovery_actions']
+    assert NEW not in host.entries and host.entries[OLD]['status']['state'] == 'running'
 
 
 @pytest.mark.parametrize('foreign', ['label', 'old_configuration', 'registry', 'service'])
