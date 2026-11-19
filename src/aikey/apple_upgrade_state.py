@@ -30,6 +30,7 @@ TOKEN = re.compile('[0-9a-f]{32}\\Z')
 NAME = re.compile('[A-Za-z0-9][A-Za-z0-9_.-]{0,127}\\Z')
 LIMIT = 65536
 RECOVERY_ACTIONS = {'hold', 'stop_new', 'delete_new', 'restart_old', 'ready_old', 'pin_old', 'new_absent'}
+RECOVERY_COMMANDS = {'stop_new', 'delete_new', 'restart_old'}
 FAILURE_CODES = {'upgrade_outcome_uncertain', 'hold_failed', 'stop_failed', 'stop_outcome_uncertain',
     'candidate_readiness_unverified', 'upgrade_configuration_changed',
     'run_outcome_uncertain', 'rollback_outcome_uncertain', 'rollback_not_ready',
@@ -59,10 +60,12 @@ def encoded(value):
 
 
 def checked(value):
-    _require(isinstance(value, dict) and set(value) == {
+    fields = {
         'schema', 'operation', 'authority', 'authority_device', 'authority_inode',
         'phase', 'plan', 'configuration_revision', 'registry_sha256', 'registry_before', 'actions', 'failure',
-        'failure_code', 'failure_exit_code', 'recovery_actions', 'recovery_attempts', 'recovery_from', 'reconciliation'})
+        'failure_code', 'failure_exit_code', 'recovery_actions', 'recovery_attempts', 'recovery_from', 'reconciliation'}
+    _require(isinstance(value, dict) and set(value) in (
+        fields, fields | {'recovery_command_attempts'}))
     _require(value['schema'] == SCHEMA and isinstance(value['operation'], str)
              and TOKEN.fullmatch(value['operation']) and value['phase'] in PHASES
              and isinstance(value['authority'], str) and HASH.fullmatch(value['authority'])
@@ -123,6 +126,11 @@ def checked(value):
         _require(isinstance(action, dict) and set(action) == {'action', 'state'}
                  and action['action'] in RECOVERY_ACTIONS
                  and action['state'] in {'requested', 'acknowledged', 'observed'})
+    attempts = value.get('recovery_command_attempts', {})
+    _require(isinstance(attempts, dict) and set(attempts) <= RECOVERY_COMMANDS)
+    for action, attempt in attempts.items():
+        _require(type(attempt) is int and 1 <= attempt <= value['recovery_attempts']
+                 and any(row['action'] == action for row in value['recovery_actions']))
     _require(len({row['action'] for row in value['recovery_actions']}) == len(value['recovery_actions']))
     if value['recovery_attempts'] == 0:
         _require(value['recovery_from'] is None and not value['recovery_actions'])
@@ -318,6 +326,9 @@ def recovery_step(directory, value, action, state, bound):
         # Observed can resolve a lost acknowledgement, without claiming that
         # the original process recorded/received that acknowledgement.
         previous['state'] = state
+    if action in RECOVERY_COMMANDS and state == 'requested':
+        # Bind before issuing the RPC; later recovery entries need not issue it again.
+        value.setdefault('recovery_command_attempts', {})[action] = value['recovery_attempts']
     publish(directory, value, bound)
 
 

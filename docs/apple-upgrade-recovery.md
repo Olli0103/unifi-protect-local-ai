@@ -59,6 +59,17 @@ operation label, image and reviewed settings. A running candidate must be
 observed stopped and then absent before the old identity may be restarted.
 Missing observations stop the process with its fence intact.
 
+The journal's `recovery_command_attempts` map retains each recovery command's
+issuing attempt, written with its requested transition before the RPC. Reconciliation reads only the terminal/no-spawn note for that
+exact attempt; an earlier successful retry cannot settle a later unknown one.
+Entering recovery again without reissuing the command does not change that
+binding. Old journals without this field can infer attempt 1 only when exactly
+one recovery attempt has occurred. A repeated legacy request is ambiguous and
+remains fenced for explicit host-owner reconciliation; do not delete its journal
+or reuse an older receipt to force recovery. Older host tools without support
+for the additional journal field may refuse these journals; do not downgrade
+host recovery tooling and assume pending-operation compatibility.
+
 A successful recovery records a separate `reconciled` proof: old running,
 candidate absent, fresh verified readiness and restored registry digest. Original
 failures and actions are not backfilled with acknowledgements. Three explicit
