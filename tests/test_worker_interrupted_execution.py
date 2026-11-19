@@ -1,5 +1,6 @@
 """Actual child death at a loopback model boundary; no camera/provider data."""
 import asyncio
+import errno
 import json
 import os
 from pathlib import Path
@@ -122,6 +123,50 @@ async def test_execution_marker_directory_sync_failure_prevents_model_io(service
         assert record['state'] == 'failed'
     finally:
         await worker.stop()
+
+
+@pytest.mark.asyncio
+async def test_journal_enospc_does_not_retire_the_queue_consumer(services, tmp_path, monkeypatch):
+    worker = JobProcessor(configuration(services), tmp_path)
+    interrupted = command("interrupted")
+    services.release.clear()
+    task = asyncio.create_task(worker.handle(interrupted))
+    try:
+        await asyncio.wait_for(services.entered.wait(), 3)
+        journal, = worker.state_dir.glob("*.json")
+        before = journal.read_bytes()
+        assert json.loads(before)["state"] == "execution_started"
+        rejected = []
+        real_replace = os.replace
+
+        def refuse_journal_replace(source, target):
+            if Path(target) == journal:
+                rejected.append(json.loads(Path(source).read_bytes())["state"])
+                raise OSError(errno.ENOSPC, "synthetic journal allocation failure")
+            return real_replace(source, target)
+
+        with monkeypatch.context() as patch:
+            patch.setattr(os, "replace", refuse_journal_replace)
+            services.release.set()
+            with pytest.raises(WorkerError, match="Job interrupted before durable completion"):
+                await asyncio.wait_for(task, 3)
+        assert rejected == ["callback_sending", "failed"]
+        assert journal.read_bytes() == before
+        assert not list(worker.state_dir.glob(".journal-*"))
+        with pytest.raises(WorkerError, match="Execution outcome is uncertain"):
+            await worker.handle(interrupted)
+        assert len(services.requests) == 1 and services.callbacks == []
+
+        result = await asyncio.wait_for(worker.handle(command("after-space-released")), 2)
+        assert result["callback"] == "http_accepted"
+        assert len(services.requests) == 2 and len(services.callbacks) == 1
+        assert journal.read_bytes() == before
+    finally:
+        services.release.set()
+        await worker.stop()
+        if not task.done():
+            task.cancel()
+        await asyncio.gather(task, return_exceptions=True)
 
 
 @pytest.mark.asyncio
