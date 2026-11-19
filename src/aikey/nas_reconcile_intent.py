@@ -181,7 +181,7 @@ def execute(manifest_path, manifest, states, *, host_state, verify, run=None,
         health_network = nas._verify_health_network(command, manifest)
         verified_bindings = {}
         if old is not None and old['revision'] == revision and (
-                old['phase'] in ('completed', 'reconciled') or settle):
+                old['phase'] in ('completed', 'reconciled', 'rolled_back') or settle):
             for name, row in old['before'].items():
                 if row.get('NetworkVerified') is True or row['State'] == 'running':
                     verified_bindings[name] = row['ID']
