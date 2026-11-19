@@ -1,6 +1,7 @@
 """Local fixture tests. Synthetic vectors here are never production fallbacks."""
 
 import asyncio
+from datetime import datetime
 import json
 import math
 from pathlib import Path
@@ -8,12 +9,15 @@ import subprocess
 import sys
 import ssl
 from types import SimpleNamespace
+from unittest.mock import AsyncMock
 
 from aiohttp import web
 import pytest
 
 from aikey.protocol import decode_message, encode_message
-from aikey.search import EmbeddingError, EmbeddingService, SearchService, normalize_embedding
+from aikey.search import (
+    EmbeddingError, EmbeddingService, SearchService, normalize_embedding, parse_query_filters,
+)
 from aikey.tls import ensure_identity_certificate, server_context
 
 
@@ -120,6 +124,74 @@ async def test_session_response_uses_requested_id_and_explicit_profile(tmp_path,
         assert message.body["keyTags"] == []
     finally:
         await service.stop()
+
+
+@pytest.mark.parametrize("spanish,reference", [
+    ("¿Un coche azul ayer?", "a blue car yesterday"),
+    ("NIÑAS y camiones hoy", "children and trucks today"),
+    ("Vehi\u0301culos y peatones esta semana", "vehicles and a pedestrian this week"),
+    ("alguien con dos paquetes esta mañana", "someone with parcels this morning"),
+    ("un gato y perros anoche", "a cat and dogs last night"),
+    ("autobuses y pájaros hoy por la tarde", "a bus and birds this afternoon"),
+    ("dos cajas de cartón esta noche", "two parcels this evening"),
+    ("rostros la semana pasada", "faces last week"),
+    ("MATRÍCULAS de motos", "a motorcycle with a license plate"),
+    ("vehiculos con matriculas", "vehicles with a license plate"),
+    ("pájaros, coches y autos hoy", "Autos und Vögel heute"),
+])
+def test_spanish_search_filters_match_existing_contract(spanish, reference):
+    now_ms = 1_790_442_000_000
+    expected = parse_query_filters(reference, now_ms, "Europe/Madrid")
+    assert expected["objectTypes"]
+    assert parse_query_filters(spanish, now_ms, "Europe/Madrid") == expected
+
+
+@pytest.mark.parametrize("sentence", [
+    "el cochecito junto a la cochera", "un personaje con carácter",
+    "la caja de música", "para mañana", "ayeres", "antes de ayer",
+])
+def test_spanish_search_avoids_partial_words_and_ambiguous_dates(sentence):
+    assert parse_query_filters(sentence, 1_790_442_000_000, "Europe/Madrid") == {"objectTypes": []}
+
+
+def test_spanish_explicit_range_retains_only_object_filter():
+    assert parse_query_filters("coches desde ayer hasta hoy", 1_790_442_000_000) == {
+        "objectTypes": ["vehicle"],
+    }
+
+
+@pytest.mark.parametrize("now_utc,start_utc,end_utc", [
+    ("2025-03-31T10:00:00Z", "2025-03-29T23:00:00Z", "2025-03-30T22:00:00Z"),
+    ("2025-10-27T10:00:00Z", "2025-10-25T22:00:00Z", "2025-10-26T23:00:00Z"),
+])
+def test_spanish_yesterday_uses_console_midnights(now_utc, start_utc, end_utc):
+    now, start, end = (int(datetime.fromisoformat(s).timestamp() * 1000)
+                       for s in (now_utc, start_utc, end_utc))
+    assert parse_query_filters("ayer", now, "Europe/Madrid") == {
+        "objectTypes": [], "timeTag": "yesterday", "startTime": start, "endTime": end,
+    }
+
+
+async def test_spanish_nl_parse_preserves_encoder_input_and_alarm_tags(tmp_path, monkeypatch):
+    (tmp_path / "device-state.json").write_text('{"timezone":"Europe/Madrid"}')
+    service = SearchService({"search": {"enabled": True, "profile": "clip-basic-v1"},
+                             "find_anything": {"clip_server": "http://127.0.0.1:8180"}}, tmp_path)
+    sentence = "¿Un COCHE azul ayer?"
+    vector = [1.0] + [0.0] * 767
+    encode = AsyncMock(return_value=vector)
+    monkeypatch.setattr(service.clip, "embed_text", encode)
+    monkeypatch.setattr("aikey.search.time", SimpleNamespace(time=lambda: 1_790_442_000))
+    try:
+        reply = decode_message(await service.handle_message(encode_message(
+            {"id": "spanish-query", "type": "request", "action": "NL_PARSE"},
+            {"querySentence": sentence})))
+    finally:
+        await service.stop()
+    encode.assert_awaited_once_with(sentence)
+    assert reply.header["errorCode"] == 0
+    assert reply.body["objectTypes"] == ["vehicle"] and reply.body["timeTag"] == "yesterday"
+    assert (reply.body["startTime"], reply.body["endTime"]) == (1_790_287_200_000, 1_790_373_600_000)
+    assert reply.body["txtEmbed"] == vector and reply.body["keyTags"] == []
 
 
 @pytest.mark.parametrize("body", [

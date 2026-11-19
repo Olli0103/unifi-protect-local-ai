@@ -21,7 +21,8 @@ from typing import Callable
 
 from .aiport_candidate import CandidateError, _private_file, load_config
 from .aiport_deployment import (
-    AI_PORT_CONTAINER_PORT, AiPortPlanError, _eligible, _ip, plan_ai_ports,
+    AI_PORT_CONTAINER_PORT, AiPortPlanError, _eligible, _ip, _slot_camera_ids, plan_ai_ports,
+    retained_empty_slot,
 )
 from .aiport_nas_compose import (
     NasComposeError, _PROJECT_NAME, build_nas_compose, read_runtime_layout,
@@ -98,12 +99,13 @@ def _verify_external_slot_capacity(plan: dict, report: dict,
                for source, cameras in groups.items()
                for camera_id, resolution, weight in cameras}
     assigned: set[str] = set()
+    known: set[str] = set()
+    current_ids = {key.lower() for key in current}
     addresses: set[str] = set()
     for index, slot in enumerate(slots, start=1):
         if (not isinstance(slot, dict) or slot.get("slot") != index
                 or slot.get("source_kind") not in groups
-                or not isinstance(slot.get("camera_ids"), list)
-                or not slot["camera_ids"] or slot.get("management_tcp") != 443
+                or slot.get("management_tcp") != 443
                 or slot.get("state") != "planned_only"):
             raise ReconcileError("Protect camera inventory or capacity changed; review a new plan")
         address = slot.get("host_ip")
@@ -115,8 +117,13 @@ def _verify_external_slot_capacity(plan: dict, report: dict,
         if slot.get("apple_publish") != (
                 f"{address}:443:{AI_PORT_CONTAINER_PORT}/tcp" if address else None):
             raise ReconcileError("Protect camera inventory or capacity changed; review a new plan")
+        active, retired = _slot_camera_ids(slot, known)
+        if current_ids.intersection(camera.lower() for camera in retired):
+            raise ReconcileError("Protect camera inventory or capacity changed; review a new plan")
+        if not active:
+            continue
         rows = []
-        for camera_id in slot["camera_ids"]:
+        for camera_id in active:
             if camera_id in assigned or camera_id not in current:
                 raise ReconcileError("Protect camera inventory or capacity changed; review a new plan")
             assigned.add(camera_id)
@@ -185,6 +192,8 @@ def verify_camera_plan(plan: dict, report: dict, states: dict[int, Path],
     if not isinstance(plan, dict) or not isinstance(plan.get("instances"), list):
         raise ReconcileError("A complete AI Port plan is required")
     try:
+        if any(retained_empty_slot(plan["instances"][n - 1]) for n in states if 1 <= n <= len(plan["instances"])):
+            raise ReconcileError("A retained empty slot cannot be selected for deployment")
         try:
             rebuilt = plan_ai_ports(report,
                                     ai_key_ip=plan["ai_key"]["host_ip"],

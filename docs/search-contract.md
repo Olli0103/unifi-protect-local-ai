@@ -92,6 +92,11 @@ Only explicit `NL_PARSE` requests for `multilingual-e5-small` receive E5 results
 The CLIP basic branch additionally parses supported object/time expressions using
 the controller timezone and returns its tag/filter fields with `exact_match:
 false`. Those fields are not a strict-filter or human-relevance guarantee.
+For example, `un coche azul ayer` adds the `vehicle` object type and bounds the
+search to the previous calendar day in the controller's timezone. Other Spanish
+expressions include `anoche`, `esta mañana`, `hoy por la tarde` and `la semana
+pasada`. The CLIP encoder still receives the original query sentence.
+
 `IMAGE_SEARCH` accepts only the configured controller's HTTPS media-port
 `/internal/files/` route, without credentials, query/fragment, traversal or
 redirects. It uses verified/pinned TLS, a bounded response and timeout, JPEG/PNG

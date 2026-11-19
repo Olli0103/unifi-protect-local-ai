@@ -61,6 +61,33 @@ needed; every selected slot must be addressed. For later planning, use
 `--previous-plan` to preserve existing identities/assignments. Do not overwrite
 an adopted installation's plan or reshuffle cameras implicitly.
 
+### Removing a camera
+
+After confirming removal in Protect, save a fresh, complete inventory. Pass the
+original Protect camera ID once for each confirmed removal. Keep the old plan
+and write the new plan to a different file.
+
+```sh
+local-aiport-plan --inventory inventory-after.json --previous-plan plan-before.json \
+  --removed-camera-id REMOVED_CAMERA_ID \
+  --check-recording-events events-before.json events-after.json > plan-after.json
+```
+
+Use the same camera scope as the old plan. A camera still listed as offline
+cannot be retired by this option. Other cameras keep their slot and address.
+Each retired ID stays with its original slot under `retired_camera_ids`. An
+empty slot reserves its address and identity. Select only active slots for a
+Mac or NAS deployment. If the same eligible ID reappears, planning restores it
+to its original slot subject to capacity.
+
+The optional recording check uses two private JSON arrays of completed Protect
+events. Capture the original samples before removal and fetch those same event
+IDs again afterwards. Include a sample from each removed camera and any
+surviving cameras you want to verify. Each object supplies `id`, `camera`,
+`start` and `end` in native milliseconds. A missing event or changed camera,
+interval or slot stops the plan. This checks the sampled metadata. Verify video
+playback separately on the controller.
+
 ## 4. Provision one new identity and generate Compose
 
 The private paths below are examples; create their parent first and use your

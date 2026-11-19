@@ -172,6 +172,14 @@ Then qualify adoption, pairing and a saved native event separately.
 
 `local-aiport-slot-diff` compares each deployed slot's `paired_streams` allowlist with Protect's authoritative pairing (`aiports[].pairedCameras`). It uses private exports of Protect's `aiports` and `cameras` lists. The Protect integration API does not expose AI Port pairing. It never pairs, unpairs or restarts anything, and its output names cameras and slots without MAC or IP addresses.
 
+Removing the last local stream leaves the same AI Port in passive mode. Its
+identity, certificate and address stay in place. In a shared pool, camera-specific
+permissions follow the remaining MAC addresses. The rollout uses health rows only
+when the running port reports the same ordered camera identities as its local
+configuration. An older or mismatched health report leaves the slot unobserved.
+See [Removing a camera](aiport-install.md#removing-a-camera) for the saved-plan
+and historical event checks.
+
 | Action | Automated | Meaning |
 |---|---|---|
 | `remove_from_allowlist` | yes, with `--apply-local` | A stream Protect never starts on this slot (stale entry). The original file is kept as `config.json.before-slot-diff`. |
