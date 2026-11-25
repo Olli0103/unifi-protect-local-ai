@@ -402,7 +402,7 @@
         "src/aikey/config.py:74",
         "src/aikey/device.py:863",
         "src/aikey/device.py:973",
-        "src/aikey/search.py:486",
+        "src/aikey/search.py:489",
         "src/aikey/worker.py:684"
       ],
       "source_class": "live_trial",
@@ -491,8 +491,8 @@
         "src/aikey/config.py:293",
         "src/aikey/config.py:77",
         "src/aikey/device_workflow.py:506",
-        "src/aikey/search.py:415",
-        "src/aikey/search.py:447"
+        "src/aikey/search.py:418",
+        "src/aikey/search.py:450"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/interface-observations-20261111.md#new-scoped-evidence",
@@ -581,7 +581,7 @@
         "src/aikey/device.py:1489",
         "src/aikey/device.py:863",
         "src/aikey/device.py:972",
-        "src/aikey/search.py:486",
+        "src/aikey/search.py:489",
         "src/aikey/worker.py:684"
       ],
       "source_class": "live_trial",
@@ -702,7 +702,7 @@
         "src/aikey/first_run_site.py:154",
         "src/aikey/lab.py:116",
         "src/aikey/lab.py:93",
-        "src/aikey/search.py:636"
+        "src/aikey/search.py:639"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/interface-existing-channels-20261111.md#attributed-facts",
@@ -737,8 +737,8 @@
         "src/aikey/lab.py:155",
         "src/aikey/lab.py:81",
         "src/aikey/lab.py:86",
-        "src/aikey/search.py:486",
-        "src/aikey/search.py:636",
+        "src/aikey/search.py:489",
+        "src/aikey/search.py:639",
         "src/aikey/worker.py:684"
       ],
       "source_class": "live_trial",
@@ -1408,9 +1408,9 @@
       "code_locations": [
         "src/aikey/protocol.py:204",
         "src/aikey/protocol.py:214",
-        "src/aikey/search.py:682",
-        "src/aikey/search.py:735",
-        "src/aikey/search.py:736"
+        "src/aikey/search.py:685",
+        "src/aikey/search.py:738",
+        "src/aikey/search.py:739"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/interface-worker-receipts-20261111.md#attributed-facts",
@@ -1427,10 +1427,10 @@
         "src/aikey/lab.py:234",
         "src/aikey/protocol.py:202",
         "src/aikey/protocol.py:218",
-        "src/aikey/search.py:685",
-        "src/aikey/search.py:702",
-        "src/aikey/search.py:717",
-        "src/aikey/search.py:735"
+        "src/aikey/search.py:688",
+        "src/aikey/search.py:705",
+        "src/aikey/search.py:720",
+        "src/aikey/search.py:738"
       ],
       "source_class": "protect_own_installation",
       "reference": "docs/evidence/live-protect-7.3.70.md#L40",
@@ -1881,10 +1881,10 @@
         "src/aikey/worker.py:1791",
         "src/aikey/worker.py:1794",
         "src/aikey/worker.py:1795",
-        "src/aikey/worker.py:2249",
-        "src/aikey/worker.py:2264",
+        "src/aikey/worker.py:2254",
+        "src/aikey/worker.py:2269",
         "src/aikey/worker.py:264",
-        "src/aikey/worker.py:2984",
+        "src/aikey/worker.py:2989",
         "src/aikey/worker.py:50"
       ],
       "source_class": "live_trial",
@@ -1913,12 +1913,12 @@
         "src/aikey/worker.py:1254",
         "src/aikey/worker.py:1833",
         "src/aikey/worker.py:186",
-        "src/aikey/worker.py:2249",
-        "src/aikey/worker.py:2264",
+        "src/aikey/worker.py:2254",
+        "src/aikey/worker.py:2269",
         "src/aikey/worker.py:266",
         "src/aikey/worker.py:276",
-        "src/aikey/worker.py:2989",
-        "src/aikey/worker.py:2994"
+        "src/aikey/worker.py:2994",
+        "src/aikey/worker.py:2999"
       ],
       "source_class": "live_trial",
       "reference": "docs/evidence/live-protect-7.3.68.md#L11",
@@ -1970,7 +1970,7 @@
         "src/aikey/worker.py:1703",
         "src/aikey/worker.py:1707",
         "src/aikey/worker.py:265",
-        "src/aikey/worker.py:2968",
+        "src/aikey/worker.py:2973",
         "src/aikey/worker.py:50"
       ],
       "source_class": "live_trial",

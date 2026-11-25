@@ -334,7 +334,7 @@ def parse_query_filters(text: str, now_ms: int, zone: str = "UTC") -> dict[str, 
     object types as label filters (falling back to a pure vector search when
     they match nothing) and the window as a start/end bound.
     """
-    from datetime import datetime, timedelta
+    from datetime import UTC, datetime, timedelta
     from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
     lowered = " ".join(unicodedata.normalize("NFC", text.lower()).split())
     # Keep accented words such as "carácter" whole when looking up object words.
@@ -353,7 +353,9 @@ def parse_query_filters(text: str, now_ms: int, zone: str = "UTC") -> dict[str, 
         tz = ZoneInfo(zone)
     except (ZoneInfoNotFoundError, ValueError):
         tz = ZoneInfo("UTC")
-    now = datetime.fromtimestamp(now_ms / 1000, tz)
+    # Relative hours measure elapsed time; calendar windows use local time.
+    utc_now = datetime.fromtimestamp(now_ms / 1000, UTC)
+    now = utc_now.astimezone(tz)
     midnight = now.replace(hour=0, minute=0, second=0, microsecond=0)
 
     def at(day, hour):
@@ -362,7 +364,8 @@ def parse_query_filters(text: str, now_ms: int, zone: str = "UTC") -> dict[str, 
     window = None
     hours = re.search(r"\b(?:last|past|letzten|vergangenen)\s+(\d{1,2})\s+(?:hours|stunden)\b", lowered)
     rules = [
-        ("last_hour", r"\b(?:last|past) hour\b|\bletzten? stunde\b", lambda: (now - timedelta(hours=1), now)),
+        ("last_hour", r"\b(?:last|past) hour\b|\bletzten? stunde\b",
+         lambda: (utc_now - timedelta(hours=1), utc_now)),
         ("last_night", r"\blast night\b|\bletzte nacht\b|\bheute nacht\b|\bvergangene nacht\b|\banoche\b",
          lambda: (at(midnight - timedelta(days=1), 18), at(midnight, 6))),
         ("this_morning", r"\bthis morning\b|\bheute (?:morgen|früh|vormittag)\b|\b(?:esta|hoy por la) mañana\b",
@@ -379,7 +382,7 @@ def parse_query_filters(text: str, now_ms: int, zone: str = "UTC") -> dict[str, 
          lambda: (midnight - timedelta(days=now.weekday()), now)),
     ]
     if hours and 1 <= int(hours.group(1)) <= 72:
-        window = ("last_hours", (now - timedelta(hours=int(hours.group(1))), now))
+        window = ("last_hours", (utc_now - timedelta(hours=int(hours.group(1))), utc_now))
     else:
         for tag, pattern, compute in rules:
             if re.search(pattern, lowered):

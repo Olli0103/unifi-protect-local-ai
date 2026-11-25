@@ -382,3 +382,34 @@ async def test_query_failure_is_visible_while_transport_connected_and_success_re
         assert service.status['query_failures'] == 1 and service.status['queries'] == 1
     finally:
         await service.stop()
+
+
+@pytest.mark.parametrize("instant,query,tag,hours", [
+    ("2026-03-29T01:30:00+00:00", "person last hour", "last_hour", 1),
+    ("2026-03-29T01:30:00+00:00", "car in the past 3 hours", "last_hours", 3),
+    ("2026-10-25T01:30:00+00:00", "person letzten Stunde", "last_hour", 1),
+    ("2026-10-25T01:30:00+00:00", "car in the last 3 hours", "last_hours", 3),
+])
+async def test_nl_parse_relative_hours_cross_dst(tmp_path, monkeypatch, instant, query, tag, hours):
+    from datetime import datetime
+    from unittest.mock import AsyncMock
+
+    from aikey import clip, search
+
+    now = datetime.fromisoformat(instant).timestamp()
+    monkeypatch.setattr(search, "time", SimpleNamespace(time=lambda: now))
+    (tmp_path / "device-state.json").write_text(json.dumps({"timezone": "Europe/Berlin"}))
+    options = {"search": {"enabled": True, "profile": clip.PROFILE},
+               "find_anything": {"clip_server": "http://127.0.0.1:8180"}}
+    service = SearchService(options, tmp_path)
+    monkeypatch.setattr(service.clip, "embed_text", AsyncMock(return_value=[1.0] + [0.0] * 767))
+    try:
+        response = decode_message(await service.handle_message(encode_message(
+            {"id": "q1", "type": "request", "action": "NL_PARSE", "timestamp": 1},
+            {"querySentence": query, "model": clip.MODEL})))
+    finally:
+        await service.stop()
+    assert response.header["errorCode"] == 0
+    assert response.body["timeTag"] == tag
+    assert response.body["endTime"] == int(now * 1000)
+    assert response.body["endTime"] - response.body["startTime"] == hours * 3_600_000

@@ -2148,23 +2148,28 @@ class JobProcessor:
                 self.deep_timeouts[job.stage] += 1
             if job.operation == "indexImages":
                 self.retroactive["failed"] += 1
+            callback_states = {"callback_sending", "callback_uncertain"}
             current = self._history.get(job.job_id, {})
-            if current.get("state") not in {"callback_sending", "callback_uncertain"}:
-                if (job.operation == "on_demand" and self.callback_mode == "enabled"
-                        and job.deadline > time.monotonic()):
-                    try:
-                        async with asyncio.timeout(job.deadline - time.monotonic()):
-                            result = await self._post_callback(job, {"error": message})
-                        result["status"] = "failed"
-                        self._record(job, "completed", result=result)
-                    except Exception:
-                        if self._history.get(job.job_id, {}).get("state") not in {
-                                "callback_sending", "callback_uncertain"}:
-                            self._record(job, "failed", error=message)
-                else:
+            if (current.get("state") not in callback_states
+                    and job.operation == "on_demand" and self.callback_mode == "enabled"
+                    and job.deadline > time.monotonic()):
+                try:
+                    async with asyncio.timeout(job.deadline - time.monotonic()):
+                        result = await self._post_callback(job, {"error": message})
+                    result["status"] = "failed"
+                    self._record(job, "completed", result=result)
+                except Exception:
+                    pass  # Use the last recorded state to decide whether to write a failure.
+            current = self._history.get(job.job_id, {})
+            if current.get("state") not in callback_states | {"completed"}:
+                try:
                     self._record(job, "failed", error=message)
-            # The replay guard is already durable. Best-effort diagnostic notes
-            # must not replace this error, change callbacks or authorize a retry.
+                except OSError:
+                    # Keep the last recorded state and don't retire the queue consumer
+                    # if the journal is still unwritable (for example, a full disk).
+                    message = "Job interrupted before durable completion"
+            # Best-effort diagnostic notes must not replace this error, change
+            # callbacks or authorize a retry.
             self._note_worker_exception(job, exc, phase=failure_phase)
             if not job.future.done():
                 job.future.set_exception(WorkerError(message))
