@@ -83,9 +83,9 @@ def _eligible(report: dict, camera_scope: str) -> tuple[
         if not isinstance(row, dict):
             raise AiPortPlanError("Invalid camera row")
         camera_id = row.get("id")
-        if not isinstance(camera_id, str) or not _CAMERA_ID.fullmatch(camera_id) or camera_id in seen:
+        if not isinstance(camera_id, str) or not _CAMERA_ID.fullmatch(camera_id) or camera_id.lower() in seen:
             raise AiPortPlanError("Invalid or duplicate camera ID")
-        seen.add(camera_id)
+        seen.add(camera_id.lower())
         processing_class = row.get("processing_class")
         if processing_class not in {"legacy_ingress_needed", "smart_event_candidate", "offline"}:
             raise AiPortPlanError("Unknown camera processing class")
@@ -118,11 +118,24 @@ def _eligible(report: dict, camera_scope: str) -> tuple[
     return groups, legacy_count, enhancement_count
 
 
+def _slot_camera_ids(item: dict, assigned: set[str]) -> tuple[list[str], list[str]]:
+    active, retired = item.get("camera_ids"), item.get("retired_camera_ids", [])
+    if not isinstance(active, list) or not isinstance(retired, list) or not (active or retained_empty_slot(item)):
+        raise AiPortPlanError("Invalid previous AI Port slot")
+    for camera in active + retired:
+        if not isinstance(camera, str) or not _CAMERA_ID.fullmatch(camera) or camera.lower() in assigned:
+            raise AiPortPlanError("Invalid or duplicate previous camera assignment")
+        assigned.add(camera.lower())
+    return active, retired
+
+
 def _previous_slots(previous_plan: dict | None,
                     selected: dict[str, tuple[str, str | None, Fraction]],
-                    addresses: list[str], key_address: str | None
+                    addresses: list[str], key_address: str | None, removed: set[str]
                     ) -> tuple[list[dict], str | None]:
     if previous_plan is None:
+        if removed:
+            raise AiPortPlanError("A confirmed camera removal requires its previous plan")
         return [], key_address
     if (not isinstance(previous_plan, dict)
             or previous_plan.get("schema") != "aikey-aiport-deployment-plan/2"
@@ -138,12 +151,11 @@ def _previous_slots(previous_plan: dict | None,
     key_address = key_address or previous_key
     bins: list[dict] = []
     assigned: set[str] = set()
+    current_ids = {key.lower() for key in selected}
     for index, item in enumerate(previous_plan["instances"]):
         if (not isinstance(item, dict) or type(item.get("slot")) is not int
                 or item["slot"] != index + 1
-                or item.get("source_kind") not in _CAPACITY
-                or not isinstance(item.get("camera_ids"), list)
-                or not item["camera_ids"]):
+                or item.get("source_kind") not in _CAPACITY):
             raise AiPortPlanError("Invalid previous AI Port slot")
         host_ip = item.get("host_ip")
         if host_ip is not None:
@@ -152,13 +164,16 @@ def _previous_slots(previous_plan: dict | None,
             raise AiPortPlanError("An existing AI Port address cannot move during reconciliation")
         source = item["source_kind"]
         cameras = []
+        history = []
         load = Fraction()
-        for camera_id in item["camera_ids"]:
-            if (not isinstance(camera_id, str) or not _CAMERA_ID.fullmatch(camera_id)
-                    or camera_id in assigned):
-                raise AiPortPlanError("Invalid or duplicate previous camera assignment")
-            assigned.add(camera_id)
+        active, retired = _slot_camera_ids(item, assigned)
+        historical = set(retired)
+        for camera_id in active + retired:
+            identity = camera_id.lower()
             current = selected.get(camera_id)
+            if identity in removed or (camera_id in historical and identity not in current_ids):
+                history.append(camera_id)
+                continue
             if current is None or current[0] != source:
                 raise AiPortPlanError("A previously assigned camera changed or is unavailable; review its pairing")
             _, resolution, weight = current
@@ -167,14 +182,28 @@ def _previous_slots(previous_plan: dict | None,
         if load > 1:
             raise AiPortPlanError("An existing AI Port slot exceeds current camera capacity")
         bins.append({"source_kind": source, "load": load,
-                     "cameras": cameras, "host_ip": host_ip})
+                     "cameras": cameras, "host_ip": host_ip, "retired_camera_ids": sorted(history)})
+    if not removed <= assigned:
+        raise AiPortPlanError("A confirmed removal must belong to a previous AI Port slot")
     return bins, key_address
+
+
+def retained_empty_slot(slot: dict) -> bool:
+    """An idle slot keeps its address and historical camera ownership."""
+    if not isinstance(slot, dict):
+        return False
+    retired = slot.get("retired_camera_ids")
+    return (slot.get("camera_ids") == [] and isinstance(retired, list) and bool(retired)
+            and all(isinstance(i, str) and _CAMERA_ID.fullmatch(i) for i in retired)
+            and slot.get("blocked_by") == "retained_empty_slot" and slot.get("deployable") is False
+            and slot.get("reserved_capacity") == "0" and slot.get("resolution_unverified") is False)
 
 
 def plan_ai_ports(report: dict, *, device_ips: list[str] | None = None,
                   ai_key_ip: str | None = None,
                   camera_scope: str = "legacy-only",
-                  previous_plan: dict | None = None) -> dict:
+                  previous_plan: dict | None = None,
+                  removed_camera_ids: list[str] | tuple[str, ...] = ()) -> dict:
     """Size independent AI Port instances without pairing or opening ports.
 
     Each instance gets a different host IP because the management listener is
@@ -183,6 +212,12 @@ def plan_ai_ports(report: dict, *, device_ips: list[str] | None = None,
     if camera_scope not in _SCOPES:
         raise AiPortPlanError("Unknown camera scope")
     groups, legacy_count, enhancement_count = _eligible(report, camera_scope)
+    if (not isinstance(removed_camera_ids, (list, tuple))
+            or any(not isinstance(i, str) or not _CAMERA_ID.fullmatch(i) for i in removed_camera_ids)):
+        raise AiPortPlanError("Invalid confirmed camera removal")
+    removed = {i.lower() for i in removed_camera_ids}
+    if len(removed) != len(removed_camera_ids) or any(row["id"].lower() in removed for row in report["cameras"]):
+        raise AiPortPlanError("Confirmed removals must be unique and absent from the complete inventory")
     selected = {camera_id: (source, resolution, weight)
                 for source, cameras in groups.items()
                 for camera_id, resolution, weight in cameras}
@@ -191,14 +226,14 @@ def plan_ai_ports(report: dict, *, device_ips: list[str] | None = None,
         raise AiPortPlanError("AI Port addresses must be distinct")
     key_address = _ip(ai_key_ip) if ai_key_ip is not None else None
     allocations, key_address = _previous_slots(previous_plan, selected,
-                                                addresses, key_address)
+                                                addresses, key_address, removed)
     assigned = {camera["id"] for item in allocations for camera in item["cameras"]}
     for source in ("protect", "onvif"):
         for camera_id, resolution, weight in sorted(groups[source], key=lambda item: (-item[2], item[0])):
             if camera_id in assigned:
                 continue
             destination = next((item for item in allocations
-                                if item["source_kind"] == source
+                                if item["cameras"] and item["source_kind"] == source
                                 and item["load"] + weight <= 1), None)
             if destination is None:
                 destination = {"source_kind": source, "load": Fraction(), "cameras": []}
@@ -209,10 +244,15 @@ def plan_ai_ports(report: dict, *, device_ips: list[str] | None = None,
     instances = []
     for index, allocation in enumerate(allocations):
         address = addresses[index] if index < len(addresses) else allocation.get("host_ip")
+        blocker = ONVIF_BLOCKER if allocation["source_kind"] == "onvif" else None
+        if not allocation["cameras"]:
+            blocker = "retained_empty_slot"
         instances.append({
             "slot": index + 1,
             "source_kind": allocation["source_kind"],
             "camera_ids": [camera["id"] for camera in allocation["cameras"]],
+            **({"retired_camera_ids": allocation["retired_camera_ids"]}
+               if allocation.get("retired_camera_ids") else {}),
             "resolution_unverified": any(camera["recording_resolution"] is None
                                          for camera in allocation["cameras"]),
             "reserved_capacity": str(allocation["load"]),
@@ -224,8 +264,8 @@ def plan_ai_ports(report: dict, *, device_ips: list[str] | None = None,
             # controller). An ONVIF camera streams from its own address and
             # port, which no slot can decode yet, so ONVIF capacity is planned
             # but not deployed (#28).
-            "deployable": allocation["source_kind"] == "protect",
-            **({"blocked_by": ONVIF_BLOCKER} if allocation["source_kind"] == "onvif" else {}),
+            "deployable": blocker is None,
+            **({"blocked_by": blocker} if blocker else {}),
         })
     assigned_addresses = [item["host_ip"] for item in instances if item["host_ip"]]
     if (len(set(assigned_addresses)) != len(assigned_addresses)
@@ -260,6 +300,10 @@ def main(argv: list[str] | None = None) -> int:
     source.add_argument("--controller", help="Fetch the current Protect inventory from this private IPv4 host")
     parser.add_argument("--previous-plan", type=Path,
                         help="Preserve existing camera slots and host addresses")
+    parser.add_argument("--removed-camera-id", action="append", default=[],
+                        help="Confirm a previously assigned camera is absent from the inventory (repeatable)")
+    parser.add_argument("--check-recording-events", nargs=2, type=Path, metavar=("BEFORE", "AFTER"),
+                        help="Check private native event samples against both plans before emitting the new plan")
     parser.add_argument("--api-key-file", type=Path)
     parser.add_argument("--web-trust-file", type=Path)
     parser.add_argument("--web-cert-file", type=Path)
@@ -285,7 +329,13 @@ def main(argv: list[str] | None = None) -> int:
         plan = plan_ai_ports(report, device_ips=args.ai_port_ip,
                              ai_key_ip=args.ai_key_ip,
                              camera_scope=args.camera_scope,
-                             previous_plan=previous_plan)
+                             previous_plan=previous_plan, removed_camera_ids=args.removed_camera_id)
+        if args.check_recording_events:
+            from .aiport_recording_links import verify_recording_links
+            if previous_plan is None:
+                raise AiPortPlanError("Checking recording links requires a previous plan")
+            verify_recording_links(previous_plan, plan, *[
+                json.loads(path.read_text()) for path in args.check_recording_events])
     except (OSError, json.JSONDecodeError, AiPortPlanError, InventoryError) as exc:
         parser.error(str(exc))
     print(json.dumps(plan, indent=2))

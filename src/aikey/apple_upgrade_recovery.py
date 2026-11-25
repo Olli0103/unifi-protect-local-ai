@@ -152,8 +152,10 @@ def recover(state_dir, service_name, *, ready, run=supervisor._run,
                 if _new_state(rows, planned, 'running', operation=value['operation']):
                     command('stop_new')
                     rows = _listing(run)
-                    if not _new_state(rows, planned, 'stopped', operation=value['operation']):
-                        return 'recovery_stop_unobserved'
+                if not _new_state(rows, planned, 'stopped', operation=value['operation']):
+                    return 'recovery_stop_unobserved'
+                # A previous attempt may have stopped the candidate before recording the observation.
+                if any(row['action'] == 'stop_new' for row in value['recovery_actions']):
                     observed('stop_new')
                 command('delete_new')
                 rows = _listing(run)

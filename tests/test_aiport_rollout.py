@@ -13,6 +13,7 @@ from aikey.aiport_rollout import (
     observe_slot, plan_rollout, public,
 )
 from aikey.tls import ensure_identity_certificate
+from aikey.camera_bindings import SCHEMA as BINDING_SCHEMA, binding_revision
 
 CAM = {name: f"2A11000000{index:02X}" for index, name in enumerate(
     ("Camera A", "Camera B", "Camera D", "Camera E", "Keller", "Garten", "Dach"), 1)}
@@ -34,11 +35,18 @@ def report(*, extra=(), offline=(), models=None, drop=()):
     return {"schema": "aikey-camera-preflight/1", "cameras": rows}
 
 
+def bound_health(config, rows):
+    macs = [s["camera_mac"] for s in config["paired_streams"]]
+    return {"pool_binding_schema": BINDING_SCHEMA, "pool_binding_revision": binding_revision(config["mac"], macs),
+            "pool_cameras": [dict({"stream_active": False}, **row) for row in rows]}
+
+
 def slot(target, host, allow, paired):
+    config = {"mac": f"02F00000{int(host.rsplit('.', 1)[1]):04X}",
+              "paired_streams": [{"camera_mac": CAM[n]} for n in allow]}
     return {"target": target, "host_ip": host,
-            **observe_slot({"paired_streams": [{"camera_mac": CAM[n]} for n in allow]},
-                           None if paired is None else {"pool_cameras": [
-                               {"policy_enabled": n in paired} for n in allow]})}
+            **observe_slot(config, None if paired is None else bound_health(
+                config, [{"policy_enabled": n in paired} for n in allow]))}
 
 
 def current():
@@ -268,10 +276,10 @@ def live_like(extra=(), points=None):
             macs.append(mac)
             rows.append({"id": f"{index:024x}", "mac": mac, "name": name, "model": model,
                          "state": "CONNECTED", "processing_class": "smart_event_candidate"})
-        config = {"paired_streams": [{"camera_mac": mac} for mac in macs]}
-        health = {"pool_cameras": [{"policy_enabled": True,
+        config = {"mac": f"02F00001{index:04X}", "paired_streams": [{"camera_mac": mac} for mac in macs]}
+        health = bound_health(config, [{"policy_enabled": True,
                                     **({"stream_points": points[mac]} if points and mac in points
-                                       else {})} for mac in macs]}
+                                       else {})} for mac in macs])
         slots[label] = {"target": "mac" if label == "mac" else "nas",
                         "host_ip": f"10.77.0.{135 + len(slots)}", **observe_slot(config, health)}
     for index, (name, model) in enumerate(extra, 50):
@@ -838,9 +846,8 @@ def test_compute_marks_a_stale_nas_template_from_its_deployed_copy(tmp_path, mon
                                deployed_config=str(deployed_path))
     rollout["new_slots"]["template"] = "nas-template"
     paired = {CAM["Camera A"], CAM["Camera B"]}
-    monkeypatch.setattr("aikey.aiport_rollout.read_slot_health", lambda d, p: {
-        "pool_cameras": [{"policy_enabled": s["camera_mac"] in paired}
-                         for s in local["paired_streams"]]})
+    monkeypatch.setattr("aikey.aiport_rollout.read_slot_health", lambda d, p: bound_health(
+        local, [{"policy_enabled": s["camera_mac"] in paired} for s in local["paired_streams"]]))
     before = {p: p.read_bytes() for p in (template / "config.json", compose_path)}
     plan, dirs = compute(rollout, inventory)
     problem = [a for a in plan["actions"] if a["kind"] == "template_config_unverified"]
@@ -863,9 +870,8 @@ def _locked_setup(tmp_path, monkeypatch):
     root, compose_path, rollout_path, rollout, slots, inventory = _one_new_nas_slot(tmp_path)
     local = json.loads((Path(rollout["slots"][0]["state_dir"]) / "config.json").read_text())
     paired = {CAM["Camera A"], CAM["Camera B"]}
-    monkeypatch.setattr("aikey.aiport_rollout.read_slot_health", lambda d, p: {
-        "pool_cameras": [{"policy_enabled": s["camera_mac"] in paired}
-                         for s in local["paired_streams"]]})
+    monkeypatch.setattr("aikey.aiport_rollout.read_slot_health", lambda d, p: bound_health(
+        local, [{"policy_enabled": s["camera_mac"] in paired} for s in local["paired_streams"]]))
     rollout_path.write_text(json.dumps(rollout))
     rollout_path.chmod(0o600)
     plan, _ = compute(json.loads(rollout_path.read_text()), inventory)

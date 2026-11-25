@@ -17,6 +17,7 @@ from pathlib import Path
 import re
 import ssl
 import time
+import unicodedata
 from typing import Any
 from urllib.parse import urlsplit
 import uuid
@@ -284,6 +285,24 @@ _OBJECT_PHRASES = {"licensePlate": ("license plate", "licence plate", "number pl
                                     "nummernschild")}
 _WORD = re.compile(r"[a-zäöüß]+")
 
+# Spanish aliases belong to structured search. RAM tags also drive native alarms.
+_ACUTE_VOWELS = str.maketrans("áéíóú", "aeiou")
+_SPANISH_OBJECT_FILTERS = {
+    kind: re.compile(r"\b(?:" + "|".join(re.escape(term.translate(_ACUTE_VOWELS)) for term in terms) + r")\b")
+    for kind, terms in {
+        "person": ("persona", "personas", "gente", "alguien", "hombre", "hombres", "mujer", "mujeres",
+                   "niño", "niños", "niña", "niñas", "peatón", "peatones"),
+        "vehicle": ("coche", "coches", "carro", "carros", "vehículo", "vehículos", "camión", "camiones",
+                    "furgoneta", "furgonetas", "camioneta", "camionetas", "moto", "motos",
+                    "motocicleta", "motocicletas", "autobús", "autobuses", "automóvil", "automóviles"),
+        "animal": ("animales", "perro", "perros", "perra", "perras", "gato", "gatos", "gata", "gatas",
+                   "pájaro", "pájaros", "mascota", "mascotas"),
+        "package": ("paquete", "paquetes", "caja de cartón", "cajas de cartón"),
+        "face": ("rostro", "rostros"),
+        "licensePlate": ("matrícula", "matrículas"),
+    }.items()
+}
+
 
 _KEY_TAG_KINDS = ("person", "vehicle", "animal", "package")
 
@@ -309,7 +328,7 @@ def key_tags(text: object) -> list[dict[str, Any]]:
 
 
 def parse_query_filters(text: str, now_ms: int, zone: str = "UTC") -> dict[str, Any]:
-    """Object types and a time window stated in a search sentence (English/German).
+    """Object types and a time window stated in an English, German or Spanish search.
 
     Deterministic and local: no model is involved. Protect applies the
     object types as label filters (falling back to a pure vector search when
@@ -317,12 +336,19 @@ def parse_query_filters(text: str, now_ms: int, zone: str = "UTC") -> dict[str, 
     """
     from datetime import UTC, datetime, timedelta
     from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
-    lowered = text.lower()
-    words = set(_WORD.findall(lowered))
-    types = [kind for kind, vocabulary in _OBJECT_WORDS.items() if words & set(vocabulary)]
+    lowered = " ".join(unicodedata.normalize("NFC", text.lower()).split())
+    # Keep accented words such as "carácter" whole when looking up object words.
+    words = set(re.findall(r"[^\W\d_]+", lowered))
+    spanish = lowered.translate(_ACUTE_VOWELS)
+    spanish_types = {kind for kind, pattern in _SPANISH_OBJECT_FILTERS.items() if pattern.search(spanish)}
+    types = [kind for kind, vocabulary in _OBJECT_WORDS.items()
+             if kind in spanish_types or not words.isdisjoint(vocabulary)]
     types += [kind for kind, phrases in _OBJECT_PHRASES.items()
-              if any(re.search(rf"\b{re.escape(phrase)}\b", lowered) for phrase in phrases)]
+              if kind in spanish_types or any(re.search(rf"\b{re.escape(phrase)}\b", lowered) for phrase in phrases)]
     result: dict[str, Any] = {"objectTypes": types}
+    # A qualified day can describe a different day or an open range.
+    if re.search(r"\b(?:antes de|despu[eé]s de|desde|hasta|entre) (?:ayer|hoy)\b", lowered):
+        return result
     try:
         tz = ZoneInfo(zone)
     except (ZoneInfoNotFoundError, ValueError):
@@ -340,19 +366,20 @@ def parse_query_filters(text: str, now_ms: int, zone: str = "UTC") -> dict[str, 
     rules = [
         ("last_hour", r"\b(?:last|past) hour\b|\bletzten? stunde\b",
          lambda: (utc_now - timedelta(hours=1), utc_now)),
-        ("last_night", r"\blast night\b|\bletzte nacht\b|\bheute nacht\b|\bvergangene nacht\b",
+        ("last_night", r"\blast night\b|\bletzte nacht\b|\bheute nacht\b|\bvergangene nacht\b|\banoche\b",
          lambda: (at(midnight - timedelta(days=1), 18), at(midnight, 6))),
-        ("this_morning", r"\bthis morning\b|\bheute (?:morgen|früh|vormittag)\b",
+        ("this_morning", r"\bthis morning\b|\bheute (?:morgen|früh|vormittag)\b|\b(?:esta|hoy por la) mañana\b",
          lambda: (at(midnight, 5), at(midnight, 12))),
-        ("this_afternoon", r"\bthis afternoon\b|\bheute nachmittag\b",
+        ("this_afternoon", r"\bthis afternoon\b|\bheute nachmittag\b|\b(?:esta|hoy por la) tarde\b",
          lambda: (at(midnight, 12), at(midnight, 18))),
-        ("this_evening", r"\bthis evening\b|\btonight\b|\bheute abend\b",
+        ("this_evening", r"\bthis evening\b|\btonight\b|\bheute abend\b|\b(?:esta|hoy por la) noche\b",
          lambda: (at(midnight, 18), midnight + timedelta(days=1))),
-        ("yesterday", r"\byesterday\b|\bgestern\b", lambda: (midnight - timedelta(days=1), midnight)),
-        ("today", r"\btoday\b|\bheute\b", lambda: (midnight, now)),
-        ("last_week", r"\blast week\b|\bletzte woche\b|\bvorige woche\b",
+        ("yesterday", r"\b(?:yesterday|gestern|ayer)\b", lambda: (midnight - timedelta(days=1), midnight)),
+        ("today", r"\b(?:today|heute|hoy)\b", lambda: (midnight, now)),
+        ("last_week", r"\blast week\b|\bletzte woche\b|\bvorige woche\b|\bsemana pasada\b",
          lambda: (midnight - timedelta(days=now.weekday() + 7), midnight - timedelta(days=now.weekday()))),
-        ("this_week", r"\bthis week\b|\bdiese woche\b", lambda: (midnight - timedelta(days=now.weekday()), now)),
+        ("this_week", r"\bthis week\b|\bdiese woche\b|\besta semana\b",
+         lambda: (midnight - timedelta(days=now.weekday()), now)),
     ]
     if hours and 1 <= int(hours.group(1)) <= 72:
         window = ("last_hours", (utc_now - timedelta(hours=int(hours.group(1))), utc_now))

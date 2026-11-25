@@ -14,6 +14,11 @@ def _load(path):
     return yaml.safe_load(path.read_text())
 
 
+def _compatibility_fields():
+    body = _load(TEMPLATES / "compatibility_report.yml")["body"]
+    return {item["id"]: item for item in body if "id" in item}
+
+
 def _block(markdown, heading):
     """The first shell block under a heading."""
     section = markdown.split(heading, 1)[1]
@@ -37,8 +42,7 @@ def test_every_form_warns_and_requires_a_privacy_check():
 
 
 def test_parity_reports_must_state_native_or_weaker_evidence():
-    form = _load(TEMPLATES / "compatibility_report.yml")
-    fields = {item.get("id"): item for item in form["body"]}
+    fields = _compatibility_fields()
     evidence = fields["evidence"]
     assert evidence["type"] == "dropdown" and evidence["validations"]["required"] is True
     options = " | ".join(evidence["attributes"]["options"]).lower()
@@ -48,6 +52,29 @@ def test_parity_reports_must_state_native_or_weaker_evidence():
     bug = {item.get("id"): item for item in _load(TEMPLATES / "bug_report.yml")["body"]}
     assert bug["commit"]["validations"]["required"] and bug["protect"]["validations"]["required"]
     assert "remove ids, hostnames" in bug["diagnostics"]["attributes"]["description"].lower()
+
+
+def test_compatibility_report_can_record_an_unsupported_or_blocked_run():
+    fields = _compatibility_fields()
+    outcome = fields["outcome"]
+    assert outcome["type"] == "dropdown" and outcome["validations"]["required"] is True
+    options = outcome["attributes"]["options"]
+    assert {"Passed", "Failed", "Blocked", "Unsupported", "Not run"} <= set(options)
+    assert "default" not in outcome["attributes"]
+    assert fields["environment"]["validations"]["required"] is True
+    assert "no controller" in fields["protect"]["attributes"]["description"].lower()
+    evidence = fields["evidence"]["attributes"]["options"]
+    assert any("no readback" in option.lower() for option in evidence)
+
+
+def test_install_trial_prompts_for_each_step_without_prefilling_success():
+    trial = _compatibility_fields()["trial"]
+    assert trial["type"] == "textarea" and not trial.get("validations", {}).get("required")
+    attributes = trial["attributes"]
+    assert "value" not in attributes
+    assert "independent" in attributes["description"].lower()
+    steps = {line.partition(":")[0] for line in attributes["placeholder"].splitlines()}
+    assert {"Install", "Update", "Recovery", "Native caption"} <= steps
 
 
 def test_blank_issues_are_off_and_security_goes_to_security_md():
