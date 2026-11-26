@@ -1498,11 +1498,11 @@ class JobProcessor:
             confidence = float(confidence) if type(confidence) in (int, float) and math.isfinite(confidence) else 0.0
             key = (tracker, moment)
             if key not in chosen or confidence > chosen[key][0]:
-                chosen[key] = (confidence, image_id)
+                chosen[key] = (confidence, image_id, item.get("objectType"))
                 kinds[tracker] = item.get("objectType")
         ranked = sorted(chosen.items(), key=lambda item: (-item[1][0], item[0]))[:16]
         media = [("image", self._url(f"/internal/aiprocessors/image/{image_id}", "media"))
-                 for _, (_, image_id) in ranked]
+                 for _, (_, image_id, _) in ranked]
         body["_crops"] = [[tracker, moment] for (tracker, moment), _ in ranked]
         body["_kinds"] = [[tracker, kinds.get(tracker)] for (tracker, _), _ in ranked]
         callback = self._url(body["resUrl"], "callback")
@@ -1511,6 +1511,9 @@ class JobProcessor:
         normalized = {"operation": "indexImages", "payload": body, "callback": callback,
                       "callbackKind": "legacy_tagging", "media": media}
         fingerprint = hashlib.sha256(_json(normalized)).hexdigest()
+        # Keep the historical normalized fingerprint for replay protection, but
+        # execute with the class of the selected crop, not the tracker as a whole.
+        body["_crop_classes"] = [kind for _, (_, _, kind) in ranked]
         job_id = hashlib.sha256(f"multipleImages:{body['camera']}:{body['event']}".encode()).hexdigest()
         # Protect allows RAM tasks 30 minutes and keeps up to 50 backfill tasks
         # queued here; a queued crop job must not expire behind the others.
@@ -2650,8 +2653,8 @@ class JobProcessor:
         started = time.monotonic()
         self._clip_client()
         tags = []
-        kind_of = {tracker: kind for tracker, kind in job.payload.get("_kinds", [])}
-        for (tracker, moment), (_, url) in zip(job.payload["_crops"], job.media):
+        for (tracker, moment), object_class, (_, url) in zip(
+                job.payload["_crops"], job.payload["_crop_classes"], job.media, strict=True):
             data, _ = await self._fetch(url, "image")
             kind = self._image_type(data)
             if kind != "image/jpeg":
@@ -2665,7 +2668,7 @@ class JobProcessor:
             except clip.ClipError as exc:
                 raise WorkerError(str(exc)) from exc
             tags.append({"keyMomentMs": moment,
-                         "tags": _merged_tags(_class_tags(kind_of.get(tracker)), await self._ram_tags(data)),
+                         "tags": _merged_tags(_class_tags(object_class), await self._ram_tags(data)),
                          "trackerID": tracker,
                          "imgEmbed": [round(value, 6) for value in vector]})
             self.retroactive["crops_indexed"] += 1

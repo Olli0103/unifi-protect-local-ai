@@ -653,6 +653,27 @@ def crop_entry(image_id, tracker, moment, confidence=80, kind="person"):
             "attributes": {"trackerId": tracker}, "trackerId": tracker}
 
 
+async def test_retroactive_class_follows_selected_crop_not_tracker(tmp_path):
+    from types import SimpleNamespace
+    from unittest.mock import AsyncMock
+
+    service = SimpleNamespace(origin="http://127.0.0.1:8080", ffmpeg="/unused")
+    worker = JobProcessor(config(service), tmp_path)
+    worker._fetch = AsyncMock(return_value=(b"\xff\xd8\xff" + bytes(64), {}))
+    worker._clip = SimpleNamespace(embed_regions=AsyncMock(return_value=[UNIT]), close=AsyncMock())
+    worker._post_callback = AsyncMock(return_value={})
+    try:
+        await worker.handle(multiple_images([
+            crop_entry("first", 7, START, 90, "person"),
+            crop_entry("second", 7, END, 95, "vehicle"),
+            crop_entry("discarded", 7, START, 60, "animal")]))
+        tags = worker._post_callback.await_args.args[1]["thumbnailTags"]
+        assert [(tag["keyMomentMs"], tag["tags"][0]["tag"]) for tag in tags] == [
+            (END, "vehicle"), (START, "person")]
+    finally:
+        await worker.stop()
+
+
 async def test_retroactive_crops_are_embedded_locally_as_thumbnail_tags(controller, tmp_path):
     worker = JobProcessor(config(controller), tmp_path)
     try:
